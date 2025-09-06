@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('call-app-frontend');
+  protected readonly title = signal('email-verfication-frontend');
 }

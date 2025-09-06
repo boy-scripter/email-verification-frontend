@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-theme-black: #121212;
+  --color-theme-white: #e3e3e3;
+}
+.hero-aurora > .om-aurora-background {
+  opacity: 0.2;
+}
+
+.typewriter {
+  font-weight: bold;
+  background: linear-gradient(90deg, #687071, #d9d9d9); /* light blue → purple */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+}
