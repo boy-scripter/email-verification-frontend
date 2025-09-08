@@ -1,24 +1,46 @@
 import { Component } from "@angular/core";
-import { NgxGridpatternComponent } from "@omnedia/ngx-gridpattern";
+import { NgxRippleComponent } from "@omnedia/ngx-ripple";
 import { NgxNumberTickerComponent } from '@omnedia/ngx-number-ticker';
+import { NgxGridpatternComponent } from '@omnedia/ngx-gridpattern';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroCheck } from '@ng-icons/heroicons/outline';
 
+interface TickerItem {
+  prefix: string;
+  countTo: number;
+  suffix: string;
+  color: string;
+}
 
 @Component({
-    selector: 'app-ticker',
-    imports: [NgxNumberTickerComponent, NgxGridpatternComponent],
-    template: `
-            <div >
-                 <om-gridpattern  [smallGrid]="true" styleClass="bg-gray-900"  [gradientColor]="'rgb(15, 15, 15)'">
-                                    <div class="email-verifications text-2xl md:text-6xl py-10 md:py-24 flex justify-center  items-center gap-2 text-theme-white">
-                                    <p class="font-bold">Over</p>
-                                        <om-number-ticker styleClass="text-2xl md:text-6xl font-bold text-theme-white" [countTo]="50000" />
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 md:h-20 md:w-20 text-green-400 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" class="stroke-3 md:stroke-[5]" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                    <p class="font-bold">emails verified!</p>
-                                </div>
-                </om-gridpattern>
-           </div>
-    `
+  selector: 'app-ticker',
+  standalone: true,
+  imports: [NgxNumberTickerComponent, NgxGridpatternComponent, NgIcon],
+  providers: [provideIcons({ heroCheck })],
+  template: `
+    <div class="relative w-full py-20 bg-gray-900 overflow-hidden">
+
+      <!-- Grid background -->
+      <om-gridpattern [gridColor]="'rgba(255,255,255,0.05)'" [gradientColor]="'rgba(0,0,0,0.3)'" [smallGrid]="true" class="absolute inset-0 pointer-events-none" ></om-gridpattern>
+
+      <!-- Content -->
+      <div class="relative z-10 flex flex-col md:flex-row flex-wrap items-center justify-center gap-6 md:gap-4 text-center md:text-left px-6">
+          @for( ticker of tickers;track $index){
+          <div class="contents md:flex flex-row  gap-6">
+              <p class="text-2xl md:text-4xl font-bold text-white">{{ ticker.prefix }}</p>
+              <om-number-ticker [countTo]="ticker.countTo" styleClass="text-4xl md:text-6xl font-extrabold" [style.color]="ticker.color"></om-number-ticker>
+              <p class="text-2xl md:text-4xl font-bold text-white">{{ ticker.suffix }}</p>
+              <ng-icon name="heroCheck" size="36" [color]="ticker.color" strokeWidth="8" class="ml-2 md:ml-4"></ng-icon>
+          </div>
+          }
+      </div>
+    </div>
+  `
 })
-export class TickerCompoenent { }
+export class TickerComponent {
+  tickers: TickerItem[] = [
+    { prefix: 'Over', countTo: 50000, suffix: 'emails verified!', color: '#22c55e' },
+    { prefix: 'More than', countTo: 1200, suffix: 'domains checked', color: '#3b82f6' },
+    { prefix: 'Trusted by', countTo: 350, suffix: 'companies worldwide', color: '#facc15' }
+  ];
+}
