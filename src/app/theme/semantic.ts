@@ -12,7 +12,7 @@ const semantic = {
     'surface.hover': primitives.gray[100],
 
     // Roundedness
-    'button.radius': primitives.borderRadius.md,
+    'button.radius': primitives.borderRadius.sm,
     'card.radius': primitives.borderRadius.lg,
     'dialog.radius': primitives.borderRadius.lg
 };

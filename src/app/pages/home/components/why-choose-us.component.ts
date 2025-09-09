@@ -15,14 +15,13 @@ interface Feature {
   imports: [HeadingComponent, NgIcon, NgxGridpatternComponent],
   providers: [provideIcons({ heroCheck })],
   template: `
-    <section class="relative bg-theme-black py-14 px-6 overflow-hidden">
+    <section class="relative md:px-20 bg-theme-black py-14 px-6 overflow-hidden">
       
       <!-- Grid Background -->
-      <om-gridpattern
+      <om-gridpattern class="absolute inset-0 pointer-events-none"
         [gridColor]="'rgba(255, 255, 255, 0.1)'"
-         [gradientColor]="'rgb(10,10,10)'"
+        [gradientColor]="'rgb(10,10,10)'"
         [smallGrid]="true"
-        class="absolute inset-0 pointer-events-none"
       ></om-gridpattern>
 
       <!-- Content -->

@@ -1,17 +1,18 @@
 // heading.component.ts
 import { Component, input } from '@angular/core';
 
+
 @Component({
-    selector: 'app-heading',
-    standalone: true,
-    template: `
-    
-      <h1 class="text-3xl font-semibold text-center md:text-5xl py-12">
-        {{ title() }}
-      </h1>
-  
-  `
+  selector: 'app-heading',
+  standalone: true,
+  template: `
+      <div class="py-12 w-max  mx-auto">
+          <h1 class="text-3xl font-semibold text-center md:text-5xl mb-5"> {{ title() }}</h1>
+
+      </div>
+
+`
 })
 export class HeadingComponent {
-    title = input.required<string>();
+  title = input.required<string>();
 }

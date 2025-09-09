@@ -4,12 +4,14 @@ import { NgxSpotlightComponent } from '@omnedia/ngx-spotlight';
 import { NgxAuroraComponent } from '@omnedia/ngx-aurora';
 import { NgxTypewriterComponent } from '@omnedia/ngx-typewriter';
 import { NgxNeonUnderlineComponent } from '@omnedia/ngx-neon-underline';
+import { LogoComponent } from "@components/logo.component";
 
 @Component({
   selector: 'app-hero',
-  imports: [NgxGridpatternComponent, NgxSpotlightComponent, NgxNeonUnderlineComponent, NgxAuroraComponent, NgxTypewriterComponent],
+  imports: [NgxGridpatternComponent, NgxSpotlightComponent, NgxNeonUnderlineComponent, NgxAuroraComponent, NgxTypewriterComponent, LogoComponent],
   template: `
      <div class="relative  w-full h-[calc(100vh-20vh)] md:h-screen ">
+      <app-logo class="absolute z-20 p-10"></app-logo>
       <om-gridpattern [gradientColor]="'rgb(10,10,10)'"  [gridColor]="'rgba(255, 255, 255, 0.1)'">
         <om-aurora styleClass="hero-aurora" [invert]="false">
           <om-spotlight>

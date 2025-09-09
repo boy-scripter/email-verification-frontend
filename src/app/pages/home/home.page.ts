@@ -13,6 +13,10 @@ import { TestimonialsComponent } from "./components/testimonial.component";
 @Component({
     selector: 'app-home',
     templateUrl: './home.page.html',
-    imports: [HeroComponent, BrandSliderComponent, TickerComponent, WhyChooseUsComponent, FeaturesComponent, PricingComponent, FooterComponent, TestimonialsComponent],
+    imports: [
+        HeroComponent, BrandSliderComponent, TickerComponent,
+        WhyChooseUsComponent, FeaturesComponent, PricingComponent,
+        FooterComponent, TestimonialsComponent
+    ],
 })
 export class HomePage { }

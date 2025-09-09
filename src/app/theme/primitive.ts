@@ -4,7 +4,7 @@ export const primitives = {
     borderRadius: {
         none: '0px',
         xs: '4px',
-        sm: '6px',
+        sm: '8px',
         md: '12px',
         lg: '20px',
         xl: '24px'
