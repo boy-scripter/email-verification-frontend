@@ -1,39 +1,23 @@
 
 export const primitives = {
-    // Roundedness tokens
-    borderRadius: {
-        none: '0px',
-        xs: '4px',
-        sm: '8px',
-        md: '12px',
-        lg: '20px',
-        xl: '24px'
-    },
-
-    // Radix-inspired color scale for primary
-    blue: {
-        50: '#eff6ff',
-        100: '#dbeafe',
-        200: '#bfdbfe',
-        300: '#93c5fd',
-        400: '#60a5fa',
-        500: '#3b82f6', // primary default
-        600: '#2563eb',
-        700: '#1d4ed8',
-        800: '#1e40af',
-        900: '#1e3a8a'
-    },
-
-    gray: {
-        50: '#f9fafb',
-        100: '#f3f4f6',
-        200: '#e5e7eb',
-        300: '#d1d5db',
-        400: '#9ca3af',
-        500: '#6b7280',
-        600: '#4b5563',
-        700: '#374151',
-        800: '#1f2937',
-        900: '#111827'
-    }
+        borderRadius: {
+            none: '0px',
+            xs: '4px',
+            sm: '8px',
+            md: '12px',
+            lg: '20px',
+            xl: '24px'
+        },
+        surface: {
+            50: '#f5f5f5',
+            100: '#e5e5e5',
+            200: '#c2c2c2',
+            300: '#a3a3a3',
+            400: '#7e7e7e',
+            500: '#141414', // black 
+            600: '#0f0f0f',
+            700: '#0c0c0c',
+            800: '#090909',
+            900: '#e3e3e3'
+        }
 };

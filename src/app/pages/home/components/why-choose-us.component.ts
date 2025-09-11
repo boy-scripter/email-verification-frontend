@@ -15,7 +15,7 @@ interface Feature {
   imports: [HeadingComponent, NgIcon, NgxGridpatternComponent],
   providers: [provideIcons({ heroCheck })],
   template: `
-    <section class="relative md:px-20 bg-theme-black py-14 px-6 overflow-hidden">
+    <section class="relative md:px-20 bg-surface-500 py-14 px-6 overflow-hidden">
       
       <!-- Grid Background -->
       <om-gridpattern class="absolute inset-0 pointer-events-none"
@@ -55,7 +55,7 @@ interface Feature {
 
           <!-- Right Image -->
           <div class="md:basis-2/5 flex justify-center relative">
-            <img src="/assets/images/why.png" alt="Email Validation why" 
+            <img src="/assets/images/why.webp" alt="Email Validation why" 
                  class="w-full max-w-md rounded-2xl shadow-lg object-cover animate-float" />
           </div>
         </div>

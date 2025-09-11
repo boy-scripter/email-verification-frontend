@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './home/home.page';
 
 export const RootRouting: Routes = [
     {
@@ -8,8 +7,13 @@ export const RootRouting: Routes = [
         pathMatch: 'full'
     },
     {
+        path: 'modal',
+        outlet: 'modal',
+        loadChildren: () => import('./modal/modal.routing').then(m => m.ModalRouting)
+    },
+    {
         path: 'home',
         title: 'Home',
-        component: HomePage
+        loadComponent: () => import('./home/home.page').then(m => m.HomePage)
     }
 ]

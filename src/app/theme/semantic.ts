@@ -1,19 +1,35 @@
-import { primitives } from "./primitive";
+import { primitives } from './primitive';
 
-const semantic = {
-    // Primary colors
-    'primary.color': primitives.blue[500],
-    'primary.hover': primitives.blue[600],
-    'primary.active': primitives.blue[700],
-    'primary.background': primitives.blue[50],
+export const semantic = {
 
-    // Surface / cards
-    'surface.background': primitives.gray[50],
-    'surface.hover': primitives.gray[100],
-
-    // Roundedness
-    'button.radius': primitives.borderRadius.sm,
-    'card.radius': primitives.borderRadius.lg,
-    'dialog.radius': primitives.borderRadius.lg
+  colorScheme: {
+    light: {
+      surface: {
+        50: primitives.surface[50],
+        100: primitives.surface[100],
+        200: primitives.surface[200],
+        300: primitives.surface[300],
+        400: primitives.surface[400],
+        500: primitives.surface[500],
+        600: primitives.surface[600],
+        700: primitives.surface[700],
+        800: primitives.surface[800],
+        // 900: primitives.surface[900]
+      }
+    },
+    dark: {
+       surface: {
+          50: primitives.surface[50],
+          100: primitives.surface[100],
+          200: primitives.surface[200],
+          300: primitives.surface[300],
+          400: primitives.surface[400],
+          500: primitives.surface[500],  
+          600: primitives.surface[600],
+          700: primitives.surface[700],
+          800: primitives.surface[800],
+          // 900: primitives.surface[900]
+     }
+    }
+  }
 };
-export { semantic };

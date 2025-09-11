@@ -15,7 +15,7 @@ interface Testimonial {
   standalone: true,
   imports: [NgxMarqueeComponent, HeadingComponent, NgTemplateOutlet],
   template: `
-    <section class="bg-black-theme py-5 px-6">
+    <section class="bg-surface-500 py-5 px-6">
     <app-heading title=" What Our Customers Say" />
 
           <om-marquee  [animationDuration]="'25s'"  [pauseOnHover]="true"  >

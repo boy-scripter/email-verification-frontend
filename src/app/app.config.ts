@@ -15,8 +15,15 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: ModernRadixPreset
+        preset: ModernRadixPreset,
+        options: {
+          cssLayer: {
+            name: 'primeng',
+            order: 'theme, base, primeng'
+          }
+        }
       }
+
     })
   ]
 };

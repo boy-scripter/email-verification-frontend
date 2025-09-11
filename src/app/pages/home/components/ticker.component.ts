@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { NgxRippleComponent } from "@omnedia/ngx-ripple";
 import { NgxNumberTickerComponent } from '@omnedia/ngx-number-ticker';
 import { NgxGridpatternComponent } from '@omnedia/ngx-gridpattern';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -18,12 +17,8 @@ interface TickerItem {
   imports: [NgxNumberTickerComponent, NgxGridpatternComponent, NgIcon],
   providers: [provideIcons({ heroCheck })],
   template: `
-    <div class="relative w-full py-20 bg-gray-900 overflow-hidden">
-
-      <!-- Grid background -->
+    <div class="relative w-full py-20 bg-surface-500 overflow-hidden">
       <om-gridpattern [gridColor]="'rgba(255,255,255,0.05)'" [gradientColor]="'rgba(0,0,0,0.3)'" [smallGrid]="true" class="absolute inset-0 pointer-events-none" ></om-gridpattern>
-
-      <!-- Content -->
       <div class="relative z-10 flex flex-col md:flex-row flex-wrap items-center justify-center gap-6 md:gap-4 text-center md:text-left px-6">
           @for( ticker of tickers;track $index){
           <div class="contents md:flex flex-row  gap-6">

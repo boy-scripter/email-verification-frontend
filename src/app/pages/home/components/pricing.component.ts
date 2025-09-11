@@ -1,24 +1,31 @@
 import { Component } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { NgxBorderBeamComponent } from "@omnedia/ngx-border-beam";
 import { HeadingComponent } from "@components/header.component";
+import { NgxBorderBeamComponent } from "@omnedia/ngx-border-beam";
 import { NgxLightRaysComponent } from "@omnedia/ngx-light-rays";
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { NgTemplateOutlet } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+
 
 interface PricingPlan {
   name: string;
-  price: string;
+  price: {
+    dollar: string;
+    ruppee: string;
+  };
   features: string[];
   buttonLabel: string;
   buttonStyle: string;
   highlight?: boolean;
 }
 
+
 @Component({
   selector: 'app-pricing',
   standalone: true,
-  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet],
+  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet, ToggleSwitchModule , FormsModule],
   styles: ` 
     :host ::ng-deep .p-card-body{
            height: 100%; 
@@ -34,9 +41,14 @@ interface PricingPlan {
       <section class="relative text-white py-20 md:pb-36 px-6">
         <app-heading title="Pricing"> </app-heading>
 
+        <div class="flex text-2xl mb-6 items-center justify-center space-x-2">
+          <span>$ Dollar</span>
+          <p-toggleSwitch [(ngModel)]="checked" class="p-button-outlined"></p-toggleSwitch>
+          <span>₹ Inr</span>
+        </div>
+
         <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           @for (plan of plans; track $index) {
-            
             @if (plan.highlight) {
               <om-border-beam gradientColorStart="#ffaa40" gradientColorEnd="#9c40ff" borderRadius="1rem" animationDuration="8s" class="rounded-2xl shadow-xl" >
                 <ng-container *ngTemplateOutlet="cardTemplate; context: { $implicit: plan }"></ng-container>
@@ -50,10 +62,10 @@ interface PricingPlan {
 
         <!-- Card Template -->
         <ng-template #cardTemplate let-plan>
-          <p-card class="rounded-2xl flex flex-col h-full shadow-xl" [header]="plan.name">
+          <p-card class="rounded-2xl flex flex-col bg-transparent  h-full shadow-5xl" [header]="plan.name">
             <div class="text-3xl font-bold mb-6">
-              {{ plan.price }}
-              @if (plan.price !== 'Custom') {
+              {{ checked ? plan.price.ruppee : plan.price.dollar }}
+              @if ((checked ? plan.price.ruppee : plan.price.dollar) !== 'Custom') {
                 <span class="text-sm">/mo</span>
               }
             </div>
@@ -64,7 +76,7 @@ interface PricingPlan {
               }
             </ul>
 
-            <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto w-full" ></button>
+            <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto"></button>
           </p-card>
         </ng-template>
       </section>
@@ -72,51 +84,64 @@ interface PricingPlan {
   `
 })
 export class PricingComponent {
+
+  checked: boolean = false;
+
+
   plans: PricingPlan[] = [
-    {
-      name: "Starter",
-      price: "$19",
-      features: [
-        "10,000 Verifications per month",
-        "Basic API Access",
-        "Bulk Upload via CSV",
-        "Standard Email Validation",
-        "Dashboard Analytics",
-        "Community Support"
-      ],
-      buttonLabel: "Choose Plan",
-      buttonStyle: "p-button-info"
+  {
+    name: "Starter",
+    price: {
+      dollar: "$9",
+      ruppee: "₹699"
     },
-    {
-      name: "Pro (Recommended)",
-      price: "$49",
-      features: [
-        "100,000 Verifications per month",
-        "Full API + SDK Access",
-        "Bulk Upload + Batch Processing",
-        "Advanced Email Validation (MX, Syntax, Disposable)",
-        "Priority Dashboard Analytics",
-        "Priority Support",
-        "Team Access & Role Management"
-      ],
-      buttonLabel: "Choose Plan ",
-      buttonStyle: "p-button-warning",
-      highlight: true
+    features: [
+      "10,000 Verifications per month",
+      "Basic API Access",
+      "Bulk Upload via CSV",
+      "Standard Email Validation",
+      "Dashboard Analytics",
+      "Community Support"
+    ],
+    buttonLabel: "Choose Plan",
+    buttonStyle: "p-button-info"
+  },
+  {
+    name: "Pro (Recommended)",
+    price: {
+      dollar: "$49",
+      ruppee: "₹3999"
     },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      features: [
-        "Unlimited Verifications",
-        "Dedicated API Cluster",
-        "99.99% Uptime SLA",
-        "Custom Integrations",
-        "24/7 Dedicated Account Manager",
-        "Advanced Security & Compliance (GDPR, SOC2)",
-        "Custom Reports & White-labeling"
-      ],
-      buttonLabel: "Contact Sales",
-      buttonStyle: "p-button-danger"
-    }
-  ];
+    features: [
+      "100,000 Verifications per month",
+      "Full API + SDK Access",
+      "Bulk Upload + Batch Processing",
+      "Advanced Email Validation (MX, Syntax, Disposable)",
+      "Priority Dashboard Analytics",
+      "Priority Support",
+      "Team Access & Role Management"
+    ],
+    buttonLabel: "Choose Plan",
+    buttonStyle: "p-button-warning",
+    highlight: true
+  },
+  {
+    name: "Enterprise",
+    price: {
+      dollar: "Custom",
+      ruppee: "Custom"
+    },
+    features: [
+      "Unlimited Verifications",
+      "Dedicated API Cluster",
+      "99.99% Uptime SLA",
+      "Custom Integrations",
+      "24/7 Dedicated Account Manager",
+      "Advanced Security & Compliance (GDPR, SOC2)",
+      "Custom Reports & White-labeling"
+    ],
+    buttonLabel: "Contact Sales",
+    buttonStyle: "p-button-danger"
+  }
+];
 }

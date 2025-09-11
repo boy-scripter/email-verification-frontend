@@ -6,7 +6,7 @@ import { HeadingComponent } from "@components/header.component";
   imports: [NgxMarqueeComponent, HeadingComponent],
   selector: 'app-brand-slider',
   template: `
-    <section class="w-full pt-6 px-0 pb-12 bg-theme-black">
+    <section class="w-full pt-6 px-0 pb-12 bg-surface-500">
        <app-heading title="Trusted by leading brands"></app-heading>
        <om-marquee  animationDuration="10s" >
         <ng-template>

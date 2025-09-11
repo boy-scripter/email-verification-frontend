@@ -21,7 +21,7 @@ interface FooterConfig {
   standalone: true,
   imports: [RouterModule, ButtonModule, LogoComponent],
   template: `
-    <footer class="bg-theme-black text-gray-400 py-36 px-6">
+    <footer class="bg-surface-500 text-gray-400 py-36 px-6">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
 
         <!-- Company Info -->

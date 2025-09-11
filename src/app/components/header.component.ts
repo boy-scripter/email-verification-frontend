@@ -8,7 +8,6 @@ import { Component, input } from '@angular/core';
   template: `
       <div class="py-12 w-max  mx-auto">
           <h1 class="text-3xl font-semibold text-center md:text-5xl mb-5"> {{ title() }}</h1>
-
       </div>
 
 `
