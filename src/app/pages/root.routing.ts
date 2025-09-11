@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { ModalLayoutComponent } from './modal/modal.layout';
+import { ModalRouting } from './modal/modal.routing';
 
 export const RootRouting: Routes = [
     {
@@ -7,9 +9,10 @@ export const RootRouting: Routes = [
         pathMatch: 'full'
     },
     {
-        path: 'modal',
+        path: 'auth',
         outlet: 'modal',
-        loadChildren: () => import('./modal/modal.routing').then(m => m.ModalRouting)
+        component: ModalLayoutComponent,
+        children: ModalRouting
     },
     {
         path: 'home',

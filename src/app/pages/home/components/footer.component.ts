@@ -33,7 +33,7 @@ interface FooterConfig {
 
           <!-- PrimeNG Buttons for Login / Signup -->
           <div class="flex justify-center md:justify-start gap-3">
-            <button pButton type="button" label="Login"  [routerLink]="['/login']"></button>
+            <button pButton type="button" label="Login"  [routerLink]="['' , { outlets: { modal: ['auth' , 'login'] } }]"></button>
             <button pButton type="button" label="Signup"  [routerLink]="['/signup']"></button>
           </div>
         </div>
