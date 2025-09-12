@@ -21,6 +21,7 @@
       "@pages/*": ["./src/app/pages/*"],
       "@store/*": ["./src/app/store/*"],
       "@decorater": ["./src/app/decorater/index"],
+      "@util/*": ["./src/app/util/*"],
     }
   },
   "angularCompilerOptions": {

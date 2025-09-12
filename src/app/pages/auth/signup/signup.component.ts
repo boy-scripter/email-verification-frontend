@@ -1,25 +1,27 @@
-import { Component, inject } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { InputComponent } from "@components/input.component";
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputComponent } from '@components/input.component';
+import { ButtonModule } from 'primeng/button';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormComponent } from "@components/form.component";
 
 export interface LoginForm {
     email: FormControl<string>;
     password: FormControl<string>;
 }
 
-
 @Component({
-    imports: [ReactiveFormsModule, InputComponent],
+    imports: [ReactiveFormsModule, InputComponent, InputGroupModule, ButtonModule, InputTextModule, FormComponent],
     selector: 'app-login',
     standalone: true,
     template: `
     <div>
-        <h2>Login</h2>
-        <form [formGroup]="loginForm">
-            <app-input> <input type="email" formControlName="email" />  </app-input>
-            <app-input> <input type="password" formControlName="password" />  </app-input>
-            <button type="button" (click)="onLogin()">Login</button>
-        </form>
+        <app-form header="Signup" [formGroup]="loginForm">
+            <app-input icon="pi-user"><input pInputText name="email"  placeholder="email" type="email" formControlName="email" /> </app-input>
+            <app-input icon="pi-lock"><input pInputText name="password"  placeholder="password" type="password" formControlName="password" />   </app-input>
+            <p-button type="button" fluid (click)="onLogin()">Login</p-button>
+        </app-form>
     </div>
 `,
 })
@@ -38,3 +40,4 @@ export class SignupComponent {
         console.log(this.loginForm.value);
     }
 }
+

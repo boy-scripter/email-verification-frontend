@@ -1,8 +1,11 @@
-import { Component, computed, AfterContentInit, input, contentChild } from '@angular/core';
+import { Component, AfterContentInit, input, contentChild, signal, Signal, inject, EnvironmentInjector } from '@angular/core';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { MessageModule } from 'primeng/message';
 import { NgControl } from '@angular/forms';
+import { ErrorMessageType, firstErrorMessage$ } from '@util/error-handler';
+import { toSignal } from '@angular/core/rxjs-interop';
+
 
 @Component({
   imports: [InputGroupModule, InputGroupAddonModule, MessageModule],
@@ -18,9 +21,9 @@ import { NgControl } from '@angular/forms';
         <ng-content></ng-content>
       </p-inputgroup>
 
-      @if (showError()) {
+      @if (errorsMessage()) {
         <p-message styleClass="mt-1 pl-2" severity="error"  size="small"  variant="simple"  >
-          <span> {{firstErrorMessage()}} </span>    
+          <span> {{errorsMessage()}} </span>    
        </p-message>
       }
     </div>
@@ -29,35 +32,24 @@ import { NgControl } from '@angular/forms';
 export class InputComponent implements AfterContentInit {
 
   icon = input<string>();
-  ngControl = contentChild(NgControl)
-  errorMessage = signal('')
+  ngControl = contentChild.required(NgControl)
+  errorsMessage: Signal<string | null> = signal(null);
 
-  showError = computed(() => {
-    ctrl?.statusChanges?.subscribe(
-      () => 
-    )
-    const ctrl = this.ngControl();
-    return !!ctrl?.control && ctrl.control.invalid && (ctrl.control.dirty || ctrl.control.touched);
-  });
 
+  injector = inject(EnvironmentInjector);
   constructor() { }
 
-  firstErrorMessage = computed(() => {
-    const ctrl = this.ngControl()?.control;
-    if (!ctrl?.errors) return undefined;
-    if (ctrl.errors['required']) return 'This field is required';
-    if (ctrl.errors['minlength']) return `Min length is ${ctrl.errors['minlength'].requiredLength}`;
-    if (ctrl.errors['maxlength']) return `Max length is ${ctrl.errors['maxlength'].requiredLength}`;
-    if (ctrl.errors['email']) return 'Invalid email address';
-    return 'Invalid input';
-  });
-
-  ngAfterContentInit() {  
-    if (!this.ngControl) {
+  ngAfterContentInit() {
+    const control = this.ngControl()?.control;
+    if (!control) {
       console.warn('⚠️ app-input: No form control found inside');
-    } else {
-
+      return;
     }
+
+    this.errorsMessage = toSignal(firstErrorMessage$(control), {
+      initialValue: null,
+      injector : this.injector
+    });
   }
 }
 
