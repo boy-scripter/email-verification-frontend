@@ -1,1 +1,1 @@
-export * from './brand-slider.component'
+export * from './brand-slider.component';

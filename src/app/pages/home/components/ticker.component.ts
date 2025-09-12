@@ -12,10 +12,10 @@ interface TickerItem {
 }
 
 @Component({
-  selector: 'app-ticker',
-  standalone: true,
   imports: [NgxNumberTickerComponent, NgxGridpatternComponent, NgIcon],
   providers: [provideIcons({ heroCheck })],
+  selector: 'app-ticker',
+  standalone: true,
   template: `
     <div class="relative w-full py-20 bg-surface-500 overflow-hidden">
       <om-gridpattern [gridColor]="'rgba(255,255,255,0.05)'" [gradientColor]="'rgba(0,0,0,0.3)'" [smallGrid]="true" class="absolute inset-0 pointer-events-none" ></om-gridpattern>
@@ -34,8 +34,8 @@ interface TickerItem {
 })
 export class TickerComponent {
   tickers: TickerItem[] = [
-    { prefix: 'Over', countTo: 50000, suffix: 'emails verified!', color: '#22c55e' },
-    { prefix: 'More than', countTo: 1200, suffix: 'domains checked', color: '#3b82f6' },
-    { prefix: 'Trusted by', countTo: 350, suffix: 'companies worldwide', color: '#facc15' }
+    { color: '#22c55e', countTo: 50000, prefix: 'Over', suffix: 'emails verified!' },
+    { color: '#3b82f6', countTo: 1200, prefix: 'More than', suffix: 'domains checked' },
+    { color: '#facc15', countTo: 350, prefix: 'Trusted by', suffix: 'companies worldwide' }
   ];
 }

@@ -10,10 +10,10 @@ interface Feature {
 }
 
 @Component({
-  selector: 'app-why-choose-us',
-  standalone: true,
   imports: [HeadingComponent, NgIcon, NgxGridpatternComponent],
   providers: [provideIcons({ heroCheck })],
+  selector: 'app-why-choose-us',
+  standalone: true,
   template: `
     <section class="relative md:px-20 bg-surface-500 py-14 px-6 overflow-hidden">
       
@@ -65,11 +65,11 @@ interface Feature {
 })
 export class WhyChooseUsComponent {
   features: Feature[] = [
-    { title: 'Accurate & fast email validation', iconColor: '#22c55e' },
-    { title: 'Developer friendly & easy integration', iconColor: '#facc15' },
-    { title: 'High ROI for email campaigns', iconColor: '#3b82f6' },
-    { title: 'Real-time verification', iconColor: '#ec4899' },
-    { title: 'Bulk email validation', iconColor: '#14b8a6' },
-    { title: 'Secure & reliable', iconColor: '#f97316' }
+    { iconColor: '#22c55e', title: 'Accurate & fast email validation' },
+    { iconColor: '#facc15', title: 'Developer friendly & easy integration' },
+    { iconColor: '#3b82f6', title: 'High ROI for email campaigns' },
+    { iconColor: '#ec4899', title: 'Real-time verification' },
+    { iconColor: '#14b8a6', title: 'Bulk email validation' },
+    { iconColor: '#f97316', title: 'Secure & reliable' }
   ];
 }

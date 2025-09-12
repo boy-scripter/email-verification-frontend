@@ -7,8 +7,8 @@ import { NgxNeonUnderlineComponent } from '@omnedia/ngx-neon-underline';
 import { LogoComponent } from "@components/logo.component";
 
 @Component({
-  selector: 'app-hero',
   imports: [NgxGridpatternComponent, NgxSpotlightComponent, NgxNeonUnderlineComponent, NgxAuroraComponent, NgxTypewriterComponent, LogoComponent],
+  selector: 'app-hero',
   template: `
      <div class="relative  w-full h-[calc(100vh-20vh)] md:h-screen ">
       <app-logo class="absolute z-20 p-10"></app-logo>
@@ -44,9 +44,4 @@ import { LogoComponent } from "@components/logo.component";
     </div>
     `
 })
-export class HeroComponent {
-
-  constructor() {
-
-  }
-}
+export class HeroComponent { }

@@ -23,9 +23,9 @@ interface PricingPlan {
 
 
 @Component({
+  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet, ToggleSwitchModule , FormsModule],
   selector: 'app-pricing',
   standalone: true,
-  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet, ToggleSwitchModule , FormsModule],
   styles: ` 
     :host ::ng-deep .p-card-body{
            height: 100%; 
@@ -85,16 +85,13 @@ interface PricingPlan {
 })
 export class PricingComponent {
 
-  checked: boolean = false;
+  checked = false;
 
 
   plans: PricingPlan[] = [
   {
-    name: "Starter",
-    price: {
-      dollar: "$9",
-      ruppee: "₹699"
-    },
+    buttonLabel: "Choose Plan",
+    buttonStyle: "p-button-info",
     features: [
       "10,000 Verifications per month",
       "Basic API Access",
@@ -103,15 +100,15 @@ export class PricingComponent {
       "Dashboard Analytics",
       "Community Support"
     ],
-    buttonLabel: "Choose Plan",
-    buttonStyle: "p-button-info"
+    name: "Starter",
+    price: {
+      dollar: "$9",
+      ruppee: "₹699"
+    }
   },
   {
-    name: "Pro (Recommended)",
-    price: {
-      dollar: "$49",
-      ruppee: "₹3999"
-    },
+    buttonLabel: "Choose Plan",
+    buttonStyle: "p-button-warning",
     features: [
       "100,000 Verifications per month",
       "Full API + SDK Access",
@@ -121,16 +118,16 @@ export class PricingComponent {
       "Priority Support",
       "Team Access & Role Management"
     ],
-    buttonLabel: "Choose Plan",
-    buttonStyle: "p-button-warning",
-    highlight: true
+    highlight: true,
+    name: "Pro (Recommended)",
+    price: {
+      dollar: "$49",
+      ruppee: "₹3999"
+    }
   },
   {
-    name: "Enterprise",
-    price: {
-      dollar: "Custom",
-      ruppee: "Custom"
-    },
+    buttonLabel: "Contact Sales",
+    buttonStyle: "p-button-danger",
     features: [
       "Unlimited Verifications",
       "Dedicated API Cluster",
@@ -140,8 +137,11 @@ export class PricingComponent {
       "Advanced Security & Compliance (GDPR, SOC2)",
       "Custom Reports & White-labeling"
     ],
-    buttonLabel: "Contact Sales",
-    buttonStyle: "p-button-danger"
+    name: "Enterprise",
+    price: {
+      dollar: "Custom",
+      ruppee: "Custom"
+    }
   }
 ];
 }

@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgxShineBorderComponent } from '@omnedia/ngx-shine-border';
 import { HeadingComponent } from "@components/header.component";
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -6,10 +6,9 @@ import { heroCheckCircle, heroEnvelope, heroServer, heroLockClosed, heroCog, her
 import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
+    imports: [NgxShineBorderComponent, HeadingComponent, NgIcon , NgTemplateOutlet],
     selector: 'app-features',
     standalone: true,
-    imports: [NgxShineBorderComponent, HeadingComponent, NgIcon , NgTemplateOutlet],
-    viewProviders: [provideIcons({ heroCheckCircle, heroEnvelope, heroServer, heroLockClosed, heroCog, heroStar })],
     template: `
     <section class="py-20 bg-black-theme text-white px-6">
       <app-heading title="Key Features of Our Email Validation Service"></app-heading>
@@ -39,15 +38,16 @@ import { NgTemplateOutlet } from '@angular/common';
         </om-shine-border>
       </ng-template>
     </section>
-  `
+  `,
+    viewProviders: [provideIcons({ heroCheckCircle, heroCog, heroEnvelope, heroLockClosed, heroServer, heroStar })]
 })
 export class FeaturesComponent {
     features = [
-        { title: 'Syntax Check', description: 'We check email syntax using regular expressions to ensure no invalid characters.', icon: 'heroCheckCircle', color: '#22c55e' },
-        { title: 'Mailbox Check', description: 'We simulate sending to verify mailbox exists and is active.', icon: 'heroEnvelope', color: '#facc15' },
-        { title: 'Domain Check', description: 'We verify the domain via DNS records to ensure validity.', icon: 'heroServer', color: '#3b82f6' },
-        { title: 'Security', description: 'Ensuring secure and safe email verification.', icon: 'heroLockClosed', color: '#ef4444' },
-        { title: 'Configuration', description: 'Easily configure API and settings.', icon: 'heroCog', color: '#8b5cf6' },
-        { title: 'Reliable', description: 'High uptime and consistent results.', icon: 'heroStar', color: '#f97316' },
+        { color: '#22c55e', description: 'We check email syntax using regular expressions to ensure no invalid characters.', icon: 'heroCheckCircle', title: 'Syntax Check' },
+        { color: '#facc15', description: 'We simulate sending to verify mailbox exists and is active.', icon: 'heroEnvelope', title: 'Mailbox Check' },
+        { color: '#3b82f6', description: 'We verify the domain via DNS records to ensure validity.', icon: 'heroServer', title: 'Domain Check' },
+        { color: '#ef4444', description: 'Ensuring secure and safe email verification.', icon: 'heroLockClosed', title: 'Security' },
+        { color: '#8b5cf6', description: 'Easily configure API and settings.', icon: 'heroCog', title: 'Configuration' },
+        { color: '#f97316', description: 'High uptime and consistent results.', icon: 'heroStar', title: 'Reliable' },
     ];
 }

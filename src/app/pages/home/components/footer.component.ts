@@ -17,9 +17,17 @@ interface FooterConfig {
 }
 
 @Component({
+  imports: [RouterModule, ButtonModule, LogoComponent],
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterModule, ButtonModule, LogoComponent],
+  styles: [`
+    footer a {
+      text-decoration: none;
+    }
+    footer a:hover {
+      color: #ffffff;
+    }
+  `],
   template: `
     <footer class="bg-surface-500 text-gray-400 py-36 px-6">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
@@ -59,28 +67,20 @@ interface FooterConfig {
 
       </div>
     </footer>
-  `,
-  styles: [`
-    footer a {
-      text-decoration: none;
-    }
-    footer a:hover {
-      color: #ffffff;
-    }
-  `]
+  `
 })
 export class FooterComponent {
   config: FooterConfig = {
     companyName: 'VerifyPro',
-    year: new Date().getFullYear(),
+    contactEmail: 'support@verifypro.com',
+    contactPhone: '+91 8010164488',
     links: [
       { label: 'Pricing', url: '/pricing' },
       { label: 'Check Email Validation', url: '/check-email' },
       { label: 'Why Choose Us', url: '/why-choose-us' },
       { label: 'Trusted Brands', url: '/trusted-brands' },
     ],
-    contactEmail: 'support@verifypro.com',
-    contactPhone: '+91 8010164488'
+    year: new Date().getFullYear()
   };
 }
 

@@ -5,9 +5,8 @@ import { Component } from './component';
 import { definePreset } from '@primeuix/themes';
 
 const ModernRadixPreset = definePreset(Aura, {
-    primitive: primitives,
-    semantic: semantic,
-    components : Component
+  components: Component,
+  primitive: primitives,
+  semantic: semantic,
 });
-
 export { ModernRadixPreset };
