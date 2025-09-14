@@ -5,6 +5,9 @@ import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormComponent } from "@components/form.component";
+import { RouterLink } from '@angular/router';
+
+
 
 export interface LoginForm {
     email: FormControl<string>;
@@ -12,15 +15,24 @@ export interface LoginForm {
 }
 
 @Component({
-    imports: [ReactiveFormsModule, InputComponent, InputGroupModule, ButtonModule, InputTextModule, FormComponent],
+    imports: [ReactiveFormsModule, InputComponent, InputGroupModule, ButtonModule, InputTextModule, FormComponent, RouterLink],
     selector: 'app-login',
     standalone: true,
     template: `
     <div>
-        <app-form header="Login" [formGroup]="loginForm">
+        <app-form header="Login" (ngSubmit)="onFormSubmit()" [formGroup]="loginForm">
             <app-input icon="pi-user"><input pInputText name="email"  placeholder="email" type="email" formControlName="email" /> </app-input>
             <app-input icon="pi-lock"><input pInputText name="password"  placeholder="password" type="password" formControlName="password" />   </app-input>
-            <p-button type="button" fluid (click)="onLogin()">Login</p-button>
+            <p-button class="ml-auto" variant="text" styleClass="bg-transparent text-sm underline " label="forgot password ?"  ></p-button>
+            <p-button #submitBtn type="submit" label="Login" icon="pi pi-sign-in" fluid ></p-button>
+            <p-button type="button" label="Login With Google" fluid >
+                <ng-template pTemplate="icon">   
+                    <div class="p-1 rounded-3xl bg-white">
+                        <img src="/assets/icons/google.svg" />        
+                    </div>
+               </ng-template>
+            </p-button><br>
+            <p-button label="Don't have account ?" [outlined]="true" fluid  [routerLink]="['' , { outlets: { modal: ['auth' , 'signup' ] } }]"  ></p-button>
         </app-form>
     </div>
 `,
@@ -30,13 +42,13 @@ export class LoginComponent {
 
     private fb = inject(FormBuilder);
     constructor() {
-        this.loginForm = this.fb.group({
+        this.loginForm = new FormGroup({
             email: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
             password: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
         });
     }
 
-    onLogin() {
+    onFormSubmit() {
         console.log(this.loginForm.value);
     }
 }

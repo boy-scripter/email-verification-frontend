@@ -7,6 +7,8 @@ import { NgxLightRaysComponent } from "@omnedia/ngx-light-rays";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { NgTemplateOutlet } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { RouterLink } from "@angular/router";
+
 
 
 interface PricingPlan {
@@ -23,7 +25,7 @@ interface PricingPlan {
 
 
 @Component({
-  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet, ToggleSwitchModule , FormsModule],
+  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet, ToggleSwitchModule, FormsModule],
   selector: 'app-pricing',
   standalone: true,
   styles: ` 

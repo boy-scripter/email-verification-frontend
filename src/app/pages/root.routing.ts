@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from './auth/auth.layout';
+import { AuthRouting } from './auth/auth.routing';
 
 export const RootRouting: Routes = [
   {
@@ -8,8 +9,8 @@ export const RootRouting: Routes = [
     redirectTo: 'home',
   },
   {
-    outlet: 'modal',
     path: 'auth',
+    outlet: 'modal',
     component: AuthLayoutComponent,
     loadChildren: () => import('./auth/auth.routing').then((r) => r.AuthRouting),
   },

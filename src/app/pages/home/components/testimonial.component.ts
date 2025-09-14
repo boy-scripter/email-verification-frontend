@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
-import { NgxMarqueeComponent } from "@omnedia/ngx-marquee";
 import { HeadingComponent } from "@components/header.component";
 import { NgTemplateOutlet } from "@angular/common";
+import { NgxFastMarqueeModule } from "ngx-fast-marquee";
 
 interface Testimonial {
   name: string;
@@ -11,23 +11,22 @@ interface Testimonial {
 }
 
 @Component({
-  imports: [NgxMarqueeComponent, HeadingComponent, NgTemplateOutlet],
+  imports: [HeadingComponent, NgTemplateOutlet, NgxFastMarqueeModule],
   selector: "app-testimonials",
   standalone: true,
   template: `
-    <section class="bg-surface-500 py-5 px-6">
+    <section class="bg-surface-500 py-5">
     <app-heading title=" What Our Customers Say" />
 
-          <om-marquee  [animationDuration]="'25s'"  [pauseOnHover]="true"  >
+          <ngx-fast-marquee  [speed]='250'   [pauseOnHover]="true"  >
               @for(t of testimonials; let i = $index; track $index) {
-                <ng-template>  
-                  <ng-container *ngTemplateOutlet="testiomonialCard; context: { $implicit: t, i: i }"></ng-container>  
-                </ng-template>
+                  <ng-container *ngTemplateOutlet="testiomonialCard; context: { $implicit: t, i: i }">
+                  </ng-container>  
               }
-          </om-marquee>
+          </ngx-fast-marquee>
 
             <ng-template #testiomonialCard let-t let-i="i">
-                    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 w-[280px] md:w-[320px] flex flex-col items-center text-center mx-2" role="group" aria-label="Customer testimonial">
+                    <div class="bg-gray-800 rounded-2xl shadow-lg p-6 w-[280px] md:w-[320px] flex flex-col items-center text-center mx-8" role="group" aria-label="Customer testimonial">
                       <img
                         [src]="'https://i.pravatar.cc/100?img=' + (i + 1)"
                         [alt]="'Photo of ' + t.name"
@@ -73,19 +72,19 @@ export class TestimonialsComponent {
       name: "Sneha Kapoor",
       role: "HR Manager, Infosys",
     },
-    // {
-    //   name: "Rahul Verma",
-    //   role: "Event Organizer, Evently",
-    //   message:
-    //     "They helped us find the perfect gifts for our product launch. Great variety and even better customer support.",
-    //   avatar: "/assets/images/avatars/avatar3.jpg",
-    // },
-    // {
-    //   name: "Sneha Kapoor",
-    //   role: "HR Manager, Infosys",
-    //   message:
-    //     "Sunrise Gifts made employee appreciation day truly special. The gifts were meaningful and beautifully packaged.",
-    //   avatar: "/assets/images/avatars/avatar4.jpg",
-    // }
+    {
+      name: "Rahul Verma",
+      role: "Event Organizer, Evently",
+      message:
+        "They helped us find the perfect gifts for our product launch. Great variety and even better customer support.",
+      avatar: "/assets/images/avatars/avatar3.jpg",
+    },
+    {
+      name: "Sneha Kapoor",
+      role: "HR Manager, Infosys",
+      message:
+        "Sunrise Gifts made employee appreciation day truly special. The gifts were meaningful and beautifully packaged.",
+      avatar: "/assets/images/avatars/avatar4.jpg",
+    }
   ];
 }

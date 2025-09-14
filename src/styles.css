@@ -17,6 +17,9 @@
   }
 }
 
+
+
+
 body {
   width: 100%;
   height: 100vh;
@@ -29,7 +32,7 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
-/** **/
+/** primeng **/
 .p-inputtext {
   border-width: 2px;
 }

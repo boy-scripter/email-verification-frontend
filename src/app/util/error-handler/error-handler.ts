@@ -1,7 +1,5 @@
 import { AbstractControl } from "@angular/forms";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { map, filter, startWith, Observable } from "rxjs";
-import { Signal } from "@angular/core";
+import { map, startWith, Observable, filter } from "rxjs";
 
 
 export const DEFAULT_ERROR_MESSAGES: Record<string, (value: any) => string> = {
@@ -25,7 +23,7 @@ export function getErrorMessage(
 export function firstErrorMessage$(
     control: AbstractControl,
     config?: Record<string, (value: any) => string>
-) : ErrorMessageType {
+): ErrorMessageType {
     return control.statusChanges.pipe(
         startWith(control.status),
         map(() => control.errors ?? {}),

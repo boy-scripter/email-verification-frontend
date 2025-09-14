@@ -3,11 +3,13 @@ import { primitives } from './primitive';
 
 export const Component: ComponentsDesignTokens = {
 
+
+
   inputgroup: {
     addon: {
       background: 'white',
       borderColor: 'white',
-      
+
     }
   },
 
@@ -15,13 +17,22 @@ export const Component: ComponentsDesignTokens = {
     root: {
       borderColor: 'white',
       background: 'white',
+      hoverBorderColor : 'white',
       color: 'black'
     }
   },
 
+
+
   button: {
+
+
     root: {
-      borderRadius: primitives.borderRadius.md,
+
+      borderRadius: primitives.borderRadius.sm,
+      label: {
+        fontWeight: '600',
+      },
       focusRing: {
         offset: '3px',
       },

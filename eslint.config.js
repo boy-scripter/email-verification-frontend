@@ -20,15 +20,11 @@ module.exports = tseslint.config(
     },
     rules: {
       // 'sort-keys-fix/sort-keys-fix': 'warn',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-restricted-imports': [
         'warn',
         {
-          patterns: [
-            '../*',       
-            '../../*',    
-            '../../../*', 
-            '*/*/*/*',    
-          ],
+          patterns: ['../*', '../../*', '../../../*', '*/*/*/*'],
         },
       ],
       '@angular-eslint/directive-selector': [
@@ -43,15 +39,12 @@ module.exports = tseslint.config(
   },
   {
     files: ['**/*.html'],
-    extends: [
-      ...angular.configs.templateRecommended,
-      ...angular.configs.templateAccessibility,
-    ],
+    extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
     plugins: {
       prettier,
     },
     rules: {
       // Add any HTML-specific rules here
     },
-  }
+  },
 );

@@ -10,7 +10,7 @@ import { NgTemplateOutlet } from '@angular/common';
     selector: 'app-features',
     standalone: true,
     template: `
-    <section class="py-20 bg-black-theme text-white px-6">
+    <section class="py-20 bg-surface-500 text-white px-6">
       <app-heading title="Key Features of Our Email Validation Service"></app-heading>
 
       <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">

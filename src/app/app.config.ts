@@ -3,10 +3,10 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withHashLocation } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
 import { ModernRadixPreset } from './theme/present';
 
@@ -15,14 +15,14 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
-    provideRouter(routes),
-    provideAnimationsAsync(),
+    provideRouter(routes , withHashLocation()  ),
+    provideAnimations(),
     providePrimeNG({
       theme: {
         options: {
           cssLayer: {
             name: 'primeng',
-            order: 'theme, base, primeng',
+            order: 'base ,primeng, theme ',
           },
         },
         preset: ModernRadixPreset,

@@ -2,9 +2,10 @@ import { Component, AfterContentInit, input, contentChild, signal, Signal, injec
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { MessageModule } from 'primeng/message';
-import { NgControl } from '@angular/forms';
+import { FormGroupDirective, NgControl } from '@angular/forms';
 import { ErrorMessageType, firstErrorMessage$ } from '@util/error-handler';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, startWith, take, tap } from 'rxjs';
 
 
 @Component({
@@ -21,7 +22,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
         <ng-content></ng-content>
       </p-inputgroup>
 
-      @if (errorsMessage()) {
+      @if (showError()) {
         <p-message styleClass="mt-1 pl-2" severity="error"  size="small"  variant="simple"  >
           <span> {{errorsMessage()}} </span>    
        </p-message>
@@ -30,25 +31,43 @@ import { toSignal } from '@angular/core/rxjs-interop';
   `
 })
 export class InputComponent implements AfterContentInit {
-
+  // inputts an chilkdren quewry 
   icon = input<string>();
   ngControl = contentChild.required(NgControl)
-  errorsMessage: Signal<string | null> = signal(null);
 
-
+  //injections
+  ngForm = inject(FormGroupDirective)
   injector = inject(EnvironmentInjector);
+
+  //varibles
+  errorsMessage: Signal<string | null> = signal(null);
+  showError: Signal<boolean> = signal(false)
+
   constructor() { }
 
   ngAfterContentInit() {
     const control = this.ngControl()?.control;
+
     if (!control) {
       console.warn('⚠️ app-input: No form control found inside');
       return;
     }
 
+    // Emits true only after the first submit
+    const firstSubmit$ = this.ngForm.ngSubmit.pipe(
+      take(1),
+      map(() => true),
+      startWith(false)
+    );
+
+    this.showError = toSignal(firstSubmit$, {
+      initialValue: false,
+      injector: this.injector
+    })
+
     this.errorsMessage = toSignal(firstErrorMessage$(control), {
       initialValue: null,
-      injector : this.injector
+      injector: this.injector
     });
   }
 }
