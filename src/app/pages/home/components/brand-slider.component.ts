@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { HeadingComponent } from "@components/header.component";
 import { NgxFastMarqueeModule } from "ngx-fast-marquee";
 
 @Component({
   imports: [HeadingComponent, NgxFastMarqueeModule],
   selector: 'app-brand-slider',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="w-full pt-6 px-0 pb-12 bg-surface-500">
        <app-heading title="Trusted by leading brands"></app-heading>

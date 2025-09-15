@@ -8,7 +8,10 @@ export const AuthRouting: Routes = [
   {
     path: 'signup',
     loadComponent: () => import('./signup/signup.component').then((c) => c.SignupComponent),
-
+  },
+  {
+    path: 'forgot',
+    loadComponent: () => import('./forgot/forgot.component').then((c) => c.ForgotPasswordComponent),
   },
 
 ];

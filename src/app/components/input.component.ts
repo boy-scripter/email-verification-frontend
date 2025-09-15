@@ -51,7 +51,7 @@ export class InputComponent implements AfterContentInit {
     if (!control) {
       console.warn('⚠️ app-input: No form control found inside');
       return;
-    }
+    } 
 
     // Emits true only after the first submit
     const firstSubmit$ = this.ngForm.ngSubmit.pipe(

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { NgxGridpatternComponent } from '@omnedia/ngx-gridpattern';
 import { NgxSpotlightComponent } from '@omnedia/ngx-spotlight';
 import { NgxAuroraComponent } from '@omnedia/ngx-aurora';
@@ -6,9 +6,11 @@ import { NgxTypewriterComponent } from '@omnedia/ngx-typewriter';
 import { NgxNeonUnderlineComponent } from '@omnedia/ngx-neon-underline';
 import { LogoComponent } from "@components/logo.component";
 
+
 @Component({
   imports: [NgxGridpatternComponent, NgxSpotlightComponent, NgxNeonUnderlineComponent, NgxAuroraComponent, NgxTypewriterComponent, LogoComponent],
   selector: 'app-hero',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
      <div class="relative  w-full h-[calc(100vh-20vh)] md:h-screen ">
       <app-logo class="absolute z-20 p-10"></app-logo>
@@ -21,7 +23,7 @@ import { LogoComponent } from "@components/logo.component";
                   Instantly verify <br class="hidden md:inline-block" /> any email address
                 </h1>
                 <om-neon-underline></om-neon-underline>
-                <h2 class="text-4xl md:text-6xl font-bold flex justify-center pt-4">
+                <h2 class="text-5xl md:text-8xl font-bold flex justify-center pt-4">
                   <om-typewriter
                     styleClass="typewriter"
                     [writeSpeed]="200"

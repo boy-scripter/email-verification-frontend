@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { LogoComponent } from "@components/logo.component";
@@ -20,6 +20,7 @@ interface FooterConfig {
   imports: [RouterModule, ButtonModule, LogoComponent],
   selector: 'app-footer',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [`
     footer a {
       text-decoration: none;
