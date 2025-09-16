@@ -5,6 +5,7 @@ import { InputComponent } from '@components/input.component';
 import { PasswordMatch } from '@util/validator';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
 
 interface PasswordForm {
     password: FormControl<string>;
@@ -15,15 +16,15 @@ export type PasswordFormGroup = FormGroup<PasswordForm>;
 
 @Component({
     selector: 'app-password-step',
-    imports: [ReactiveFormsModule, InputComponent, ButtonModule, InputTextModule, FormComponent],
+    imports: [InputComponent, ButtonModule, InputTextModule, FormComponent , PasswordModule , ReactiveFormsModule , PasswordModule],
     template: `
         <app-form header="Create New Password" (formSubmit)="onPasswordSubmit($event)" [formGroup]="passwordForm">
             <p class=" text-sm mb-4">    Set a new password  </p>
             <app-input icon="pi-lock">
-                <input pInputText placeholder="Enter new password" type="password" formControlName="password" />
+                <p-password [toggleMask]="true" [feedback]="false"  placeholder="Enter new password" type="password" formControlName="password" />
             </app-input>
             <app-input icon="pi-lock" [errorConfig]="{ mismatch : 'Confirm Password Is Not matching' }">
-                <input pInputText placeholder="Confirm new password" type="password" formControlName="confirmPassword" />
+                <p-password [toggleMask]="true" [feedback]="false"  placeholder="Confirm new password" type="password" formControlName="confirmPassword" />
             </app-input>
             <p-button fluid label="Reset Password" #submitBtn type="submit" icon="pi pi-check" class="flex-1" > </p-button>
         </app-form>

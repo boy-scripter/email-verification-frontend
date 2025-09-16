@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputOtpModule } from 'primeng/inputotp';
 import { CountdownManager } from '@util/service/countdown.service';
+import { CountdownFormatPipe } from '@util/service/countdown.pipe';
 
 interface OtpForm {
     otp: FormControl<string>;
@@ -14,7 +15,7 @@ export type OtpFormGroup = FormGroup<OtpForm>
 
 @Component({
     selector: 'app-otp-step',
-    imports: [ReactiveFormsModule, InputComponent, ButtonModule, InputTextModule, FormComponent, InputOtpModule],
+    imports: [ReactiveFormsModule, InputComponent, ButtonModule, InputTextModule, FormComponent, InputOtpModule , CountdownFormatPipe],
     providers: [CountdownManager],
     template: `
         <app-form header="Verify OTP" (formSubmit)="onOtpSubmit($event)"  [formGroup]="otpForm">
@@ -22,8 +23,8 @@ export type OtpFormGroup = FormGroup<OtpForm>
             <app-input [errorConfig]="{'pattern':'OTP is Incorrect'}" class="max-w-80 mx-auto" >
                 <p-inputOtp formControlName="otp" [length]="6"  class="text-center"></p-inputOtp>
             </app-input>
-            <p-button fluid type="button" [disabled]="countDownService.isRunning"  (click)="resendOtp()" icon="pi pi-refresh">
-               <span> Resend Code ? {{countDownService.timeLeft()}} </span>   
+            <p-button fluid type="button" label=" " [disabled]="countDownService.isRunning()" (onClick)="resendOtp()"  icon="pi pi-refresh">
+               <span> Resend Code ? {{countDownService.timeLeft() | countdownFormat:true}} </span>   
             </p-button>
             <p-button fluid type="submit" severity="success" label="Verify Code" #submitBtn icon="pi pi-check" ></p-button>
             <p-button fluid type="button" label="Entered a Wrong Email ?" (onClick)="backRequested.emit()" variant="text" ></p-button>
