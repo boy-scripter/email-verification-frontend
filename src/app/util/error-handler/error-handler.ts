@@ -1,28 +1,37 @@
 import { AbstractControl } from "@angular/forms";
-import { map, startWith, Observable, filter } from "rxjs";
+import { map, startWith, Observable } from "rxjs";
+
+export type errorConfigType = Record<string, ((value?: any) => string) | string>
+export type ErrorMessageType = Observable<string | null>
 
 
-export const DEFAULT_ERROR_MESSAGES: Record<string, (value: any) => string> = {
-    required: () => 'This field is required',
+export const DEFAULT_ERROR_MESSAGES: errorConfigType = {
+    required: 'This field is required',
     minlength: v => `Minimum length is ${v.requiredLength}, but got ${v.actualLength}`,
     maxlength: v => `Maximum length is ${v.requiredLength}, but got ${v.actualLength}`,
-    email: () => 'Please enter a valid email address',
+    email: 'Please enter a valid email address',
 };
+
+function normalizeMessage(msg?: errorConfigType[string], value?: any): string | undefined {
+    if (!msg) return undefined;
+    return typeof msg === 'function' ? msg(value) : msg;
+}
 
 export function getErrorMessage(
     key: string,
     value: any,
-    config: Record<string, (value?: any) => string> = {}
+    config: errorConfigType = {}
 ): string {
-    return config[key]?.(value)
-        ?? DEFAULT_ERROR_MESSAGES[key]?.(value)
+   
+    return normalizeMessage(config[key], value)
+        ?? normalizeMessage(DEFAULT_ERROR_MESSAGES[key], value)
         ?? 'Invalid field';
 }
 
 
 export function firstErrorMessage$(
     control: AbstractControl,
-    config?: Record<string, (value: any) => string>
+    config?: errorConfigType
 ): ErrorMessageType {
     return control.statusChanges.pipe(
         startWith(control.status),
@@ -34,4 +43,3 @@ export function firstErrorMessage$(
     );
 }
 
-export type ErrorMessageType = Observable<string | null>

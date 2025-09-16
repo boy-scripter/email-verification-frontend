@@ -43,11 +43,8 @@ export class AuthLayoutComponent {
   private router = inject(Router);
 
   displayModal = signal(true);
-  // loading = signal(true);
-
 
   onBack() {
-    console.log('test')
     this.location.back()
   }
 

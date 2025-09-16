@@ -3,9 +3,9 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { MessageModule } from 'primeng/message';
 import { FormGroupDirective, NgControl } from '@angular/forms';
-import { ErrorMessageType, firstErrorMessage$ } from '@util/error-handler';
+import { errorConfigType, firstErrorMessage$ } from '@util/error-handler';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map, startWith, take, tap } from 'rxjs';
+import {  map, startWith, take } from 'rxjs';
 
 
 @Component({
@@ -33,6 +33,7 @@ import { filter, map, startWith, take, tap } from 'rxjs';
 export class InputComponent implements AfterContentInit {
   // inputts an chilkdren quewry 
   icon = input<string>();
+  errorConfig = input<errorConfigType>();
   ngControl = contentChild.required(NgControl)
 
   //injections
@@ -40,8 +41,8 @@ export class InputComponent implements AfterContentInit {
   injector = inject(EnvironmentInjector);
 
   //varibles
-  errorsMessage: Signal<string | null> = signal(null);
-  showError: Signal<boolean> = signal(false)
+  protected errorsMessage: Signal<string | null> = signal(null);
+  protected showError: Signal<boolean> = signal(false)
 
   constructor() { }
 
@@ -65,7 +66,7 @@ export class InputComponent implements AfterContentInit {
       injector: this.injector
     })
 
-    this.errorsMessage = toSignal(firstErrorMessage$(control), {
+    this.errorsMessage = toSignal(firstErrorMessage$(control , this.errorConfig()), {
       initialValue: null,
       injector: this.injector
     });

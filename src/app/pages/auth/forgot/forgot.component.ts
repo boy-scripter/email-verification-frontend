@@ -1,49 +1,58 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { EmailFormType, EmailStepComponent } from './steps/email-step.component';
-import { OtpFormType, OtpStepComponent } from './steps/otp-step.component';
-import { PasswordStepComponent } from './steps/password-step.component';
+import { StepperModule } from 'primeng/stepper';
+import { RawValue } from '@components/form.component';
+import { EmailStepComponent, EmailFormGroup, OtpFormGroup, OtpStepComponent, PasswordStepComponent, PasswordFormGroup } from './steps';
 
+export type StepsType = 1 | 2 | 3;
 @Component({
-    imports: [EmailStepComponent, OtpStepComponent, PasswordStepComponent],
+    imports: [EmailStepComponent, OtpStepComponent, PasswordStepComponent, StepperModule],
     selector: 'app-forgot-password',
     standalone: true,
     template: `
-    <div>
-        @if (currentStep() === 1) {
-            <app-email-step (onWorkDone)="onEmailSubmitted($event)"></app-email-step>
-        }
+        <p-stepper  [value]="currentStep()">
+            <p-step-panels>
+                <p-step-panel [value]="1" >
+                    <ng-template pTemplate="content">
+                        <app-email-step (onWorkDone)="onEmailSubmitted($event)"></app-email-step>
+                    </ng-template>
+                </p-step-panel>
 
-        @if (currentStep() === 2) {
-            <app-otp-step  (onWorkDone)="onOtpVerified($event)" (backRequested)="goToStep(1)" [email]="submittedEmail()"   ></app-otp-step>
-        }
+                <p-step-panel [value]="2" >
+                    <ng-template pTemplate="content">
+                        <app-otp-step (onWorkDone)="onOtpVerified($event)" (backRequested)="goToStep(1)" [email]="submittedEmail()"></app-otp-step>
+                    </ng-template>
+                </p-step-panel>
 
-        @if (currentStep() === 3) {
-            <app-password-step (onWorkDone)="onPasswordReset($event)" (backRequested)="goToStep(2)" ></app-password-step>
-        }
-    </div>
+                <p-step-panel [value]="3">
+                    <ng-template pTemplate="content">
+                        <app-password-step (onWorkDone)="onPasswordReset($event)" (backRequested)="goToStep(2)"></app-password-step>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPasswordComponent {
-    currentStep = signal(1);
+    currentStep = signal<StepsType>(1);
     submittedEmail = signal('');
 
-    onEmailSubmitted(data: EmailFormType) {
+    onEmailSubmitted(data: RawValue<EmailFormGroup>) {
         this.submittedEmail.set(data.email);
         this.currentStep.set(2);
+        console.log(data.email)
     }
 
-    onOtpVerified(otp: OtpFormType) {
+    onOtpVerified(otp: RawValue<OtpFormGroup>) {
         console.log('OTP verified:', otp);
         this.currentStep.set(3);
     }
 
-    onPasswordReset(passwordData: { password: string; confirmPassword: string }) {
+    onPasswordReset(passwordData: RawValue<PasswordFormGroup>) {
         console.log('Password reset completed:', passwordData);
-
     }
 
-    goToStep(step: number) {
+    goToStep(step: StepsType) {
         this.currentStep.set(step);
     }
 }

@@ -1,5 +1,5 @@
 
-import {  ChangeDetectionStrategy, ChangeDetectorRef, Component, contentChild, inject, input, signal} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, contentChild, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { Button } from 'primeng/button';
@@ -7,7 +7,10 @@ import { filter, firstValueFrom, timer } from 'rxjs';
 
 
 export type RawValue<T extends FormGroup> = T extends FormGroup<any> ? ReturnType<T['getRawValue']> : never;
-export type functionType = (value: RawValue<FormGroup>) => Promise<void>;
+export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
+    nextTask: () => void
+};
+
 @Component({
     selector: 'app-form',
     standalone: true,
@@ -22,11 +25,11 @@ export type functionType = (value: RawValue<FormGroup>) => Promise<void>;
             </div>
         </form>
     `,
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormComponent {
     header = input.required<string>();
-    formSubmit = input<functionType>();
+    formSubmit = output<FormType<FormGroup>>();
 
     submitBtn = contentChild.required<'submitBtn', Button>('submitBtn', {
         read: Button
@@ -34,7 +37,7 @@ export class FormComponent {
     isSubmitting = signal(false);
 
     ngForm = inject(FormGroupDirective);
-     cdr = inject(ChangeDetectorRef);
+    cdr = inject(ChangeDetectorRef);
 
     constructor() {
 
@@ -45,14 +48,21 @@ export class FormComponent {
 
     }
     async onSubmit() {
-        this.setLoading(true);
-        try {
-            await firstValueFrom(timer(4000));
-            await this.formSubmit()?.(this.ngForm.form.getRawValue());
-        } finally {
-            this.setLoading(false);
-            
+        if (!this.submitBtn) {
+            throw new Error('Submit Btn Not Found')
         }
+
+        this.setLoading(true);
+
+        await firstValueFrom(timer(1000));
+        
+        this.formSubmit.emit({
+            ...this.ngForm.form.getRawValue(),
+            nextTask: () => {
+                this.setLoading(false);
+            }
+        });
+
     }
 
     setLoading(value: boolean) {
@@ -60,5 +70,5 @@ export class FormComponent {
         this.submitBtn().loading = value;
         this.submitBtn().cd.markForCheck();
     }
- 
+
 }

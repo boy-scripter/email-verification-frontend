@@ -47,6 +47,7 @@ export class LoginComponent {
     }
 
     onFormSubmit() {
+        this
         console.log(this.loginForm.value);
     }
 }

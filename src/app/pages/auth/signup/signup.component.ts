@@ -19,7 +19,7 @@ export interface SignupForm {
     standalone: true,
     template: `
     <div>
-        <app-form header="Signup" [formSubmit]="onFormSubmit" [formGroup]="signupForm">
+        <app-form header="Signup" (formSubmit)="onFormSubmit($event)" [formGroup]="signupForm">
             <app-input icon="pi-user"><input pInputText name="name"  placeholder="name" type="text" formControlName="name" />   </app-input>
             <app-input icon="pi-envelope"><input pInputText name="email"  placeholder="email" type="email" formControlName="email" /> </app-input>
             <app-input icon="pi-lock"><input pInputText name="password"  placeholder="password" type="password" formControlName="password" />   </app-input>
@@ -48,7 +48,8 @@ export class SignupComponent {
     }
 
     async onFormSubmit(value: RawValue<typeof this.signupForm>) {
-        console.log(value);
+        
+        console.log(this,value);
     }
 }
 
