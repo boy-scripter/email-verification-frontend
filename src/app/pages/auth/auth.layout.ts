@@ -1,4 +1,4 @@
-import { afterNextRender, AfterViewInit, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { Location } from '@angular/common';
@@ -11,7 +11,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   imports: [DialogModule, RouterOutlet, ButtonModule, ProgressSpinnerModule],
   template: `
     <p-dialog
-    position="center"
+       position="center"
       [visible]="displayModal()"
       (visibleChange)="displayModal.set(!!$event)"
       [draggable]="false"
@@ -22,7 +22,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
       [breakpoints]="{ '1400px': '60vw', '960px': '70vw', '740px': '99vw' }"
       [contentStyle]="{ 'max-height': '80vh', 'overflow': 'visible' }"
       [style]="{ width: '30vw' }"
-      styleClass="backdrop-blur-md  bg-surface-400/10 backdrop-blur-md sm:p-5"
+      styleClass="backdrop-blur-md bg-surface-400/10  sm:p-5"
     >
       <!-- @if (loading()) {
         <div class="flex justify-center items-center py-8">

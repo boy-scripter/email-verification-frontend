@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthLayoutComponent } from './auth/auth.layout';
-import { AuthRouting } from './auth/auth.routing';
+import { DashboardLayout } from './dashboard/dashboard.layout';
 
 export const RootRouting: Routes = [
   {
@@ -13,6 +13,11 @@ export const RootRouting: Routes = [
     outlet: 'modal',
     component: AuthLayoutComponent,
     loadChildren: () => import('./auth/auth.routing').then((r) => r.AuthRouting),
+  },
+  {
+    path: 'dashboard',
+    component: DashboardLayout,
+    loadChildren: () => import('./dashboard/dashboard.routing').then((r) => r.DashboardRouting),
   },
   {
     path: 'home',
