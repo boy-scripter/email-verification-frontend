@@ -17,7 +17,7 @@ export interface LoginForm {
     imports: [ReactiveFormsModule, InputComponent, InputGroupModule, ButtonModule, InputTextModule, FormComponent, RouterLink , PasswordModule],
     selector: 'app-login',
     standalone: true,
-    template: `
+    template: ` 
     <div>
         <app-form header="Login" (ngSubmit)="onFormSubmit()" [formGroup]="loginForm">
             <app-input icon="pi-user"><input pInputText name="email"  placeholder="email" type="email" formControlName="email" /> </app-input>
