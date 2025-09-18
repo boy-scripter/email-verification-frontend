@@ -9,8 +9,8 @@ import { VerificationChartComponent } from './components/verification-chart/veri
   imports: [CommonModule, StatsCardComponent, VerificationChartComponent],
   template: `
   
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold">Dashboard</h1>
+      <div class="mb-8 ">
+        <h1 class="text-3xl tracking-widest font-bold">Dashboard</h1>
       </div>
       <div class="flex flex-col gap-6">
       

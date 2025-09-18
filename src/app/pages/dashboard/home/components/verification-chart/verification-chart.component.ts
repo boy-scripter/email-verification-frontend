@@ -32,8 +32,8 @@ import { TimeRangeSelectorComponent } from '../time-range-selector/time-range-se
       </div>
 
       <!-- Chart -->
-      <div class="h-full flex-1">
-        <p-chart type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+      <div class="min-h-[500px] max-h-[500px]">
+        <p-chart class="h-full min-h-[500px] w-full" type="line" [data]="chartData" [options]="chartOptions"></p-chart>
       </div>
     </p-card>
   `

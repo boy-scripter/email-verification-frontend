@@ -51,11 +51,9 @@ import { NgxHaloComponent } from '@omnedia/ngx-halo';
 
 
                     
-                    <div class=" flex-1 rounded-lg backdrop-blur-md bg-surface-400/10 overflow-y-scroll  sm:p-5">
-              
-                    <router-outlet />
-   
-                </div>
+                    <div class="flex-1 border-2 border-surface-200 rounded-lg backdrop-blur-md bg-surface-400/10 overflow-y-auto  sm:p-5">
+                        <router-outlet />
+                    </div>
                 </div>
         </om-halo>
 `

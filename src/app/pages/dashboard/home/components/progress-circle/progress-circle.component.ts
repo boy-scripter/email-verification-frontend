@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {  ButtonModule } from "primeng/button";
 
@@ -21,7 +21,7 @@ import {  ButtonModule } from "primeng/button";
               </circle>
             </svg>
             <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-2xl font-bold text-blue-600">{{percentage}}%</span>
+              <span class="text-2xl font-bold text-blue-600">{{percentage()}}%</span>
             </div>
             
           </div>
@@ -29,8 +29,8 @@ import {  ButtonModule } from "primeng/button";
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Almost out of Credits,</h3>
             <h3 class="text-lg font-semibold text-blue-600 mb-4">Recharge Now!</h3>
             <div class="text-sm text-gray-600 mb-4 space-y-1">
-              <div>Remaining Credits: <span class="text-green-600 font-medium">{{remainingCredits}}</span></div>
-              <div>Used Credits: <span class="font-medium">{{usedCredits}}</span></div>
+              <div>Remaining Credits: <span class="text-green-600 font-medium">{{remainingCredits()}}</span></div>
+              <div>Used Credits: <span class="font-medium">{{usedCredits()}}</span></div>
             </div>
           </div>
         </div>
@@ -39,15 +39,15 @@ import {  ButtonModule } from "primeng/button";
   `
 })
 export class ProgressCircleComponent {
-  @Input() percentage: number = 0;
-  @Input() remainingCredits: number = 0;
-  @Input() usedCredits: number = 0;
+  percentage = input(0);
+  remainingCredits = input(0);
+  usedCredits = input(0);
 
   get circumference(): number {
     return 2 * Math.PI * 50; // r = 50
   }
 
   get strokeDashoffset(): number {
-    return this.circumference - (this.percentage / 100) * this.circumference;
+    return this.circumference - (this.percentage() / 100) * this.circumference;
   }
 }

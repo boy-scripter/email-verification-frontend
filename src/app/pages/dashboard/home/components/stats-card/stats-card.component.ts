@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ProgressCircleComponent } from '../progress-circle/progress-circle.component';
@@ -30,9 +30,9 @@ import { ProgressCircleComponent } from '../progress-circle/progress-circle.comp
 
             <!-- Progress Circle Section -->
             <app-progress-circle 
-              [percentage]="creditUsagePercentage"
-              [remainingCredits]="remainingCredits"
-              [usedCredits]="usedCredits">
+              [percentage]="creditUsagePercentage()"
+              [remainingCredits]="remainingCredits()"
+              [usedCredits]="usedCredits()">
             </app-progress-circle>
        </div>
 
@@ -50,7 +50,7 @@ export class StatsCardComponent {
   totalVerified = 50;
   validCount = 25;
   invalidCount = 25;
-  creditUsagePercentage = 75;
-  remainingCredits = 35;
-  usedCredits = 75;
+  creditUsagePercentage = signal(75);
+  remainingCredits = signal(35);
+  usedCredits = signal(75);
 }
