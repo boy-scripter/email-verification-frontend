@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MenuModule } from 'primeng/menu';
 import { BadgeModule } from 'primeng/badge';
@@ -10,15 +10,20 @@ import { NgxHaloComponent } from '@omnedia/ngx-halo';
     selector: 'app-dashboard-layout',
     imports: [RouterOutlet, MenuModule, BadgeModule, AvatarModule, LogoComponent, NgxHaloComponent],
     template: `
-        <om-halo haloSize="500px" class="w-full">
-                <div class="p-2 w-full flex sm:p-5 h-screen gap-6">
+        <om-halo haloSize="600px"  class="relative w-full">
+                <div class="p-2 w-full flex  md:flex-row sm:p-5 h-screen gap-6">
                     
-                        <p-menu [model]="items" styleClass="w-full border-white  backdrop-blur-md bg-surface-300/10  "  >
+                    <p-menu [model]="items" [class]="'absolute md:static top-0 left-0 z-10 transition-transform duration-300 ' + (isMenuOpen() ? 'translate-y-0' : '-translate-y-full md:translate-none') " styleClass="w-full border-white backdrop-blur-md bg-surface-300/10"  >
                         <!-- Brand / Logo -->
                         <ng-template #start>
                             <div class="flex justify-center gap-2 py-3 px-10">
                                 <app-logo styleClass="md:text-3xl"/>
                             </div>
+                            <div (click)="toggleMenu()" class="items-center fixed top-0 left-0 z-50">
+                              <button class=" p-2 px-3 border-white/50 border-[1px] rounded-full">
+                                <i class="pi pi-bars text-xl relative z-10"></i>
+                             </button>
+                           </div>
                         </ng-template>
 
                         <!-- Section Headers -->
@@ -28,7 +33,7 @@ import { NgxHaloComponent } from '@omnedia/ngx-halo';
 
                         <!-- Menu Items -->
                         <ng-template #item let-item>
-                            <a  class="flex items-center px-4 py-3  cursor-pointer transition">
+                            <a  class="flex items-center px-4 py-3  cursor-pointer ">
                                 <i [class]="item.icon"></i>
                                 <span class="ml-3">{{ item.label }}</span>
                                 @if(item.badge){
@@ -43,14 +48,12 @@ import { NgxHaloComponent } from '@omnedia/ngx-halo';
                                 <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" size="large" class="mr-3"></p-avatar>
                                 <div>
                                     <span class="font-bold block">Amy Elsner</span>
-                                    <span class="text-sm">Admin</span>
+                                  
                                 </div>
                             </div>
                         </ng-template>
                     </p-menu>
 
-
-                    
                     <div class="flex-1 border-2 border-surface-200 rounded-lg backdrop-blur-md bg-surface-400/10 overflow-y-auto  sm:p-5">
                         <router-outlet />
                     </div>
@@ -71,5 +74,10 @@ export class DashboardLayout {
         { label: 'Logout', icon: 'pi pi-sign-out', routerLink: 'logout' }
     ];
 
+    
+    isMenuOpen = signal(false);
+    toggleMenu() {
+        this.isMenuOpen.set(!this.isMenuOpen);
+    }
 
 }

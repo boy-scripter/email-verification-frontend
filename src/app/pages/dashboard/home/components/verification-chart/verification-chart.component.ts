@@ -14,12 +14,13 @@ import { TimeRangeSelectorComponent } from '../time-range-selector/time-range-se
     <p-card class="shadow-sm">
       <div class="mb-6">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">Verification Activity</h2>
+          <h2 class="text-xl font-semibold text-surface-500">Verification Activity</h2>
           <p-select 
+            [editable]="false"
             [options]="timeRangeOptions" 
             [(ngModel)]="selectedTimeRange" 
             placeholder="Please Select..."
-            class="w-48">
+           >
           </p-select>
         </div>
 
