@@ -21,26 +21,33 @@ export const Component: ComponentsDesignTokens = {
   },
 
   card: {
-    
+
     root: {
       background: 'rgba(255, 255, 255, 0.9)'
-      
+
+    }
+  },
+
+  menu: {
+    item: {
+      borderRadius: primitives.borderRadius.md,
+      focusBackground: primitives.surface[400]
     }
   },
 
   select: {
-    root : {
+    root: {
       paddingX: '20px',
       paddingY: '10px',
-       color: primitives.surface[400],
+      color: primitives.surface[400],
       borderColor: primitives['surface']['200'],
     },
-   
+
     option: {
-      focusBackground : primitives.surface[400],
-      selectedFocusBackground : primitives.surface[400],
+      focusBackground: primitives.surface[400],
+      selectedFocusBackground: primitives.surface[400],
       color: primitives.surface[400],
-     
+
     }
   },
 

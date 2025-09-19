@@ -22,7 +22,7 @@ export type EmailFormGroup = FormGroup<EmailForm>;
                 <input pInputText placeholder="Enter your email" type="email" formControlName="email" />
             </app-input>
             <p-button #submitBtn type="submit" label="Send OTP" icon="pi pi-envelope" fluid></p-button>
-            <p-button label="Back to Login" outlined fluid [routerLink]="['' , { outlets: { modal: ['auth' , 'login' ] } }]"></p-button>
+            <p-button label="Back to Login" outlined fluid [routerLink]="['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]"></p-button>
         </app-form>
   `,
 })

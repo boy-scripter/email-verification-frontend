@@ -30,7 +30,7 @@ export interface SignupForm {
                     </div>
                </ng-template>
             </p-button> <br>
-            <p-button  label="Already Have account ?" [outlined]="true" fluid  [routerLink]="['' , { outlets: { modal: ['auth' , 'login' ] } }]"  ></p-button>
+            <p-button  label="Already Have account ?" [outlined]="true" fluid  [routerLink]="['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]"  ></p-button>
         </app-form>
     </div>
 `,

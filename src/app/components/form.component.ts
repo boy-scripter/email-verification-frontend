@@ -1,9 +1,11 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, contentChild, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, contentChild, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { filter, firstValueFrom, timer } from 'rxjs';
+import { twMerge } from 'tailwind-merge';
+
 
 
 export type RawValue<T extends FormGroup> = T extends FormGroup<any> ? ReturnType<T['getRawValue']> : never;
@@ -16,11 +18,11 @@ export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
     standalone: true,
     imports: [],
     template: `
-        <form class="flex flex-col gap-6 p-6 px-1 sm:px-4  rounded-lg shadow-sm" >
+        <form [class]="computedClass()" >
             <div class="pb-4 border-b border-gray-200">
                 <h2 class="m-0 text-2xl text-white font-semibold ">{{ header() }}</h2>
             </div>
-            <div class="grid gap-4">
+            <div class="grid gap-5">
                 <ng-content></ng-content>
             </div>
         </form>
@@ -29,6 +31,10 @@ export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
 })
 export class FormComponent {
     header = input.required<string>();
+
+    styleClass = input<string>();
+    computedClass = computed(() => twMerge('flex flex-col gap-6 p-6 px-1 sm:px-4  rounded-lg shadow-sm' + this.styleClass()))
+
     formSubmit = output<FormType<FormGroup>>();
 
     submitBtn = contentChild.required<'submitBtn', Button>('submitBtn', {
@@ -55,7 +61,7 @@ export class FormComponent {
         this.setLoading(true);
 
         await firstValueFrom(timer(1000));
-        
+
         this.formSubmit.emit({
             ...this.ngForm.form.getRawValue(),
             nextTask: () => {

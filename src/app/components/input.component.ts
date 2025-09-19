@@ -1,11 +1,12 @@
-import { Component, AfterContentInit, input, contentChild, signal, Signal, inject, EnvironmentInjector } from '@angular/core';
+import { Component, AfterContentInit, input, contentChild, signal, Signal, inject, EnvironmentInjector, computed } from '@angular/core';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { MessageModule } from 'primeng/message';
 import { FormGroupDirective, NgControl } from '@angular/forms';
 import { errorConfigType, firstErrorMessage$ } from '@util/error-handler';
 import { toSignal } from '@angular/core/rxjs-interop';
-import {  map, startWith, take } from 'rxjs';
+import { map, startWith, take } from 'rxjs';
+import { twMerge } from 'tailwind-merge';
 
 
 @Component({
@@ -13,9 +14,9 @@ import {  map, startWith, take } from 'rxjs';
   selector: 'app-input',
   template: `
     <div class="input-wrapper">
-      <p-inputgroup>
+      <p-inputgroup >
         @if (icon()){
-          <p-inputgroup-addon>
+          <p-inputgroup-addon [styleClass]="computedIconClass()">
             <i [class]="'pi ' + icon()"></i>
           </p-inputgroup-addon>
         }
@@ -31,19 +32,21 @@ import {  map, startWith, take } from 'rxjs';
   `
 })
 export class InputComponent implements AfterContentInit {
+
   // inputts an chilkdren quewry 
   icon = input<string>();
   errorConfig = input<errorConfigType>();
+  iconStyleClass = input<string>('');
+  computedIconClass = computed(() => twMerge('items-center', this.iconStyleClass()));
   ngControl = contentChild.required(NgControl)
+
+  //varibles
+  protected errorsMessage: Signal<string | null> = signal(null);
+  protected showError: Signal<boolean> = signal(false);
 
   //injections
   ngForm = inject(FormGroupDirective)
   injector = inject(EnvironmentInjector);
-
-  //varibles
-  protected errorsMessage: Signal<string | null> = signal(null);
-  protected showError: Signal<boolean> = signal(false)
-
   constructor() { }
 
   ngAfterContentInit() {
@@ -52,7 +55,7 @@ export class InputComponent implements AfterContentInit {
     if (!control) {
       console.warn('⚠️ app-input: No form control found inside');
       return;
-    } 
+    }
 
     // Emits true only after the first submit
     const firstSubmit$ = this.ngForm.ngSubmit.pipe(
@@ -66,7 +69,7 @@ export class InputComponent implements AfterContentInit {
       injector: this.injector
     })
 
-    this.errorsMessage = toSignal(firstErrorMessage$(control , this.errorConfig()), {
+    this.errorsMessage = toSignal(firstErrorMessage$(control, this.errorConfig()), {
       initialValue: null,
       injector: this.injector
     });

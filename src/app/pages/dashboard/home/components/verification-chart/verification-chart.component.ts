@@ -13,13 +13,14 @@ import { TimeRangeSelectorComponent } from '../time-range-selector/time-range-se
   template: `
     <p-card class="shadow-sm">
       <div class="mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-surface-500">Verification Activity</h2>
+        <div class="flex flex-col items-start justify-between mb-4 space-y-3 sm:flex-row sm:items-center sm:space-y-0">
+          <h2 class="text-lg sm:text-xl font-semibold text-surface-500">Verification Activity</h2>
           <p-select 
             [editable]="false"
             [options]="timeRangeOptions" 
             [(ngModel)]="selectedTimeRange" 
             placeholder="Please Select..."
+            class="w-full sm:w-auto"
            >
           </p-select>
         </div>
@@ -33,8 +34,8 @@ import { TimeRangeSelectorComponent } from '../time-range-selector/time-range-se
       </div>
 
       <!-- Chart -->
-      <div class="min-h-[500px] max-h-[500px]">
-        <p-chart class="h-full min-h-[500px] w-full" type="line" [data]="chartData" [options]="chartOptions"></p-chart>
+      <div >
+        <p-chart class="min-h-[300px] max-h-[300px] sm:min-h-[400px] sm:max-h-[400px] md:min-h-[500px] md:max-h-[500px]" type="line" [data]="chartData" [options]="chartOptions"></p-chart>
       </div>
     </p-card>
   `

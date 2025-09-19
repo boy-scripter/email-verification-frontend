@@ -10,7 +10,7 @@ import {  ButtonModule } from "primeng/button";
   template: `
     <div class="shadow-sm bg-gradient-to-br p-5 px-8 rounded-lg from-blue-50 to-indigo-50">
       <div class="text-center">
-        <div class="flex">
+        <div class="flex flex-col md:flex-row">
           <div class="relative w-32 h-32 mx-auto mb-4">
             <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
@@ -23,7 +23,6 @@ import {  ButtonModule } from "primeng/button";
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="text-2xl font-bold text-blue-600">{{percentage()}}%</span>
             </div>
-            
           </div>
           <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Almost out of Credits,</h3>

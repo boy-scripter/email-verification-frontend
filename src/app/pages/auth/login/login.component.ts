@@ -22,7 +22,7 @@ export interface LoginForm {
         <app-form header="Login" (ngSubmit)="onFormSubmit()" [formGroup]="loginForm">
             <app-input icon="pi-user"><input pInputText name="email"  placeholder="email" type="email" formControlName="email" /> </app-input>
             <app-input icon="pi-lock">  <p-password [toggleMask]="true" [feedback]="false"  placeholder="Enter new password" type="password" formControlName="password" />  </app-input>
-            <p-button [routerLink]="['' , { outlets: { modal: ['auth' , 'forgot' ] } }]" class="ml-auto" variant="text" styleClass="bg-transparent text-sm underline " label="forgot password ?"  ></p-button>
+            <p-button [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','forgot' ] } }]" class="ml-auto" variant="text" styleClass="bg-transparent text-sm underline " label="forgot password ?"  ></p-button>
             <p-button #submitBtn type="submit" label="Login" icon="pi pi-sign-in" fluid ></p-button>
             <p-button type="button" label="Login With Google" fluid >
                 <ng-template pTemplate="icon">   
@@ -31,7 +31,7 @@ export interface LoginForm {
                     </div>
                </ng-template>
             </p-button><br>
-            <p-button label="Don't have account ?" outlined fluid  [routerLink]="['' , { outlets: { modal: ['auth' , 'signup' ] } }]" ></p-button>
+            <p-button label="Don't have account ?" outlined fluid  [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','signup' ] } }]" ></p-button>
         </app-form>
     </div>
 `,

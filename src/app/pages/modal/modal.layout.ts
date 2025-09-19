@@ -6,12 +6,12 @@ import { Router, RouterOutlet } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
-  selector: 'app-auth-layout',
+  selector: 'app-modal-layout',
   standalone: true,
   imports: [DialogModule, RouterOutlet, ButtonModule, ProgressSpinnerModule],
   template: `
     <p-dialog
-       position="center"
+      position="center"
       [visible]="displayModal()"
       (visibleChange)="displayModal.set(!!$event)"
       [draggable]="false"
@@ -38,7 +38,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     </p-dialog>
   `,
 })
-export class AuthLayoutComponent {
+export class ModalLayoutComponent {
   private location = inject(Location);
   private router = inject(Router);
 

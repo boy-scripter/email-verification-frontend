@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { AuthLayoutComponent } from './auth/auth.layout';
 import { DashboardLayout } from './dashboard/dashboard.layout';
+import { ModalLayoutComponent } from './modal/modal.layout';
+
 
 export const RootRouting: Routes = [
   {
@@ -9,10 +10,10 @@ export const RootRouting: Routes = [
     redirectTo: 'home',
   },
   {
-    path: 'auth',
+    path: 'modal',
     outlet: 'modal',
-    component: AuthLayoutComponent,
-    loadChildren: () => import('./auth/auth.routing').then((r) => r.AuthRouting),
+    component: ModalLayoutComponent,
+    loadChildren: () => import('./modal/modal.routing').then((r) => r.ModalRoutes),
   },
   {
     path: 'dashboard',
