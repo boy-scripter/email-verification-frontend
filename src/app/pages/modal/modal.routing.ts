@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
 
 
+
 export const ModalRoutes: Routes = [
 
     {
@@ -8,10 +9,10 @@ export const ModalRoutes: Routes = [
         loadChildren: () => import('../auth/auth.routing').then((r) => r.AuthRouting),
     }
     ,
-    // {
-    //     path : 'profile',
-    //     loadComponent : () =>
-    // }
+    {
+        path : 'dashboard',
+        loadChildren : () => import('../dashboard/dashboard.routing').then( r => r.DashboardModalRouting)
+    }
 
 
 

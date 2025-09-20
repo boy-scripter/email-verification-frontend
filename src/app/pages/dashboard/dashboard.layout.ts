@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MenuModule } from 'primeng/menu';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
@@ -9,7 +9,7 @@ import { NgxHaloComponent } from '@omnedia/ngx-halo';
 
 @Component({
     selector: 'app-dashboard-layout',
-    imports: [RouterOutlet, MenuModule, BadgeModule, AvatarModule, LogoComponent, NgxHaloComponent, RouterLink , RouterLinkActive],
+    imports: [RouterOutlet, MenuModule, BadgeModule, AvatarModule, LogoComponent, NgxHaloComponent, RouterLink, RouterLinkActive],
     template: `
        <div class="w-full overflow-x-hidden">
          <om-halo haloSize="600px" [interactive]="false"  class="relative w-full">
@@ -67,7 +67,6 @@ import { NgxHaloComponent } from '@omnedia/ngx-halo';
 })
 
 export class DashboardLayout {
-
     items = [
         { label: 'Dashboard', icon: 'pi pi-home', routerLink: 'home' },
         { label: 'Email Verification', icon: 'pi pi-envelope', routerLink: 'email-verification' },
@@ -78,14 +77,15 @@ export class DashboardLayout {
         { label: 'Logout', icon: 'pi pi-sign-out', click: () => this.toggleMenu() }
     ];
 
+    constructor(private router: Router) { }
 
     isMenuOpen = signal(false);
     toggleMenu() {
         this.isMenuOpen.set(!this.isMenuOpen());
     }
 
-    onProfileClick(){
-
+    onProfileClick() {
+        this.router.navigate(['' , { outlets: { modal: ['modal','dashboard','profile' ] } }]);
     }
 
 }

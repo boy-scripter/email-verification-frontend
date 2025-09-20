@@ -7,7 +7,6 @@ export const Component: ComponentsDesignTokens = {
     addon: {
       background: 'white',
       borderColor: 'white',
-
     }
   },
 
@@ -16,7 +15,8 @@ export const Component: ComponentsDesignTokens = {
       borderColor: 'white',
       background: 'white',
       hoverBorderColor: 'white',
-      color: 'black'
+      color: 'black',
+      disabledBackground: 'white'
     }
   },
 

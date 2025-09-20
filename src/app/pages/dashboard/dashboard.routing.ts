@@ -14,4 +14,13 @@ export const DashboardRouting: Routes = [
         path: 'support',
         loadComponent: () => import('./support/support.component').then((c) => c.SupportComponent),
     },
+
 ];
+
+
+export const DashboardModalRouting: Routes = [
+    {
+        path: 'profile',
+        loadComponent: () => import('./profile/profile').then((c) => c.ProfileComponent),
+    },
+]

@@ -1,10 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputComponent } from '@components/input.component';
+import { InputComponent, FormComponent, RawValue } from '@components/index';
 import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormComponent, RawValue } from "@components/form.component";
 import { RouterLink } from '@angular/router';
 
 export interface SignupForm {
@@ -48,8 +47,8 @@ export class SignupComponent {
     }
 
     async onFormSubmit(value: RawValue<typeof this.signupForm>) {
-        
-        console.log(this,value);
+
+        console.log(this, value);
     }
 }
 
