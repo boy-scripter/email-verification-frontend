@@ -110,6 +110,7 @@ export class VerificationChartComponent {
   }
 
   private updateChartData(period: string) {
+    console.log(period)
     // Logic to update chart data based on selected period
     // This would typically call a service to fetch new data
   }

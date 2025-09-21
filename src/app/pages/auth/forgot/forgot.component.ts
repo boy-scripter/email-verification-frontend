@@ -13,19 +13,19 @@ export type StepsType = 1 | 2 | 3;
             <p-step-panels>
                 <p-step-panel [value]="1" >
                     <ng-template pTemplate="content">
-                        <app-email-step (onWorkDone)="onEmailSubmitted($event)"></app-email-step>
+                        <app-email-step (workDone)="onEmailSubmitted($event)"></app-email-step>
                     </ng-template>
                 </p-step-panel>
 
                 <p-step-panel [value]="2" >
                     <ng-template pTemplate="content">
-                        <app-otp-step (onWorkDone)="onOtpVerified($event)" (backRequested)="goToStep(1)" [email]="submittedEmail()"></app-otp-step>
+                        <app-otp-step (workDone)="onOtpVerified($event)" (backRequested)="goToStep(1)" [email]="submittedEmail()"></app-otp-step>
                     </ng-template>
                 </p-step-panel>
 
                 <p-step-panel [value]="3">
                     <ng-template pTemplate="content">
-                        <app-password-step (onWorkDone)="onPasswordReset($event)" (backRequested)="goToStep(2)"></app-password-step>
+                        <app-password-step (workDone)="onPasswordReset($event)" (backRequested)="goToStep(2)"></app-password-step>
                     </ng-template>
                 </p-step-panel>
             </p-step-panels>

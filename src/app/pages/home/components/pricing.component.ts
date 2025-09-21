@@ -76,7 +76,7 @@ interface PricingPlan {
               }
             </ul>
 
-            <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto"></button>
+            <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto"> </button>
           </p-card>
         </ng-template>
       </section>
@@ -89,59 +89,59 @@ export class PricingComponent {
 
 
   plans: PricingPlan[] = [
-  {
-    buttonLabel: "Choose Plan",
-    buttonStyle: "p-button-info",
-    features: [
-      "10,000 Verifications per month",
-      "Basic API Access",
-      "Bulk Upload via CSV",
-      "Standard Email Validation",
-      "Dashboard Analytics",
-      "Community Support"
-    ],
-    name: "Starter",
-    price: {
-      dollar: "$9",
-      ruppee: "₹699"
+    {
+      buttonLabel: "Choose Plan",
+      buttonStyle: "p-button-info",
+      features: [
+        "10,000 Verifications per month",
+        "Basic API Access",
+        "Bulk Upload via CSV",
+        "Standard Email Validation",
+        "Dashboard Analytics",
+        "Community Support"
+      ],
+      name: "Starter",
+      price: {
+        dollar: "$9",
+        ruppee: "₹699"
+      }
+    },
+    {
+      buttonLabel: "Choose Plan",
+      buttonStyle: "p-button-warning",
+      features: [
+        "100,000 Verifications per month",
+        "Full API + SDK Access",
+        "Bulk Upload + Batch Processing",
+        "Advanced Email Validation (MX, Syntax, Disposable)",
+        "Priority Dashboard Analytics",
+        "Priority Support",
+        "Team Access & Role Management"
+      ],
+      highlight: true,
+      name: "Pro (Recommended)",
+      price: {
+        dollar: "$49",
+        ruppee: "₹3999"
+      }
+    },
+    {
+      buttonLabel: "Contact Sales",
+      buttonStyle: "p-button-danger",
+      features: [
+        "Unlimited Verifications",
+        "Dedicated API Cluster",
+        "99.99% Uptime SLA",
+        "Custom Integrations",
+        "24/7 Dedicated Account Manager",
+        "Advanced Security & Compliance (GDPR, SOC2)",
+        "Custom Reports & White-labeling"
+      ],
+      name: "Enterprise",
+      price: {
+        dollar: "Custom",
+        ruppee: "Custom"
+      }
     }
-  },
-  {
-    buttonLabel: "Choose Plan",
-    buttonStyle: "p-button-warning",
-    features: [
-      "100,000 Verifications per month",
-      "Full API + SDK Access",
-      "Bulk Upload + Batch Processing",
-      "Advanced Email Validation (MX, Syntax, Disposable)",
-      "Priority Dashboard Analytics",
-      "Priority Support",
-      "Team Access & Role Management"
-    ],
-    highlight: true,
-    name: "Pro (Recommended)",
-    price: {
-      dollar: "$49",
-      ruppee: "₹3999"
-    }
-  },
-  {
-    buttonLabel: "Contact Sales",
-    buttonStyle: "p-button-danger",
-    features: [
-      "Unlimited Verifications",
-      "Dedicated API Cluster",
-      "99.99% Uptime SLA",
-      "Custom Integrations",
-      "24/7 Dedicated Account Manager",
-      "Advanced Security & Compliance (GDPR, SOC2)",
-      "Custom Reports & White-labeling"
-    ],
-    name: "Enterprise",
-    price: {
-      dollar: "Custom",
-      ruppee: "Custom"
-    }
-  }
-];
+  ];
 }

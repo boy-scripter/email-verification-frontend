@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputComponent } from '@components/input.component';
 import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -44,8 +44,7 @@ export class SupportComponent {
         this.supportForm = new FormGroup({
             name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
             email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
- 
-            phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^[\+]?[1-9][\d]{0,15}$/)] }),
+phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^[+]?[1-9]\d{0,15}$/)] }),
             query: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10)] }),
         });
     }

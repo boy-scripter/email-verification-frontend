@@ -1,5 +1,5 @@
 import { Component, output } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormComponent, FormType, RawValue } from '@components/form.component';
 import { InputComponent } from '@components/input.component';
 import { PasswordMatch } from '@util/validator';
@@ -32,7 +32,7 @@ export type PasswordFormGroup = FormGroup<PasswordForm>;
 })
 export class PasswordStepComponent {
     // Outputs
-    onWorkDone = output<RawValue<PasswordFormGroup>>();
+    workDone = output<RawValue<PasswordFormGroup>>();
     backRequested = output<void>();
 
     passwordForm: PasswordFormGroup;
@@ -53,7 +53,7 @@ export class PasswordStepComponent {
     async onPasswordSubmit(data: FormType<PasswordFormGroup>) {
         console.log('Password reset completed:', data);
         // Here you would typically call your API to reset the password
-        this.onWorkDone.emit(data);
+        this.workDone.emit(data);
     }
 
     onBack() {

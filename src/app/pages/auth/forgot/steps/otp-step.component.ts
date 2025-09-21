@@ -36,7 +36,7 @@ export class OtpStepComponent {
     email = input.required<string>();
 
     // Outputs
-    onWorkDone = output<RawValue<OtpFormGroup>>();
+    workDone = output<RawValue<OtpFormGroup>>();
     backRequested = output<void>();
 
     otpForm: OtpFormGroup;
@@ -55,7 +55,7 @@ export class OtpStepComponent {
 
     async onOtpSubmit(data: FormType<OtpFormGroup>) {
         console.log('OTP submitted:', data);
-        this.onWorkDone.emit(data);
+        this.workDone.emit(data);
     }
 
     onBack() {

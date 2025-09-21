@@ -41,5 +41,5 @@ export class InputComponent {
   ngControl = contentChild(NgControl);
   controlName = computed(() => this.ngControl()?.name + '' || '');
 
-  constructor() { }
+
 }

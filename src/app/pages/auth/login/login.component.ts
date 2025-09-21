@@ -26,7 +26,7 @@ export interface LoginForm {
             <p-button type="button" label="Login With Google" fluid >
                 <ng-template pTemplate="icon">   
                     <div class="p-1 rounded-3xl bg-white">
-                        <img src="/assets/icons/google.svg" />        
+                        <img src="/assets/icons/google.svg" alt="google-login" />        
                     </div>
                </ng-template>
             </p-button><br>
@@ -47,7 +47,7 @@ export class LoginComponent {
     }
 
     onFormSubmit() {
-        this
+        
         console.log(this.loginForm.value);
     }
 }

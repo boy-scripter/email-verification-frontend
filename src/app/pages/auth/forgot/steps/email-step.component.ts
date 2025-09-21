@@ -27,7 +27,7 @@ export type EmailFormGroup = FormGroup<EmailForm>;
   `,
 })
 export class EmailStepComponent {
-    onWorkDone = output<RawValue<EmailFormGroup>>();
+    workDone = output<RawValue<EmailFormGroup>>();
     emailForm: EmailFormGroup
 
     constructor() {
@@ -42,6 +42,6 @@ export class EmailStepComponent {
     async onEmailSubmit(data: FormType<EmailFormGroup>) {
         const { nextTask , ...formValue } = data
         nextTask()
-        this.onWorkDone.emit(formValue)
+        this.workDone.emit(formValue)
     }
 }

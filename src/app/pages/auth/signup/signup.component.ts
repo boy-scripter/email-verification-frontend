@@ -25,7 +25,7 @@ export interface SignupForm {
              <p-button #submitBtn type="submit" label="Signup" icon="pi pi-user-plus" fluid ></p-button>
              <p-button type="button" label="Signup With Google" icon="pi pi-google" fluid > <ng-template pTemplate="icon">   
                     <div class="p-1 rounded-3xl bg-white">
-                        <img src="/assets/icons/google.svg" />        
+                        <img src="/assets/icons/google.svg" alt="google-login"/>        
                     </div>
                </ng-template>
             </p-button> <br>

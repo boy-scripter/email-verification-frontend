@@ -42,8 +42,8 @@ interface FooterConfig {
 
           <!-- PrimeNG Buttons for Login / Signup -->
           <div class="flex max-w-72 mx-auto md:mx-0 w-full justify-center md:justify-start gap-3">
-            <button pButton type="button" label="Login" fluid [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','login' ] } }]"></button>
-            <button pButton type="button" label="Signup" fluid [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','login' ] } }]"></button>
+            <button pButton type="button" label="Login" fluid [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','login' ] } }]"> </button>
+            <button pButton type="button" label="Signup" fluid [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','login' ] } }]"> </button>
           </div>
         </div>
 
