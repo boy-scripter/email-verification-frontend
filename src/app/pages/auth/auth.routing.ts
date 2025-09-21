@@ -13,5 +13,4 @@ export const AuthRouting: Routes = [
     path: 'forgot',
     loadComponent: () => import('./forgot/forgot.component').then((c) => c.ForgotPasswordComponent),
   },
-
 ];

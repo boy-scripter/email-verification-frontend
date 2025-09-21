@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { DashboardLayout } from './dashboard/dashboard.layout';
 import { ModalLayoutComponent } from './modal/modal.layout';
 
-
 export const RootRouting: Routes = [
   {
     path: '',

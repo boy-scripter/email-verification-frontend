@@ -1,25 +1,21 @@
 import { primitives } from './primitive';
 
 export const semantic = {
-      primary: {
-        50: primitives.surface[50],
-        100: primitives.surface[100],
-        200: primitives.surface[200],
-        300: primitives.surface[300],
-        400: primitives.surface[300],
-        500: primitives.surface[500],
-        600: primitives.surface[300],
-        700: primitives.surface[300],
-        800: primitives.surface[800],
-        900: primitives.surface[900],
-      },
-
+  primary: {
+    50: primitives.surface[50],
+    100: primitives.surface[100],
+    200: primitives.surface[200],
+    300: primitives.surface[300],
+    400: primitives.surface[300],
+    500: primitives.surface[500],
+    600: primitives.surface[300],
+    700: primitives.surface[300],
+    800: primitives.surface[800],
+    900: primitives.surface[900],
+  },
 
   colorScheme: {
-
     dark: {
-
-
       surface: {
         50: primitives.surface[50],
         100: primitives.surface[100],
@@ -31,11 +27,10 @@ export const semantic = {
         700: primitives.surface[700],
         800: primitives.surface[800],
         900: primitives.surface[900],
-        950: primitives.surface[900]
+        950: primitives.surface[900],
       },
     },
     light: {
-
       surface: {
         50: primitives.surface[50],
         100: primitives.surface[100],
@@ -47,7 +42,7 @@ export const semantic = {
         700: primitives.surface[700],
         800: primitives.surface[800],
         900: primitives.surface[900],
-        950: primitives.surface[900]
+        950: primitives.surface[900],
       },
     },
   },

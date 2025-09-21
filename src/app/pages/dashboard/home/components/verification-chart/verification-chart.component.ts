@@ -42,7 +42,7 @@ import { TimeRangeSelectorComponent } from '../time-range-selector/time-range-se
 })
 export class VerificationChartComponent {
   selectedTimeRange: any;
-  selectedPeriod: string = 'Last 24 Hours';
+  selectedPeriod = 'Last 24 Hours';
 
   timeRangeOptions = [
     { label: 'Last 24 Hours', value: '24h' },

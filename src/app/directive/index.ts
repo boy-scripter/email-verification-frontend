@@ -1,1 +1,1 @@
-export * from './asyncTask.directive'
+export * from './asyncTask.directive';

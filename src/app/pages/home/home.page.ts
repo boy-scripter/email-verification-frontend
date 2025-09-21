@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import {
-  HeroComponent,
-  TickerComponent,
-  WhyChooseUsComponent,
-  PricingComponent,
-  FooterComponent,
   BrandSliderComponent,
   FeaturesComponent,
+  FooterComponent,
+  HeroComponent,
+  PricingComponent,
   TestimonialsComponent,
+  TickerComponent,
+  WhyChooseUsComponent,
 } from './components';
 
 @Component({
@@ -24,4 +24,4 @@ import {
   selector: 'app-home',
   templateUrl: './home.page.html',
 })
-export class HomePage { }
+export class HomePage {}

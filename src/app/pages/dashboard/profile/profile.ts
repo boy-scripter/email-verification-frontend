@@ -1,46 +1,53 @@
-import { Component } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { FormComponent, InputComponent, FileInputDirective, ImageInputComponent } from "@components/index";
-import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FileInputDirective,
+  FormComponent,
+  ImageInputComponent,
+  InputComponent,
+} from '@components/index';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 
 export interface ProfileForm {
-    name: FormControl<string>;
-    avatar: FormControl<string | null>;
+  name: FormControl<string>;
+  avatar: FormControl<string | null>;
 }
 @Component({
-    selector: 'app-profile',
-    imports: [FormComponent, InputComponent, ButtonModule, InputTextModule, ReactiveFormsModule, ImageInputComponent, FileInputDirective],
-    template: `
-        <app-form header="Profile" [formGroup]="profileForm" (formSubmit)="onSubmit()">
-        
-           <app-image-input>
-                <input cfileInput type="file" value="test" formControlName="avatar" />
-           </app-image-input>
-            <app-input icon="pi-user" >
-                <input pInputText placeholder="Name" formControlName="name" />
-            </app-input>
-            <app-input icon="pi-envelope" >
-                <input readonly pInputText placeholder="Email" value="test@gmail.com"  [disabled]='true' />
-            </app-input>
-            <p-button #submitBtn type="submit" label="Save" icon="pi pi-pencil" fluid ></p-button>
-        </app-form>
-    `,
-
-
+  selector: 'app-profile',
+  imports: [
+    FormComponent,
+    InputComponent,
+    ButtonModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    ImageInputComponent,
+    FileInputDirective,
+  ],
+  template: `
+    <app-form [formGroup]="profileForm" (formSubmit)="onSubmit()" header="Profile">
+      <app-image-input>
+        <input cfileInput formControlName="avatar" type="file" value="test" />
+      </app-image-input>
+      <app-input icon="pi-user">
+        <input formControlName="name" pInputText placeholder="Name" />
+      </app-input>
+      <app-input icon="pi-envelope">
+        <input [disabled]="true" pInputText placeholder="Email" readonly value="test@gmail.com" />
+      </app-input>
+      <p-button #submitBtn fluid icon="pi pi-pencil" label="Save" type="submit"></p-button>
+    </app-form>
+  `,
 })
 export class ProfileComponent {
-    profileForm: FormGroup<ProfileForm>;
+  profileForm: FormGroup<ProfileForm>;
 
-    constructor() {
-        this.profileForm = new FormGroup({
-            name: new FormControl('', { nonNullable: true }),
-            avatar: new FormControl('')
-        });
-    }
+  constructor() {
+    this.profileForm = new FormGroup({
+      name: new FormControl('', { nonNullable: true }),
+      avatar: new FormControl(''),
+    });
+  }
 
-    onSubmit() {
-
-    }
+  onSubmit() {}
 }

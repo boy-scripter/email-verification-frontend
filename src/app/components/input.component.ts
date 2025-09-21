@@ -21,9 +21,9 @@ import { ErrorControlComponent } from './errorcontrol.component';
         <ng-content></ng-content>
       </p-inputgroup>
 
-      @if(ngControl()){
-        <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>
-      }
+            @if(ngControl()){
+              <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>
+            }
     </div>
   `
 })

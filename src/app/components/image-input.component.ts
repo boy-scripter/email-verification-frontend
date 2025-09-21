@@ -9,7 +9,7 @@ import { ErrorControlComponent } from "./errorcontrol.component";
     imports: [ErrorControlComponent],
     template: `
     <div class="image-input-wrapper">
-        <ng-content><ng-content>
+        <ng-content></ng-content>
             
         @if(ngControl()){
             <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>

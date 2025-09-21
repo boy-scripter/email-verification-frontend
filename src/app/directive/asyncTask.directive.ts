@@ -1,59 +1,55 @@
-import { computed, Directive, signal, input, ElementRef, inject } from "@angular/core";
-import { Button } from "primeng/button";
-import { Observable, firstValueFrom } from "rxjs";
+import { computed, Directive, inject, input, signal } from '@angular/core';
+import { Button } from 'primeng/button';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Directive({
-    selector: '[asyncTask]',
-    standalone: true,
-    host: {
-        '(click)': 'handleClick()',
-    }
+  selector: '[asyncTask]',
+  standalone: true,
+  host: {
+    '(click)': 'handleClick()',
+  },
 })
 export class AsyncTaskDirective {
-    private btnRef = inject<Button>(Button);
+  private btnRef = inject<Button>(Button);
 
+  asyncTask = input.required<Promise<any> | Observable<any>>();
+  isLoading = computed(() => this.loading());
 
-    asyncTask = input.required<Promise<any> | Observable<any>>();
-    isLoading = computed(() => this.loading());
+  private loading = signal(false);
 
-    private loading = signal(false)
+  constructor() {}
 
-    constructor() { }
-
-    async handleClick() {
-        if (!this.asyncTask()) {
-            console.warn('asyncTask directive: No task provided!');
-            return;
-        }
-
-        try {
-            this.taskStart();
-            const task = this.asyncTask();
-
-            const result = task instanceof Observable
-                ? await firstValueFrom(task)
-                : await task;
-
-            this.taskComplete();
-        } catch (err) {
-            this.taskError(err instanceof Error ? err : new Error('Task failed'));
-        }
+  async handleClick() {
+    if (!this.asyncTask()) {
+      console.warn('asyncTask directive: No task provided!');
+      return;
     }
 
-    private taskStart() {
-        this.loading.set(true);
+    try {
+      this.taskStart();
+      const task = this.asyncTask();
 
-        this.btnRef.loading = true;
+      const result = task instanceof Observable ? await firstValueFrom(task) : await task;
+
+      this.taskComplete();
+    } catch (err) {
+      this.taskError(err instanceof Error ? err : new Error('Task failed'));
     }
+  }
 
-    private taskComplete() {
-        this.loading.set(false);
-        this.btnRef.loading = false;
-    }
+  private taskStart() {
+    this.loading.set(true);
 
-    private taskError(error: Error) {
-        this.loading.set(false);
-        this.btnRef.loading = false;
+    this.btnRef.loading = true;
+  }
 
-    }
+  private taskComplete() {
+    this.loading.set(false);
+    this.btnRef.loading = false;
+  }
+
+  private taskError(error: Error) {
+    this.loading.set(false);
+    this.btnRef.loading = false;
+  }
 }

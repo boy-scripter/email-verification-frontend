@@ -2,12 +2,11 @@ import { ComponentsDesignTokens } from '@primeuix/themes/types';
 import { primitives } from './primitive';
 
 export const Component: ComponentsDesignTokens = {
-
   inputgroup: {
     addon: {
       background: 'white',
       borderColor: 'white',
-    }
+    },
   },
 
   inputtext: {
@@ -16,23 +15,21 @@ export const Component: ComponentsDesignTokens = {
       background: 'white',
       hoverBorderColor: 'white',
       color: 'black',
-      disabledBackground: 'white'
-    }
+      disabledBackground: 'white',
+    },
   },
 
   card: {
-
     root: {
-      background: 'rgba(255, 255, 255, 0.9)'
-
-    }
+      background: 'rgba(255, 255, 255, 0.9)',
+    },
   },
 
   menu: {
     item: {
       borderRadius: primitives.borderRadius.md,
-      focusBackground: primitives.surface[400]
-    }
+      focusBackground: primitives.surface[400],
+    },
   },
 
   select: {
@@ -47,10 +44,8 @@ export const Component: ComponentsDesignTokens = {
       focusBackground: primitives.surface[400],
       selectedFocusBackground: primitives.surface[400],
       color: primitives.surface[400],
-
-    }
+    },
   },
-
 
   button: {
     root: {

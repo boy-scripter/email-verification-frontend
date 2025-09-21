@@ -1,8 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
-import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
 import { Location } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
@@ -11,18 +11,18 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   imports: [DialogModule, RouterOutlet, ButtonModule, ProgressSpinnerModule],
   template: `
     <p-dialog
-      position="center"
-      [visible]="displayModal()"
-      (visibleChange)="displayModal.set(!!$event)"
-      [draggable]="false"
-      transitionOptions="300ms cubic-bezier(0, 0, 0.2, 1)"
-      [modal]="true"
-      [closable]="true"
-      (onHide)="onClose()"
       [breakpoints]="{ '1400px': '60vw', '960px': '70vw', '740px': '99vw' }"
-      [contentStyle]="{ 'max-height': '80vh', 'overflow': 'visible' }"
+      [closable]="true"
+      [contentStyle]="{ 'max-height': '80vh', overflow: 'visible' }"
+      [draggable]="false"
+      [modal]="true"
       [style]="{ width: '30vw' }"
+      [visible]="displayModal()"
+      (onHide)="onClose()"
+      (visibleChange)="displayModal.set(!!$event)"
+      position="center"
       styleClass="backdrop-blur-md bg-surface-400/10  sm:p-5"
+      transitionOptions="300ms cubic-bezier(0, 0, 0.2, 1)"
     >
       <!-- @if (loading()) {
         <div class="flex justify-center items-center py-8">
@@ -31,7 +31,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
       } -->
 
       <ng-template #header>
-        <p-button (onClick)="onBack()" rounded icon="pi pi-arrow-left" > </p-button>
+        <p-button (onClick)="onBack()" icon="pi pi-arrow-left" rounded> </p-button>
       </ng-template>
 
       <router-outlet></router-outlet>
@@ -45,13 +45,11 @@ export class ModalLayoutComponent {
   displayModal = signal(true);
 
   onBack() {
-    this.location.back()
+    this.location.back();
   }
 
   onClose() {
     this.displayModal.set(false);
-    this.router.navigate([{ outlets: { modal: null } }])
+    this.router.navigate([{ outlets: { modal: null } }]);
   }
-
-
 }
