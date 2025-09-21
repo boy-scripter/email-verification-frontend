@@ -3,7 +3,7 @@ import { Button } from 'primeng/button';
 import { firstValueFrom, Observable } from 'rxjs';
 
 @Directive({
-  selector: '[asyncTask]',
+  selector: '[appAsyncTask]',
   standalone: true,
   host: {
     '(click)': 'handleClick()',
@@ -17,7 +17,7 @@ export class AsyncTaskDirective {
 
   private loading = signal(false);
 
-  constructor() {}
+  constructor() { }
 
   async handleClick() {
     if (!this.asyncTask()) {
@@ -28,10 +28,11 @@ export class AsyncTaskDirective {
     try {
       this.taskStart();
       const task = this.asyncTask();
-
-      const result = task instanceof Observable ? await firstValueFrom(task) : await task;
-
-      this.taskComplete();
+      if (task instanceof Promise) {
+        await task;
+      } else {
+        await firstValueFrom(task as Observable<any>);
+      }
     } catch (err) {
       this.taskError(err instanceof Error ? err : new Error('Task failed'));
     }
@@ -49,6 +50,7 @@ export class AsyncTaskDirective {
   }
 
   private taskError(error: Error) {
+    console.error(error)
     this.loading.set(false);
     this.btnRef.loading = false;
   }

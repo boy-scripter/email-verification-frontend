@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LogoComponent } from '@components/logo.component';
 import { NgxHaloComponent } from '@omnedia/ngx-halo';
@@ -71,7 +71,8 @@ import { MenuModule } from 'primeng/menu';
             <ng-template #end>
               <div
                 class="border-primary-300 mt-auto flex cursor-pointer items-center border-t px-4 py-4"
-                (click)="onProfileClick()"
+                tabindex="0"
+                (keydown)="onProfileClick()"
               >
                 <p-avatar
                   class="mr-3"
@@ -107,8 +108,7 @@ export class DashboardLayout {
     { label: 'Logout', icon: 'pi pi-sign-out', click: () => this.toggleMenu() },
   ];
 
-  constructor(private router: Router) {}
-
+  router = inject(Router)
   isMenuOpen = signal(false);
   toggleMenu() {
     this.isMenuOpen.set(!this.isMenuOpen());

@@ -49,5 +49,7 @@ export class ProfileComponent {
     });
   }
 
-  onSubmit() {}
+  onSubmit() {
+    //do job
+  }
 }

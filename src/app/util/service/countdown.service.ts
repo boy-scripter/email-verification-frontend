@@ -14,7 +14,7 @@ export class CountdownManager {
   private onTickCb?: (timeLeft: number) => void;
   private onCompleteCb?: () => void;
 
-  private intervalId: any;
+  private intervalId: ReturnType<typeof setTimeout> | null = null;
 
   /**
    * Start a countdown

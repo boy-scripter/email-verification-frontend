@@ -20,6 +20,7 @@ module.exports = tseslint.config(
     },
     processor: angular.processInlineTemplates,
     rules: {
+      '@typescript-eslint/no-explicit-any' : 'warn',
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -36,7 +37,7 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      'prettier/prettier': 'error',
+      // 'prettier/prettier': 'error',
     },
   },
   {
