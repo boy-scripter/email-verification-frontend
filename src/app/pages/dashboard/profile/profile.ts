@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   FileInputDirective,
   FormComponent,
   ImageInputComponent,
   InputComponent,
 } from '@components/index';
+import { fileSizeValidator, fileTypeValidator } from '@util/error-handler';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+
 
 export interface ProfileForm {
   name: FormControl<string>;
@@ -27,7 +29,7 @@ export interface ProfileForm {
   template: `
     <app-form [formGroup]="profileForm" (formSubmit)="onSubmit()" header="Profile">
       <app-image-input>
-        <input cfileInput formControlName="avatar" type="file" value="test" />
+        <input appfileInput fileType="AVTAR_IMAGE" [multiple]="false" formControlName="avatar" type="file" value="test" />
       </app-image-input>
       <app-input icon="pi-user">
         <input formControlName="name" pInputText placeholder="Name" />
@@ -44,8 +46,8 @@ export class ProfileComponent {
 
   constructor() {
     this.profileForm = new FormGroup({
-      name: new FormControl('', { nonNullable: true }),
-      avatar: new FormControl(''),
+      name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      avatar: new FormControl('', { validators: [Validators.required, fileSizeValidator(0, 1024), fileTypeValidator(['image/png', 'image/jpeg', 'image/gif'])] }),
     });
   }
 

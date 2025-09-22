@@ -31,11 +31,11 @@ import { MenuModule } from 'primeng/menu';
         <div class="flex min-h-screen w-full gap-6 p-2 sm:p-5 md:h-screen md:flex-row">
           <p-menu
             [class]="
-              'absolute top-0 left-0 z-10 w-full transition-transform duration-300 md:w-auto lg:static ' +
+              'absolute top-0 left-0 z-10 w-full transition-transform duration-300 lg:w-auto lg:static ' +
               (isMenuOpen() ? ' translate-y-0' : '-translate-y-full lg:translate-none')
             "
             [model]="items"
-            styleClass="w-full border-white backdrop-blur-md bg-surface-500/80  border-0 md:border-2 md:bg-surface-300/10"
+            styleClass="w-full border-white backdrop-blur-md bg-surface-500/80 border-0 lg:border-2 lg:bg-surface-300/10"
           >
             <!-- Brand / Logo -->
             <ng-template #start>
@@ -70,9 +70,10 @@ import { MenuModule } from 'primeng/menu';
             <!-- User Profile -->
             <ng-template #end>
               <div
-                class="border-primary-300 mt-auto flex cursor-pointer items-center border-t px-4 py-4"
+                role="button"
                 tabindex="0"
-                (keydown)="onProfileClick()"
+                class="border-primary-300 mt-auto flex cursor-pointer items-center border-t px-4 py-4"
+                (click)="onProfileClick()"
               >
                 <p-avatar
                   class="mr-3"
@@ -88,7 +89,7 @@ import { MenuModule } from 'primeng/menu';
           </p-menu>
 
           <div
-            class="border-surface-200 bg-surface-400/10 w-full rounded-lg p-5 backdrop-blur-md md:flex-1 md:overflow-y-auto md:border-2"
+            class="border-surface-200 border-dashed bg-surface-400/10 w-full rounded-lg p-5 backdrop-blur-md md:flex-1 md:overflow-y-auto lg:border-2"
           >
             <router-outlet />
           </div>

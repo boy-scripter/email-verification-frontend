@@ -1,32 +1,76 @@
-import { Component, viewChild, TemplateRef, AfterViewInit, contentChild, input, computed } from "@angular/core";
+import { Component, AfterViewInit, contentChild, input, computed, viewChild, TemplateRef, ChangeDetectionStrategy, signal, ElementRef, inject } from "@angular/core";
 import { NgControl } from "@angular/forms";
-import { errorConfigType } from "@util/error-handler";
 import { ErrorControlComponent } from "./errorcontrol.component";
+import { from, switchMap, tap } from "rxjs";
+import { NgTemplateOutlet } from "@angular/common";
+import { AvatarModule } from 'primeng/avatar'
+import { errorConfigType } from "@util/error-handler";
+import { getPreviewUrl } from "@util/index";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 
 @Component({
     selector: 'app-image-input',
-    imports: [ErrorControlComponent],
+    imports: [ErrorControlComponent, NgTemplateOutlet, AvatarModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <div class="image-input-wrapper">
-        <ng-content></ng-content>
+
+           <ng-container *ngTemplateOutlet="(templateRef() || defaultTemplate);  context: { $implicit: previewValue() };"> </ng-container>
+          
+            <ng-template let-previewUrl #defaultTemplate>
+                   <p-avatar class="mx-auto" label="P" [image]="previewUrl" size="xlarge" shape="circle" />
+           </ng-template>
             
-        @if(ngControl()){
-            <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>
-        }
+           <ng-content> </ng-content>
+
+            @if(ngControl()){
+                <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>
+            }
     </div>
     `
 })
 
 export class ImageInputComponent implements AfterViewInit {
 
+
     errorConfig = input<errorConfigType>();
 
-    // contentchild
-    ngControl = contentChild(NgControl);
+    templateRef = contentChild(TemplateRef);
+    ngControl = contentChild.required(NgControl);
     controlName = computed(() => this.ngControl()?.name + '' || '');
+    previewValue = signal<string | null>(null)
+
+
+    elementRef = inject(ElementRef)
+
 
     ngAfterViewInit() {
-        // Template reference is now available
+        this.ngControl().valueChanges?.pipe(
+            switchMap((v) => from(getPreviewUrl(v))),
+            tap((v) => this.setPreview(v))
+        ).subscribe();
+
+
+        const wrapper = this.elementRef.nativeElement;
+        if (wrapper) {
+            wrapper.style.position = 'relative';
+        }
+
+        const fileInput = wrapper.querySelector('input[type="file"]');
+        fileInput.style.position = 'absolute';
+        fileInput.style.width = '100%';
+        fileInput.style.height = '100%';
+        fileInput.style.top = '0%';
+        fileInput.style.left = '0%';
+        fileInput.style.opacity = '0';
+        fileInput.style.cursor = 'pointer';
     }
+
+
+    setPreview(url: string | null) {
+        console.log(url)
+        this.previewValue.set(url);
+    }
+
 }

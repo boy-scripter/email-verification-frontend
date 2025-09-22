@@ -1,8 +1,15 @@
-import { Directive, forwardRef } from '@angular/core';
+import { Directive, forwardRef, input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+
+export interface UploadableFile extends File {
+    filetype: FILE_SUPPORTED_BACKEND;
+}
+type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
+export type FileInputType = File | File[] | null
+
 @Directive({
-    selector: '[cfileInput]',
+    selector: '[appfileInput]',
     host: {
         '(change)': 'onInput($event)',
         '(blur)': 'onBlur()'
@@ -17,10 +24,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class FileInputDirective implements ControlValueAccessor {
 
-    value: File | null = null;
+    fileType = input<FILE_SUPPORTED_BACKEND>()
+
+    value: FileInputType = null;
 
     // Callbacks assigned by Angular
-    onChange: (value: File | null) => void = () => { };
+    onChange: (value: FileInputType) => void = () => { };
     onTouched: () => void = () => { };
 
     // Angular calls this to update the input value
@@ -28,7 +37,7 @@ export class FileInputDirective implements ControlValueAccessor {
         this.value = value;
     }
 
-    registerOnChange(fn: (value: File | null) => void): void {
+    registerOnChange(fn: (value: FileInputType) => void): void {
         this.onChange = fn;
     }
 
@@ -39,9 +48,30 @@ export class FileInputDirective implements ControlValueAccessor {
     // Event handlers using classic method syntax
     onInput(event: Event): void {
         const input = event.target as HTMLInputElement;
-        const file = input.files && input.files.length > 0 ? input.files[0] : null;
-        this.value = file;
-        this.onChange(this.value);
+
+        if (!input.files || input.files.length === 0) {
+            this.value = null;
+            this.onChange(null);
+            return;
+        }
+
+        const files = Array.from(input.files) as UploadableFile[];
+
+        // Attach __uploadType metadata to each file
+        const uploadableFiles = files.map(file =>
+            Object.assign(file, {
+                fileType: this.fileType(),
+            })
+        );
+
+        // Detect if multiple attribute is set on input element
+        if (input.multiple) {
+            this.value = uploadableFiles;
+            this.onChange(uploadableFiles);
+        } else {
+            this.value = uploadableFiles[0];
+            this.onChange(uploadableFiles[0]);
+        }
     }
 
     onBlur(): void {
