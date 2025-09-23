@@ -1,6 +1,6 @@
-import { Component, input, inject, EnvironmentInjector, Signal, signal, AfterContentInit, contentChild } from '@angular/core';
+import { Component, input, inject, EnvironmentInjector, Signal, signal, AfterContentInit, } from '@angular/core';
 import { MessageModule } from 'primeng/message';
-import { FormControl, FormGroupDirective, NgControl } from '@angular/forms';
+import { FormGroupDirective } from '@angular/forms';
 import { errorConfigType, firstErrorMessage$ } from '@util/error-handler';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith, take } from 'rxjs';
@@ -11,7 +11,7 @@ import { map, startWith, take } from 'rxjs';
   template: `
     @if (showError()) {
       <p-message styleClass="mt-1 pl-2" severity="error" size="small" variant="simple">
-        <span>{{errorsMessage()}}</span>    
+        <span >{{errorsMessage()}}</span>    
       </p-message>
     }
   `
@@ -31,7 +31,7 @@ export class ErrorControlComponent implements AfterContentInit {
   ngForm = inject(FormGroupDirective);
   injector = inject(EnvironmentInjector);
 
-  constructor() { }
+
 
   ngAfterContentInit() {
     const control = this.formGroup.form.get(this.controlName());

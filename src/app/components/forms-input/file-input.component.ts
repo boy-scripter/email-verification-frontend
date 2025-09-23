@@ -9,7 +9,7 @@ type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
 export type FileInputType = File | File[] | null
 
 @Directive({
-    selector: '[appfileInput]',
+    selector: '[appFileInput]',
     host: {
         '(change)': 'onInput($event)',
         '(blur)': 'onBlur()'
@@ -57,7 +57,7 @@ export class FileInputDirective implements ControlValueAccessor {
 
         const files = Array.from(input.files) as UploadableFile[];
 
-        // Attach __uploadType metadata to each file
+        // Attach fileType metadata to each file
         const uploadableFiles = files.map(file =>
             Object.assign(file, {
                 fileType: this.fileType(),
@@ -66,10 +66,8 @@ export class FileInputDirective implements ControlValueAccessor {
 
         // Detect if multiple attribute is set on input element
         if (input.multiple) {
-            this.value = uploadableFiles;
             this.onChange(uploadableFiles);
         } else {
-            this.value = uploadableFiles[0];
             this.onChange(uploadableFiles[0]);
         }
     }
@@ -78,3 +76,7 @@ export class FileInputDirective implements ControlValueAccessor {
         this.onTouched();
     }
 }
+
+
+
+
