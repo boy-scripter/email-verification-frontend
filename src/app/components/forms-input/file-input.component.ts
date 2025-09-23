@@ -1,9 +1,10 @@
 import { Directive, forwardRef, input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-
+import { getPreviewUrl } from "@util/index";
 
 export interface UploadableFile extends File {
     filetype: FILE_SUPPORTED_BACKEND;
+    preview: string
 }
 type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
 export type FileInputType = File | File[] | null
@@ -61,6 +62,7 @@ export class FileInputDirective implements ControlValueAccessor {
         const uploadableFiles = files.map(file =>
             Object.assign(file, {
                 fileType: this.fileType(),
+                preview: getPreviewUrl(file)
             })
         );
 

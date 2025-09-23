@@ -14,6 +14,10 @@ export const DashboardRouting: Routes = [
     path: 'support',
     loadComponent: () => import('./support/support.component').then((c) => c.SupportComponent),
   },
+  {
+    path: 'email-verification',
+    loadComponent: () => import('./email-verification/email-verification.component').then((c) => c.EmailVerificationComponent),
+  },
 ];
 
 export const DashboardModalRouting: Routes = [

@@ -6,7 +6,6 @@ import { errorConfigType } from '@util/error-handler';
 import { twMerge } from 'tailwind-merge';
 import { ErrorControlComponent } from './errorcontrol.component';
 
-
 @Component({
   imports: [InputGroupModule, InputGroupAddonModule, ErrorControlComponent],
   selector: 'app-input',

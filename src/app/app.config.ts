@@ -5,17 +5,20 @@ import {
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, withHashLocation } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withHashLocation } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 import { routes } from './app.routes';
 import { ModernRadixPreset } from './theme/present';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
-    provideRouter(routes, withHashLocation()),
+    provideHttpClient(withFetch()),
+    provideRouter(routes, withHashLocation() , withComponentInputBinding()),
     provideAnimations(),
     providePrimeNG({
       theme: {
@@ -28,5 +31,6 @@ export const appConfig: ApplicationConfig = {
         preset: ModernRadixPreset,
       },
     }),
+    MessageService,
   ],
 };

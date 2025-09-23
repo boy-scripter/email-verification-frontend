@@ -1,12 +1,10 @@
-export function getPreviewUrl(value: File | string | null | undefined): Promise<string | null> {
-    return new Promise((resolve) => {
-        if (value instanceof File) {
-            const blobUrl = URL.createObjectURL(value);
-            resolve(blobUrl);
-        } else if (typeof value === 'string' && value.trim() !== '') {
-            resolve(value);
-        } else {
-            resolve(null);
-        }
-    });
+export function getPreviewUrl(value: File | string | null | undefined): string | null {
+    if (value instanceof File) {
+        const blobUrl = URL.createObjectURL(value);
+        return blobUrl;
+    } else if (typeof value === 'string' && value.trim() !== '') {
+        return value;
+    } else {
+        return null;
+    }
 }

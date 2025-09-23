@@ -13,14 +13,18 @@ import { ProgressCircleComponent } from '../progress-circle/progress-circle.comp
       <div class="flex  items-center  justify-between">
         <!-- Stats Section -->
        <div class="flex flex-col md:flex-row w-full md:w-auto gap-5">
+
           <div class="bg-white/90 rounded-xl p-5 ">
+
               <div class="text-4xl font-bold text-blue-600 mb-2">{{totalVerified}}</div>
               <div class="text-lg font-semibold text-gray-900 mb-4">Verified till now</div>
+
               <div class="flex items-center space-x-6">
                 <div class="flex items-center space-x-2">
                   <i class="pi pi-thumbs-up text-green-500"></i>
                   <span class="text-green-500 font-medium">{{validCount}} Valid</span>
                 </div>
+
                 <div class="flex items-center space-x-2">
                   <i class="pi pi-thumbs-down text-red-500"></i>
                   <span class="text-red-500 font-medium">{{invalidCount}} Invalid</span>
