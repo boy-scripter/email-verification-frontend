@@ -47,12 +47,20 @@ export const Component: ComponentsDesignTokens = {
     },
   },
 
+ 
   button: {
+    
     root: {
+      warn : {
+        background: 'red',
+          color : '#fff',
+      },
+
       borderRadius: primitives.borderRadius.sm,
       label: {
-        fontWeight: '600',
+        fontWeight: '500',
       },
+
       focusRing: {
         offset: '3px',
       },

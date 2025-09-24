@@ -9,7 +9,7 @@ import { ProgressCircleComponent } from '../progress-circle/progress-circle.comp
   standalone: true,
   imports: [CommonModule, CardModule, ProgressCircleComponent],
   template: `
-    <p-card class="shadow-sm backdrop-blur-xl bg-white/10">
+    <p-card class="transparent-bg">
       <div class="flex  items-center  justify-between">
         <!-- Stats Section -->
        <div class="flex flex-col md:flex-row w-full md:w-auto gap-5">

@@ -44,7 +44,7 @@ export class SupportComponent {
         this.supportForm = new FormGroup({
             name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
             email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^[+]?[1-9]\d{0,15}$/)] }),
+            phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^[+]?[1-9]\d{0,15}$/)] }),
             query: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10)] }),
         });
     }

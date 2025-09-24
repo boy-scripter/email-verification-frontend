@@ -1,0 +1,399 @@
+
+
+
+/* ============================================
+   Table Container & Structure
+   ============================================ */
+
+   .p-datatable {
+    border-radius: 20px;
+    background: var(--p-surface-0);
+    box-shadow: 0 2px 8px rgba(20, 20, 20, 0.1);
+    
+    
+  }
+
+  .p-datatable table {
+   border-top-left-radius: 10px;
+   border-top-right-radius: 10px;
+   overflow: hidden;
+  }
+  
+  .p-datatable .p-datatable-wrapper {
+    border-radius: 15px 15px 0 0;
+  }
+  
+  /* ============================================
+     Table Header
+     ============================================ */
+  
+  .p-datatable .p-datatable-thead > tr > th {
+    background: var(--p-surface-50);
+    color: var(--color-gray-600);
+    font-weight: 600;
+    padding: 20px;
+    border-bottom: 2px solid var(--p-surface-100);
+    border-right: 1px solid var(--p-surface-100);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+  
+  .p-datatable .p-datatable-thead > tr > th:last-child {
+    border-right: none;
+  }
+  
+  .p-datatable .p-datatable-thead > tr > th .p-column-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Sortable headers */
+  .p-datatable .p-datatable-thead > tr > th.p-sortable-column:hover {
+    background: var(--p-surface-100);
+    transition: background-color 0.2s ease;
+  }
+  
+  .p-datatable .p-datatable-thead > tr > th .p-sortable-column-icon {
+    color: var(--color-gray-600);
+    margin-left: 0.5rem;
+  }
+  
+  .p-datatable .p-datatable-thead > tr > th.p-highlight {
+    background: var(--p-surface-100);
+  }
+  
+  .p-datatable .p-datatable-thead > tr > th.p-highlight .p-sortable-column-icon {
+    color: var(--color-gray-600);
+  }
+  
+  /* ============================================
+     Table Body
+     ============================================ */
+  
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 18px;
+    border-bottom: 1px solid var(--p-surface-100);
+    border-right: 1px solid var(--p-surface-100);
+    color: var(--color-gray-600);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    background: var(--p-surface-0);
+  }
+  
+  .p-datatable .p-datatable-tbody > tr > td:last-child {
+    border-right: none;
+  }
+  
+  /* Row hover and striping */
+  .p-datatable .p-datatable-tbody > tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background: var(--p-surface-50);
+  }
+  
+  .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background: rgba(229, 229, 229, 0.3);
+  }
+  
+  .p-datatable .p-datatable-tbody > tr:nth-child(even):hover {
+    background: var(--p-surface-50);
+  }
+  
+  /* Selected rows */
+  .p-datatable .p-datatable-tbody > tr.p-highlight {
+    background: rgba(20, 20, 20, 0.1);
+    color: var(--color-gray-600);
+  }
+  
+  .p-datatable .p-datatable-tbody > tr.p-highlight:hover {
+    background: rgba(20, 20, 20, 0.15);
+  }
+  
+  /* ============================================
+     Empty State
+     ============================================ */
+  
+  .p-datatable .p-datatable-emptymessage {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-gray-600);
+    font-style: italic;
+  }
+  
+  /* ============================================
+     Loading State
+     ============================================ */
+  
+  .p-datatable .p-datatable-loading-overlay {
+    background: rgba(245, 245, 245, 0.8);
+    backdrop-filter: blur(2px);
+  }
+  
+  .p-datatable .p-datatable-loading-icon {
+    color: var(--color-gray-600);
+  }
+  
+  /* ============================================
+     Paginator
+     ============================================ */
+  
+  .p-paginator {
+    background: var(--p-surface-50);
+    border-top: 1px solid var(--p-surface-100);
+    padding: 10px;
+    border-radius: 0 0 15px 15px;
+ 
+  }
+  
+  /* Paginator info text */
+  .p-paginator .p-paginator-current {
+    color: var(--color-gray-600);
+    font-size: 0.875rem;
+    margin: 0 1rem;
+  }
+  
+  /* Page numbers container */
+  .p-paginator .p-paginator-pages {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  /* Individual page buttons */
+  .p-paginator .p-paginator-page {
+    background: var(--p-surface-0);
+    border: 1px solid var(--p-surface-100);
+    color: var(--color-gray-600);
+    border-radius: var(--p-border-radius-sm);
+    min-width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .p-paginator .p-paginator-page:hover {
+    background: var(--p-surface-100);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(20, 20, 20, 0.1);
+  }
+  
+  .p-paginator .p-paginator-page.p-highlight {
+    background: var(--p-primary-color);
+    color: var(--color-gray-600-color);
+    border-color: var(--p-primary-color);
+    box-shadow: 0 2px 4px rgba(20, 20, 20, 0.2);
+  }
+  
+  /* Navigation buttons (first, prev, next, last) */
+  .p-paginator .p-paginator-first,
+  .p-paginator .p-paginator-prev,
+  .p-paginator .p-paginator-next,
+  .p-paginator .p-paginator-last {
+    background: var(--p-surface-0);
+    border: 1px solid var(--p-surface-100);
+    color: var(--color-gray-600);
+    border-radius: var(--p-border-radius-sm);
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .p-paginator .p-paginator-first:hover,
+  .p-paginator .p-paginator-prev:hover,
+  .p-paginator .p-paginator-next:hover,
+  .p-paginator .p-paginator-last:hover {
+    background: var(--p-surface-100);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(20, 20, 20, 0.1);
+  }
+  
+  .p-paginator .p-paginator-first:disabled,
+  .p-paginator .p-paginator-prev:disabled,
+  .p-paginator .p-paginator-next:disabled,
+  .p-paginator .p-paginator-last:disabled {
+    background: var(--p-surface-50);
+    color: var(--color-gray-600);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Rows per page dropdown */
+  .p-paginator .p-dropdown {
+    background: var(--p-surface-0);
+    border: 1px solid var(--p-surface-100);
+    border-radius: var(--p-border-radius-sm);
+    color: var(--color-gray-600);
+    min-width: 4rem;
+    height: 2.5rem;
+  }
+  
+  .p-paginator .p-dropdown:hover {
+    border-color: var(--p-surface-200);
+  }
+  
+  .p-paginator .p-dropdown:focus {
+    border-color: var(--p-primary-color);
+    box-shadow: 0 0 0 2px rgba(20, 20, 20, 0.2);
+  }
+  
+  .p-paginator .p-dropdown .p-dropdown-label {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  /* ============================================
+     Column Resizer
+     ============================================ */
+  
+  .p-datatable .p-column-resizer {
+    border-right: 2px solid transparent;
+    cursor: col-resize;
+  }
+  
+  .p-datatable .p-column-resizer:hover,
+  .p-datatable .p-datatable-resizer-helper {
+    border-color: var(--p-primary-color);
+  }
+  
+  /* ============================================
+     Filters
+     ============================================ */
+  
+  .p-datatable .p-datatable-filter-overlay {
+    background: var(--p-surface-0);
+    border: 1px solid var(--p-surface-100);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(20, 20, 20, 0.15);
+  }
+  
+  .p-datatable .p-column-filter-menu-button {
+    color: var(--color-gray-600);
+    transition: color 0.2s ease;
+  }
+  
+  .p-datatable .p-column-filter-menu-button:hover {
+    color: var(--color-gray-600);
+  }
+  
+  .p-datatable .p-column-filter-menu-button.p-column-filter-menu-button-open {
+    color: var(--color-gray-600);
+  }
+  
+  /* ============================================
+     Responsive Design
+     ============================================ */
+  
+  /* @media (max-width: 768px) {
+    .p-datatable .p-datatable-thead > tr > th,
+    .p-datatable .p-datatable-tbody > tr > td {
+      padding: var(--p-content-padding-xs);
+      font-size: 0.75rem;
+    }
+    
+    .p-paginator {
+      padding: var(--p-content-padding-xs);
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+    
+    .p-paginator .p-paginator-page,
+    .p-paginator .p-paginator-first,
+    .p-paginator .p-paginator-prev,
+    .p-paginator .p-paginator-next,
+    .p-paginator .p-paginator-last {
+      min-width: 2rem;
+      height: 2rem;
+      font-size: 0.75rem;
+    }
+    
+    .p-paginator .p-paginator-current {
+      font-size: 0.75rem;
+      margin: 0 0.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .p-datatable .p-datatable-thead > tr > th,
+    .p-datatable .p-datatable-tbody > tr > td {
+      padding: 0.25rem 0.5rem;
+    }
+    
+    .p-datatable .p-datatable-thead > tr > th {
+      font-size: 0.7rem;
+    }
+    
+    .p-paginator .p-paginator-pages {
+      order: 2;
+      width: 100%;
+      justify-content: center;
+    }
+  } */
+  
+  /* ============================================
+     Accessibility
+     ============================================ */
+  
+  .p-datatable .p-datatable-thead > tr > th:focus-visible,
+  .p-datatable .p-datatable-tbody > tr > td:focus-visible,
+  .p-paginator .p-paginator-page:focus-visible,
+  .p-paginator .p-paginator-first:focus-visible,
+  .p-paginator .p-paginator-prev:focus-visible,
+  .p-paginator .p-paginator-next:focus-visible,
+  .p-paginator .p-paginator-last:focus-visible {
+    outline: 2px solid var(--p-primary-color);
+    outline-offset: 2px;
+    z-index: 1;
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .p-datatable {
+      border: 2px solid var(--p-primary-color);
+    }
+    
+    .p-datatable .p-datatable-thead > tr > th,
+    .p-datatable .p-datatable-tbody > tr > td {
+      border-width: 2px;
+    }
+    
+    .p-paginator .p-paginator-page,
+    .p-paginator .p-paginator-first,
+    .p-paginator .p-paginator-prev,
+    .p-paginator .p-paginator-next,
+    .p-paginator .p-paginator-last {
+      border-width: 2px;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .p-datatable .p-datatable-tbody > tr,
+    .p-paginator .p-paginator-page,
+    .p-paginator .p-paginator-first,
+    .p-paginator .p-paginator-prev,
+    .p-paginator .p-paginator-next,
+    .p-paginator .p-paginator-last {
+      transition: none;
+    }
+    
+    .p-paginator .p-paginator-page:hover,
+    .p-paginator .p-paginator-first:hover,
+    .p-paginator .p-paginator-prev:hover,
+    .p-paginator .p-paginator-next:hover,
+    .p-paginator .p-paginator-last:hover {
+      transform: none;
+    }
+  }

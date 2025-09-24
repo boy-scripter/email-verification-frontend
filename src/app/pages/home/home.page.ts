@@ -4,11 +4,13 @@ import {
   FeaturesComponent,
   FooterComponent,
   HeroComponent,
-  PricingComponent,
+PricingCardComponent,
   TestimonialsComponent,
   TickerComponent,
   WhyChooseUsComponent,
 } from './components';
+
+
 
 @Component({
   imports: [
@@ -17,11 +19,11 @@ import {
     TickerComponent,
     WhyChooseUsComponent,
     FeaturesComponent,
-    PricingComponent,
+    PricingCardComponent,
     FooterComponent,
     TestimonialsComponent,
   ],
   selector: 'app-home',
   templateUrl: './home.page.html',
 })
-export class HomePage {}
+export class HomePage { }

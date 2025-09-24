@@ -103,8 +103,8 @@ export class DashboardLayout {
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: 'home' },
     { label: 'Email Verification', icon: 'pi pi-envelope', routerLink: 'email-verification' },
     { label: 'Buy Credits', icon: 'pi pi-credit-card', routerLink: 'buy-credits' },
+    { label: 'Invoices', icon: 'pi pi-file', routerLink: 'invoice' },
     { label: 'Subscriptions', icon: 'pi pi-wallet', routerLink: 'subscriptions' },
-    { label: 'Invoices', icon: 'pi pi-file', routerLink: 'invoices' },
     { label: 'Support', icon: 'pi pi-question-circle', routerLink: 'support' },
     { label: 'Logout', icon: 'pi pi-sign-out', click: () => this.toggleMenu() },
   ];

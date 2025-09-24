@@ -1,9 +1,7 @@
 import { Component } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { HeadingComponent } from "@components/header.component";
 import { NgxBorderBeamComponent } from "@omnedia/ngx-border-beam";
-import { NgxLightRaysComponent } from "@omnedia/ngx-light-rays";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { NgTemplateOutlet } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -23,7 +21,7 @@ interface PricingPlan {
 
 
 @Component({
-  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, HeadingComponent, NgxLightRaysComponent, NgTemplateOutlet, ToggleSwitchModule, FormsModule],
+  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, NgTemplateOutlet, ToggleSwitchModule, FormsModule],
   selector: 'app-pricing',
   standalone: true,
   styles: ` 
@@ -37,13 +35,9 @@ interface PricingPlan {
       }
   `,
   template: `
-    <om-light-rays>
-      <section class="relative text-white py-20 md:pb-36 px-6">
-        <app-heading title="Pricing"> </app-heading>
-
         <div class="flex text-2xl mb-6 items-center justify-center space-x-2">
           <span>$ Dollar</span>
-          <p-toggleSwitch [(ngModel)]="checked" class="p-button-outlined"></p-toggleSwitch>
+               <p-toggleSwitch [(ngModel)]="checked" class="p-button-outlined"></p-toggleSwitch>
           <span>₹ Inr</span>
         </div>
 
@@ -79,8 +73,8 @@ interface PricingPlan {
             <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto"> </button>
           </p-card>
         </ng-template>
-      </section>
-    </om-light-rays>
+      
+
   `
 })
 export class PricingComponent {

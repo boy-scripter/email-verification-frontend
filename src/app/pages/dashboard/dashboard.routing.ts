@@ -18,6 +18,18 @@ export const DashboardRouting: Routes = [
     path: 'email-verification',
     loadComponent: () => import('./email-verification/email-verification.component').then((c) => c.EmailVerificationComponent),
   },
+  {
+    path: 'buy-credits',
+    loadComponent: () => import('./buy-credits/buy-credit.components').then((c) => c.BuyCreditComponent),
+  },
+  {
+    path: 'invoice',
+    loadComponent: () => import('./invoice/invoice.components').then((c) => c.InvoiceComponent),
+  },
+  {
+    path: 'subscriptions',
+    loadComponent: () => import('./subscriptions/subscriptions.components').then((c) => c.SubscriptionsComponent),
+  },
 ];
 
 export const DashboardModalRouting: Routes = [
