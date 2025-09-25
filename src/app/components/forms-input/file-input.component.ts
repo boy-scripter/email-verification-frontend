@@ -1,6 +1,8 @@
-import { Directive, forwardRef, input } from '@angular/core';
+import {  Directive, forwardRef, inject, input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { getPreviewUrl } from "@util/index";
+import { ChangeDetectorRef } from '@angular/core';
+
 
 export interface UploadableFile extends File {
     filetype: FILE_SUPPORTED_BACKEND;
@@ -28,6 +30,9 @@ export class FileInputDirective implements ControlValueAccessor {
     fileType = input<FILE_SUPPORTED_BACKEND>()
 
     value: FileInputType = null;
+
+
+    cdr = inject(ChangeDetectorRef);
 
     // Callbacks assigned by Angular
     onChange: (value: FileInputType) => void = () => { };
@@ -58,7 +63,6 @@ export class FileInputDirective implements ControlValueAccessor {
 
         const files = Array.from(input.files) as UploadableFile[];
 
-        // Attach fileType metadata to each file
         const uploadableFiles = files.map(file =>
             Object.assign(file, {
                 fileType: this.fileType(),
@@ -72,6 +76,9 @@ export class FileInputDirective implements ControlValueAccessor {
         } else {
             this.onChange(uploadableFiles[0]);
         }
+
+        console.log(uploadableFiles)
+       this.cdr.markForCheck();
     }
 
     onBlur(): void {

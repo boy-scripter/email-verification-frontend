@@ -31,7 +31,7 @@ import { MenuModule } from 'primeng/menu';
         <div class="flex min-h-screen w-full gap-6 p-2 sm:p-5 md:h-screen md:flex-row">
           <p-menu
             [class]="
-              'absolute top-0 left-0 z-10 w-full transition-transform duration-300 lg:w-auto lg:static ' +
+              'fixed top-0 left-0 z-10 w-full transition-transform duration-300 lg:w-auto lg:static ' +
               (isMenuOpen() ? ' translate-y-0' : '-translate-y-full lg:translate-none')
             "
             [model]="items"

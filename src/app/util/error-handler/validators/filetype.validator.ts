@@ -1,17 +1,23 @@
 import { AbstractControl, ValidatorFn } from '@angular/forms';
 
-
 export const FILETYPE_ERROR = 'filetype';
-export function fileTypeValidator(allowedTypes: string[]): ValidatorFn {
+export function fileTypeValidator(allowedExtensions: string[]): ValidatorFn {
   return (control: AbstractControl) => {
-    const file = control.value;
+    const file: File = control.value;
+    if (!file) {
+      return null;
+    }
+    
+    const fileName = file.name?.toLowerCase() || '';
+    const extension = fileName.split('.').pop();
+    
 
-    if (file && file.type && !allowedTypes.includes(file.type)) {
+    if (!extension || !allowedExtensions.map((e) => e.toLowerCase()).includes(extension)) {
       return {
         [FILETYPE_ERROR]: {
-          allowedTypes,
-          actualType: file.type
-        }
+          allowedExtensions,
+          actualExtension: extension,
+        },
       };
     }
 

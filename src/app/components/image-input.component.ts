@@ -1,12 +1,13 @@
 import { Component, AfterViewInit, contentChild, input, computed, TemplateRef, ChangeDetectionStrategy, signal, ElementRef, inject, DestroyRef } from "@angular/core";
 import { NgControl } from "@angular/forms";
-import { ErrorControlComponent } from "./errorcontrol.component";
+import { ErrorControlComponent } from "./errorcontrol/errorcontrol.component";
 import { filter, tap } from "rxjs";
 import { NgTemplateOutlet } from "@angular/common";
 import { AvatarModule } from 'primeng/avatar'
 import { errorConfigType } from "@util/error-handler";
 import { UploadableFile } from "./forms-input/file-input.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { twMerge } from "tailwind-merge";
 
 @Component({
     selector: 'app-image-input',
@@ -15,7 +16,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     template: `
     <div class="image-input-wrapper">
 
-        <div class=" image-box relative w-max">
+        <div [class]="computedClass()">
             <ng-container *ngTemplateOutlet="(templateRef() || defaultTemplate);  context: { $implicit: file_data(), fallBack: fallBackImageLabel() };"> </ng-container>
             <ng-content> </ng-content>
         </div>
@@ -42,6 +43,9 @@ export class ImageInputComponent implements AfterViewInit {
     errorConfig = input<errorConfigType>();
     fallBackImageLabel = input<string>('3');
 
+    styleClass = input<string>();
+    computedClass = computed(() => twMerge('image-box relative w-max', this.styleClass()));
+
     templateRef = contentChild(TemplateRef);
     ngControl = contentChild.required(NgControl);
     controlName = computed(() => this.ngControl()?.name + '' || '');
@@ -49,7 +53,7 @@ export class ImageInputComponent implements AfterViewInit {
     elementRef = inject(ElementRef)
     destroyRef = inject(DestroyRef);
 
-    file_data = signal<UploadableFile | null>(null)
+   protected file_data = signal<UploadableFile | null>(null)
 
     ngAfterViewInit() {
         // pewview setter
@@ -58,7 +62,6 @@ export class ImageInputComponent implements AfterViewInit {
             filter(() => !this.ngControl().errors),
             tap((v) => this.file_data.set(v)),
         ).subscribe();
-
 
         const wrapper = this.elementRef.nativeElement;
 

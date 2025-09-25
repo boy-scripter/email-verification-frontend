@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { CardComponent } from '@components/index';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-invoice',
-  imports: [CardComponent],
+  imports: [CardComponent , TableModule],
   template: `
     <div class="w-full">
       <div class="mb-8">
@@ -16,6 +17,7 @@ import { CardComponent } from '@components/index';
             View all your invoices, receipts and Billing details at one place.
             </p>
           </app-card>
+          
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ export type StepsType = 1 | 2 | 3;
     selector: 'app-forgot-password',
     standalone: true,
     template: `
-        <p-stepper  [value]="currentStep()">
+        <p-stepper [value]="currentStep()">
             <p-step-panels>
                 <p-step-panel [value]="1" >
                     <ng-template pTemplate="content">

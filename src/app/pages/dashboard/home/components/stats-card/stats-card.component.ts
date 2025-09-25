@@ -29,6 +29,7 @@ import { ProgressCircleComponent } from '../progress-circle/progress-circle.comp
                   <i class="pi pi-thumbs-down text-red-500"></i>
                   <span class="text-red-500 font-medium">{{invalidCount}} Invalid</span>
                 </div>
+                
               </div>
           </div>
 

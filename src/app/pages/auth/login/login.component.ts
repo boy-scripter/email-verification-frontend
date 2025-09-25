@@ -43,7 +43,7 @@ export class LoginComponent {
         this.loginForm = new FormGroup({
             email: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
             password: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
-        });
+        } , { updateOn: 'change' });
     }
 
     onFormSubmit() {

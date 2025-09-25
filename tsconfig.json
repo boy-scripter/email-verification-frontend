@@ -23,6 +23,7 @@
       "@decorater": ["./src/app/decorater/index"],
       "@util/*": ["./src/app/util/*"],
       "@directive/*": ["./src/app/directive/*"],
+      "@provider/*": ["./src/app/providers/*"],
     }
   },
   "angularCompilerOptions": {

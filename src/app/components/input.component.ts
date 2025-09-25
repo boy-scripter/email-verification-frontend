@@ -1,13 +1,13 @@
-import { Component, input, computed, contentChild } from '@angular/core';
+import { Component, input, computed, contentChild, forwardRef } from '@angular/core';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { NgControl } from '@angular/forms';
 import { errorConfigType } from '@util/error-handler';
 import { twMerge } from 'tailwind-merge';
-import { ErrorControlComponent } from './errorcontrol.component';
+import { ErrorControlComponent } from '@components/index';
 
 @Component({
-  imports: [InputGroupModule, InputGroupAddonModule, ErrorControlComponent],
+  imports: [InputGroupModule, InputGroupAddonModule, forwardRef(() => ErrorControlComponent)],
   selector: 'app-input',
   template: `
     <div class="input-wrapper">

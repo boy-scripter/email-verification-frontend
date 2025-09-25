@@ -1,9 +1,13 @@
-import { Component, input, inject, EnvironmentInjector, Signal, signal, AfterContentInit, } from '@angular/core';
+
+
+
+import { Component, input, inject, EnvironmentInjector, Signal, signal, AfterContentInit, ChangeDetectorRef, } from '@angular/core';
 import { MessageModule } from 'primeng/message';
 import { FormGroupDirective } from '@angular/forms';
 import { errorConfigType, firstErrorMessage$ } from '@util/error-handler';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map, startWith, take } from 'rxjs';
+import { FormComponent } from '@components/index';
+import { getValidationStrategy } from './strategy-factory';
 
 @Component({
   imports: [MessageModule],
@@ -21,16 +25,16 @@ export class ErrorControlComponent implements AfterContentInit {
   // Inputs
   errorConfig = input<errorConfigType>();
   controlName = input.required<string>()
-
+  
   // Variables
   protected errorsMessage: Signal<string | null> = signal(null);
   protected showError: Signal<boolean> = signal(false);
-
+  
   // Injections
   formGroup = inject(FormGroupDirective);
   ngForm = inject(FormGroupDirective);
   injector = inject(EnvironmentInjector);
-
+  formComponent = inject(FormComponent);
 
 
   ngAfterContentInit() {
@@ -41,14 +45,12 @@ export class ErrorControlComponent implements AfterContentInit {
       return;
     }
 
-    // Emits true only after the first submit
-    const firstSubmit$ = this.ngForm.ngSubmit.pipe(
-      take(1),
-      map(() => true),
-      startWith(false)
+    const strategy = getValidationStrategy( 
+      this.formComponent.updateOn(),
+      this.ngForm
     );
 
-    this.showError = toSignal(firstSubmit$, {
+    this.showError = toSignal(strategy.showError(control), {
       initialValue: false,
       injector: this.injector
     });
@@ -57,5 +59,9 @@ export class ErrorControlComponent implements AfterContentInit {
       initialValue: null,
       injector: this.injector
     });
+  
   }
+  
 }
+
+

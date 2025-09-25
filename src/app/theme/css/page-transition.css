@@ -1,0 +1,35 @@
+@keyframes slide-in-x {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out-x {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+::view-transition-old(count),
+::view-transition-new(count) {
+  animation-duration: 300ms;
+  animation-timing-function: ease;
+}
+
+::view-transition-new(count) {
+  animation-name: slide-in-x;
+}
+
+::view-transition-old(count) {
+  animation-name: slide-out-x;
+}

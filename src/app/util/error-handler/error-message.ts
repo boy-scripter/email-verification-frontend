@@ -6,5 +6,7 @@ export const DEFAULT_ERROR_MESSAGES: errorConfigType = {
   email: 'Please enter a valid email address.',
   filesizeMin: (v) => `File is too small. Minimum size is ${v.requiredSize} bytes, but got ${v.actualSize} bytes.`,
   filesizeMax: (v) => `File is too large. Maximum size is ${v.requiredSize} bytes, but got ${v.actualSize} bytes.`,
-  filetype: (v) => `Invalid file type. Allowed types: ${v.allowedTypes.join(', ')}. Got: ${v.actualType}.`,
+  filetype: (v) =>
+    `Invalid file type. Allowed extensions: ${v.allowedExtensions.join(', ')}. Got: ${v.actualExtension || 'none'}.`,
+  
 };

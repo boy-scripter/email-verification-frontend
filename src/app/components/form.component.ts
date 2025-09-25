@@ -5,6 +5,7 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { Button } from 'primeng/button';
 import { filter, firstValueFrom, timer } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
+import { StrategyType } from './errorcontrol/strategy-factory';
 
 
 
@@ -19,9 +20,11 @@ export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
     imports: [],
     template: `
         <form [class]="computedClass()" >
+           @if(header()){
             <div class="pb-4 border-b border-gray-200">
                 <h2 class="m-0 text-2xl text-white font-semibold ">{{ header() }}</h2>
             </div>
+           }
             <div class="grid gap-5">
                 <ng-content></ng-content>
             </div>
@@ -30,7 +33,8 @@ export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormComponent {
-    header = input.required<string>();
+    header = input<string>();
+    updateOn = input<StrategyType>('changeSubmit');
 
     styleClass = input<string>();
     computedClass = computed(() => twMerge('flex flex-col gap-6 p-6 px-1 sm:px-4  rounded-lg shadow-sm' + this.styleClass()))
@@ -72,7 +76,7 @@ export class FormComponent {
     }
 
     setLoading(value: boolean) {
-        this.isSubmitting.set(value);  // Use the signal
+        this.isSubmitting.set(value); 
         this.submitBtn().loading = value;
         this.submitBtn().cd.markForCheck();
     }

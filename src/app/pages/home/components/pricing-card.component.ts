@@ -10,7 +10,7 @@ import { HeadingComponent } from "@components/index";
   template: `
       <om-light-rays>
       <section class="relative text-white py-20 md:pb-36 px-6">
-      <app-heading title="Pricing"> </app-heading>
+      <app-heading title="Pricing"></app-heading>
         <app-pricing></app-pricing>
       </section>
     </om-light-rays>

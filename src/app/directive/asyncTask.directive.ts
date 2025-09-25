@@ -17,8 +17,6 @@ export class AsyncTaskDirective {
 
   private loading = signal(false);
 
-  constructor() { }
-
   async handleClick() {
     if (!this.asyncTask()) {
       console.warn('asyncTask directive: No task provided!');

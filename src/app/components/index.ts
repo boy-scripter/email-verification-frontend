@@ -5,3 +5,4 @@ export * from './image-input.component';
 export * from './input.component';
 export * from './logo.component';
 export * from './card.component';
+export * from './errorcontrol/errorcontrol.component';
