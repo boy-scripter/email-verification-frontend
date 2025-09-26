@@ -55,14 +55,15 @@ export class FileInputDirective implements ControlValueAccessor {
     onInput(event: Event): void {
         const input = event.target as HTMLInputElement;
 
+        this.onTouched()
         if (!input.files || input.files.length === 0) {
             this.value = null;
             this.onChange(null);
             return;
         }
-
+        
         const files = Array.from(input.files) as UploadableFile[];
-
+        
         const uploadableFiles = files.map(file =>
             Object.assign(file, {
                 fileType: this.fileType(),
@@ -76,9 +77,6 @@ export class FileInputDirective implements ControlValueAccessor {
         } else {
             this.onChange(uploadableFiles[0]);
         }
-
-        console.log(uploadableFiles)
-       this.cdr.markForCheck();
     }
 
     onBlur(): void {
