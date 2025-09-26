@@ -1,17 +1,19 @@
 
 
 
-import { Component, input, inject, EnvironmentInjector, Signal, signal, AfterContentInit, ChangeDetectorRef, } from '@angular/core';
+import { Component, input, inject, EnvironmentInjector, Signal, signal, AfterContentInit } from '@angular/core';
 import { MessageModule } from 'primeng/message';
 import { FormGroupDirective } from '@angular/forms';
 import { errorConfigType, firstErrorMessage$ } from '@util/error-handler';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormComponent } from '@components/index';
 import { getValidationStrategy } from './strategy-factory';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   imports: [MessageModule],
   selector: 'app-error-control',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (showError()) {
       <p-message styleClass="mt-1 pl-2" severity="error" size="small" variant="simple">
