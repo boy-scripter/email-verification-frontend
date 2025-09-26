@@ -17,7 +17,7 @@ import { twMerge } from "tailwind-merge";
     <div class="image-input-wrapper">
 
         <div [class]="computedClass()">
-            <ng-container *ngTemplateOutlet="(templateRef() || defaultTemplate);  context: { $implicit: file_data(), fallBack: fallBackImageLabel() };"> </ng-container>
+            <ng-container *ngTemplateOutlet="(templateRef() || defaultTemplate);  context: { $implicit: file_data(), fallBack: fallBack() };"> </ng-container>
             <ng-content> </ng-content>
         </div>
 
@@ -41,14 +41,14 @@ import { twMerge } from "tailwind-merge";
 export class ImageInputComponent implements AfterViewInit {
 
     errorConfig = input<errorConfigType>();
-    fallBackImageLabel = input<string>('3');
+    fallBack = input<string>('3');
 
     styleClass = input<string>();
     computedClass = computed(() => twMerge('image-box relative w-max', this.styleClass()));
 
     templateRef = contentChild(TemplateRef);
     ngControl = contentChild.required(NgControl);
-    controlName = computed(() => this.ngControl()?.name + '' || '');
+    controlName = computed(() => this.ngControl().name);
 
     elementRef = inject(ElementRef)
     destroyRef = inject(DestroyRef);
