@@ -26,7 +26,7 @@ export interface ProfileForm {
     FileInputDirective,
   ],
   template: `
-    <app-form [formGroup]="profileForm" (formSubmit)="onSubmit()" header="Profile">
+    <app-form updateOn="change" [formGroup]="profileForm" (formSubmit)="onSubmit()" header="Profile">
       <app-image-input>
         <input
           [multiple]="false"

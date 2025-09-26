@@ -31,7 +31,7 @@ export interface FileEmailVerficationForm {
                         </div>
                     </ng-template>
                 </app-image-input>
-                <p-button #submitBtn size="small" severity="info" type="submit" label="Start Upload" icon="pi pi-upload" ></p-button>
+                <p-button #submitBtn styleClass="p-2 px-6" size="small" severity="info" type="submit" label="Start Upload" icon="pi pi-upload" ></p-button>
             </app-form>
         </app-card>
     </div>
