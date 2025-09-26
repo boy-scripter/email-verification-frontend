@@ -1,5 +1,5 @@
 import { AbstractControl } from '@angular/forms';
-import { map, Observable, startWith, tap } from 'rxjs';
+import { map, Observable, startWith } from 'rxjs';
 import { DEFAULT_ERROR_MESSAGES, errorConfigType } from './error-message';
 
 export type ErrorMessageType = Observable<string | null>;
@@ -28,8 +28,6 @@ export function firstErrorMessage$(
       const [key, value] = Object.entries(errors)[0] ?? [];
       return key ? getErrorMessage(key, value, config) : null;
     }),
-    tap(() => {
-      // console.log(control);
-    }),
+
   );
 }
