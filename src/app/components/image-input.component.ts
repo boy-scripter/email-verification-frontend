@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, contentChild, input, computed, TemplateRef, ChangeDetectionStrategy, signal, ElementRef, inject, DestroyRef } from "@angular/core";
 import { NgControl } from "@angular/forms";
 import { ErrorControlComponent } from "./errorcontrol/errorcontrol.component";
-import { filter, tap } from "rxjs";
+import {  tap } from "rxjs";
 import { NgTemplateOutlet } from "@angular/common";
 import { AvatarModule } from 'primeng/avatar'
 import { errorConfigType } from "@util/error-handler";
@@ -56,10 +56,9 @@ export class ImageInputComponent implements AfterViewInit {
    protected file_data = signal<UploadableFile | null>(null)
 
     ngAfterViewInit() {
-        // pewview setter
+        // file data provider
         this.ngControl().valueChanges?.pipe(
             takeUntilDestroyed(this.destroyRef),
-            filter(() => !this.ngControl().errors),
             tap((v) => this.file_data.set(v)),
         ).subscribe();
 
