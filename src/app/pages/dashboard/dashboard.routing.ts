@@ -30,6 +30,10 @@ export const DashboardRouting: Routes = [
     path: 'subscriptions',
     loadComponent: () => import('./subscriptions/subscriptions.components').then((c) => c.SubscriptionsComponent),
   },
+  {
+    path: 'logout',
+    loadComponent: () => import('./logout/logout').then((c) => c.LogoutComponent),
+  },
 ];
 
 export const DashboardModalRouting: Routes = [

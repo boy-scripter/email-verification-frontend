@@ -106,7 +106,7 @@ export class DashboardLayout {
     { label: 'Invoices', icon: 'pi pi-file', routerLink: 'invoice' },
     { label: 'Subscriptions', icon: 'pi pi-wallet', routerLink: 'subscriptions' },
     { label: 'Support', icon: 'pi pi-question-circle', routerLink: 'support' },
-    { label: 'Logout', icon: 'pi pi-sign-out', click: () => this.toggleMenu() },
+    { label: 'Logout', icon: 'pi pi-sign-out', routerLink: 'logout' },
   ];
 
   router = inject(Router)
