@@ -31,7 +31,7 @@ import { MenuModule } from 'primeng/menu';
         <div class="flex min-h-screen w-full gap-6 p-2 sm:p-5 md:h-screen md:flex-row">
           <p-menu
             [class]="
-              'fixed top-0 left-0 z-10 w-full transition-transform duration-300 lg:w-auto lg:static ' +
+              'fixed top-0 left-0 z-10 w-full transition-transform duration-300 lg:static lg:w-auto ' +
               (isMenuOpen() ? ' translate-y-0' : '-translate-y-full lg:translate-none')
             "
             [model]="items"
@@ -70,10 +70,10 @@ import { MenuModule } from 'primeng/menu';
             <!-- User Profile -->
             <ng-template #end>
               <div
-                role="button"
-                tabindex="0"
                 class="border-primary-300 mt-auto flex cursor-pointer items-center border-t px-4 py-4"
                 (click)="onProfileClick()"
+                role="button"
+                tabindex="0"
               >
                 <p-avatar
                   class="mr-3"
@@ -89,7 +89,7 @@ import { MenuModule } from 'primeng/menu';
           </p-menu>
 
           <div
-            class="border-surface-200 border-dashed bg-surface-400/10 w-full rounded-lg p-5 backdrop-blur-md md:flex-1 md:overflow-y-auto lg:border-2"
+            class="border-surface-200 bg-surface-400/10 w-full rounded-lg border-dashed p-2 backdrop-blur-md sm:p-5 md:flex-1 md:overflow-y-auto lg:border-2"
           >
             <router-outlet />
           </div>
@@ -109,7 +109,7 @@ export class DashboardLayout {
     { label: 'Logout', icon: 'pi pi-sign-out', routerLink: 'logout' },
   ];
 
-  router = inject(Router)
+  router = inject(Router);
   isMenuOpen = signal(false);
   toggleMenu() {
     this.isMenuOpen.set(!this.isMenuOpen());
