@@ -35,6 +35,7 @@ import { MenuModule } from 'primeng/menu';
               (isMenuOpen() ? ' translate-y-0' : '-translate-y-full lg:translate-none')
             "
             [model]="items"
+            (click)="onLinkClick($event)"
             styleClass="w-full border-white backdrop-blur-md bg-surface-500/80 border-0 lg:border-2 lg:bg-surface-300/10"
           >
             <!-- Brand / Logo -->
@@ -54,9 +55,9 @@ import { MenuModule } from 'primeng/menu';
             <!-- Menu Items -->
             <ng-template #item let-item>
               <a
-                class="flex cursor-pointer items-center rounded-xl px-4 py-3"
+                class="clickable-link flex cursor-pointer items-center rounded-xl px-4 py-3"
                 [routerLink]="'/dashboard/' + item.routerLink"
-                (click)="item.click()"
+               
                 routerLinkActive="bg-surface-400"
               >
                 <i [class]="item.icon"></i>
@@ -117,5 +118,17 @@ export class DashboardLayout {
 
   onProfileClick() {
     this.router.navigate(['', { outlets: { modal: ['modal', 'dashboard', 'profile'] } }]);
+  }
+
+  onLinkClick(event: Event) {
+    event.preventDefault();
+    const element = event.target as HTMLElement;
+    if (element instanceof HTMLElement) {
+      if (element.closest('.clickable-link')) {
+        setTimeout(() => {
+          this.isMenuOpen.set(false);
+        }, 100);
+      }
+    }
   }
 }
