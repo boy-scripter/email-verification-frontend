@@ -41,7 +41,7 @@ export interface FileEmailVerficationForm {
                         </div>
                     </ng-template>
                     <ng-template #progress let-progress>
-                        <div class="w-full my-2" >
+                        <div class="w-full mt-4" >
                           <p-progressbar  [value]="progress.count" />
                         </div>
                     </ng-template>

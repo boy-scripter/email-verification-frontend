@@ -49,7 +49,6 @@ export const Component: ComponentsDesignTokens = {
 
  
   button: {
-    
     root: {
       warn : {
         background: 'red',
@@ -64,6 +63,17 @@ export const Component: ComponentsDesignTokens = {
       focusRing: {
         offset: '3px',
       },
+    },
+  },
+
+
+  progressbar: {
+    root: {
+      borderRadius: primitives.borderRadius.xs,
+      background: primitives.surface[200],
+    },
+    value: {
+      background: 'repeating-linear-gradient(45deg, skyblue, skyblue 10px, #2196F3 10px, #2196F3 20px)',
     },
   },
 };

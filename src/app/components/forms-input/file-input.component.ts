@@ -24,12 +24,7 @@ export type FileInputType = File | File[] | null
 })
 export class FileInputDirective implements ControlValueAccessor {
 
-    
-
     value: FileInputType = null;
-
-
-    cdr = inject(ChangeDetectorRef);
 
     // Callbacks assigned by Angular
     onChange: (value: FileInputType) => void = () => { };

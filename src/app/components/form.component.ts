@@ -25,7 +25,7 @@ export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
                 <h2 class="m-0 text-2xl text-white font-semibold ">{{ header() }}</h2>
             </div>
            }
-            <div class="grid gap-5">
+            <div class="grid gap-3">
                 <ng-content></ng-content>
             </div>
         </form>
