@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputComponent , FormComponent } from '@components/index';
+import { InputComponent , FormComponent, FormType } from '@components/index';
 import { ButtonModule } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,7 +18,7 @@ export interface LoginForm {
     standalone: true,
     template: ` 
     <div>
-        <app-form header="Login" (formSubmit)="onFormSubmit()" [formGroup]="loginForm">
+        <app-form header="Login" (formSubmit)="onFormSubmit($event)" [formGroup]="loginForm">
             <app-input icon="pi-user"><input pInputText name="email"  placeholder="email" type="email" formControlName="email" /> </app-input>
             <app-input icon="pi-lock">  <p-password [toggleMask]="true" [feedback]="false"  placeholder="Enter new password" type="password" formControlName="password" />  </app-input>
             <p-button [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','forgot' ] } }]" class="ml-auto" variant="text" styleClass="bg-transparent text-sm underline " label="forgot password ?"  ></p-button>
@@ -46,8 +46,8 @@ export class LoginComponent {
         } , { updateOn: 'change' });
     }
 
-    onFormSubmit() {
+    onFormSubmit(value: FormType<typeof this.loginForm>) {
         
-        console.log(this.loginForm.value);
+        console.log(value);
     }
 }

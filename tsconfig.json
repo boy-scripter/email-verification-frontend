@@ -15,7 +15,7 @@
     "module": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@env": ["./src/environments"],
+      "@env": ["./src/environments/environment"],
       "@assets/*": ["./src/assets/*"],
       "@components/*": ["./src/app/components/*"],
       "@pages/*": ["./src/app/pages/*"],

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  FileInputComponent,
   FileInputDirective,
   FormComponent,
-  ImageInputComponent,
   InputComponent,
 } from '@components/index';
 import { fileSizeValidator, fileTypeValidator } from '@util/error-handler';
@@ -22,21 +22,19 @@ export interface ProfileForm {
     ButtonModule,
     InputTextModule,
     ReactiveFormsModule,
-    ImageInputComponent,
+    FileInputComponent,
     FileInputDirective,
   ],
   template: `
-    <app-form updateOn="change" [formGroup]="profileForm" (formSubmit)="onSubmit()" header="Profile">
-      <app-image-input>
-        <input
-          [multiple]="false"
-          appFileInput
-          fileType="AVTAR_IMAGE"
-          formControlName="avatar"
-          type="file"
-          value="test"
-        />
-      </app-image-input>
+    <app-form
+      [formGroup]="profileForm"
+      (formSubmit)="onSubmit()"
+      header="Profile"
+      updateOn="change"
+    >
+      <app-file-input fileType="AVTAR_IMAGE">
+        <input [multiple]="false" appFileInput formControlName="avatar" type="file" value="test" />
+      </app-file-input>
       <app-input icon="pi-user">
         <input formControlName="name" pInputText placeholder="Name" />
       </app-input>
