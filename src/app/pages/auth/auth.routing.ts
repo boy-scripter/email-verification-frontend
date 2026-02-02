@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const AuthRouting: Routes = [
+export const AuthModalRouting: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./login/login.component').then((c) => c.LoginComponent),

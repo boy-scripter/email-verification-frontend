@@ -14,7 +14,6 @@ export class AsyncTaskDirective {
 
   asyncTask = input.required<Promise<any> | Observable<any>>();
   isLoading = computed(() => this.loading());
-
   private loading = signal(false);
 
   async handleClick() {
@@ -38,7 +37,6 @@ export class AsyncTaskDirective {
 
   private taskStart() {
     this.loading.set(true);
-
     this.btnRef.loading = true;
   }
 
@@ -48,7 +46,7 @@ export class AsyncTaskDirective {
   }
 
   private taskError(error: Error) {
-    console.error(error)
+    console.error(error);
     this.loading.set(false);
     this.btnRef.loading = false;
   }

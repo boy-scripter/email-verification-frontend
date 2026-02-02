@@ -21,9 +21,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -56,9 +54,7 @@
         },
         "serve": {
           "options": {
-            "allowedHosts": [
-              "792d5d888e52.ngrok-free.app"
-            ]
+            "allowedHosts": ["792d5d888e52.ngrok-free.app"]
           },
           "builder": "@angular/build:dev-server",
           "configurations": {
@@ -84,18 +80,13 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/styles.css"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
@@ -103,8 +94,6 @@
   },
   "cli": {
     "analytics": "2a737ddc-c7f4-406e-99cb-e42a8454ba6d",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   }
 }
