@@ -1,0 +1,5 @@
+mutation UpdateProfileImage($fileId: String!) {
+  updateProfileImage(fileId: $fileId) {
+    ...UserFields
+  }
+}

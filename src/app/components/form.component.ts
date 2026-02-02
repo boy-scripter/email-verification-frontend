@@ -7,8 +7,6 @@ import { filter, firstValueFrom, timer } from 'rxjs';
 import { twMerge } from 'tailwind-merge';
 import { StrategyType } from './errorcontrol/strategy-factory';
 
-
-
 export type RawValue<T extends FormGroup> = T extends FormGroup<any> ? ReturnType<T['getRawValue']> : never;
 export type FormType<FormValues extends FormGroup> = RawValue<FormValues> & {
     nextTask: () => void
@@ -41,9 +39,7 @@ export class FormComponent {
 
     formSubmit = output<FormType<FormGroup>>();
 
-    submitBtn = contentChild.required<'submitBtn', Button>('submitBtn', {
-        read: Button
-    });
+    submitBtn = contentChild.required<'submitBtn', Button>('submitBtn', { read: Button });
     isSubmitting = signal(false);
 
     ngForm = inject(FormGroupDirective);
@@ -63,7 +59,6 @@ export class FormComponent {
         }
 
         this.setLoading(true);
-
         await firstValueFrom(timer(1000));
 
         this.formSubmit.emit({

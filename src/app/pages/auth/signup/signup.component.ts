@@ -24,7 +24,7 @@ export interface SignupForm {
             <app-input icon="pi-lock"><input pInputText name="password"  placeholder="password" type="password" formControlName="password" />   </app-input>
              <p-button #submitBtn type="submit" label="Signup" icon="pi pi-user-plus" fluid ></p-button>
              <p-button type="button" label="Signup With Google" icon="pi pi-google" fluid >
-                 <ng-template pTemplate="icon">   
+               <ng-template pTemplate="icon">   
                     <div class="p-1 rounded-3xl bg-white">
                         <img src="/assets/icons/google.svg" alt="google-login"/>        
                     </div>
@@ -49,7 +49,7 @@ export class SignupComponent {
 
     async onFormSubmit(value: RawValue<typeof this.signupForm>) {
 
-        console.log(this, value);
+        console.log( value);
     }
 }
 

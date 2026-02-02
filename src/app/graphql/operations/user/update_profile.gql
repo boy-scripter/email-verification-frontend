@@ -1,0 +1,5 @@
+mutation UpdateProfile($input: UserDto!) {
+  updateProfile(input: $input) {
+    ...UserFields
+  }
+}

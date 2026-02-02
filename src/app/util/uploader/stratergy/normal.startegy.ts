@@ -1,8 +1,7 @@
 import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { lastValueFrom, Observable, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { UploadCallbacks, UploadStrategy } from './abstract.strategy';
-import { setInterval } from 'timers/promises';
 
 @Injectable({
   providedIn: 'root',
@@ -69,8 +68,7 @@ export class NormalUploadStrategy implements UploadStrategy {
   }
 }
 
-
-async function mockUpload( callbacks: UploadCallbacks) {
+async function mockUpload(callbacks: UploadCallbacks) {
   const totalSteps = 10;
   for (let step = 1; step <= totalSteps; step++) {
     // simulate delay for each chunk

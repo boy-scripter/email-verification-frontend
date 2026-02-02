@@ -1,0 +1,11 @@
+fragment UserFields on User {
+  _id
+  updatedAt
+  phone
+  name
+  email
+  createdAt
+  image {
+    key
+  }
+}

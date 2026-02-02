@@ -1,17 +1,16 @@
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import {
-  ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
-  provideZonelessChangeDetection,
-} from '@angular/core';
+import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding, withHashLocation } from '@angular/router';
+import { withViewTransitionsConfig } from '@provider/index';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { routes } from './app.routes';
-import { withViewTransitionsConfig } from './providers/transition';
 import { ModernRadixPreset } from './theme/present';
+import { InMemoryCache, provideApollo, withApolloOptions } from '@apollo-orbit/angular';
+import { HttpLinkFactory, withHttpLink } from '@apollo-orbit/angular/http';
+import { envirmonment } from '@env';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +18,13 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch()),
+    provideApollo(
+      withHttpLink(),
+      withApolloOptions(() => ({
+        cache: new InMemoryCache(),
+        link: inject(HttpLinkFactory).create({ uri: envirmonment.gql_base_url })
+      }))
+    ),
     provideRouter(
       routes,
       withHashLocation(),

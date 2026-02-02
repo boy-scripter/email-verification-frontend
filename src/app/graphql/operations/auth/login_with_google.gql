@@ -1,0 +1,9 @@
+mutation LoginWithGoogle($input: GoogleLoginInput!) {
+  loginWithGoogle(input: $input) {
+    accessToken
+    refreshToken
+    user {
+      ...UserFields
+    }
+  }
+}

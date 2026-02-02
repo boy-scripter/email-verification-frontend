@@ -1,0 +1,9 @@
+mutation LoginWithEmail($input: LoginInput!) {
+  loginWithEmail(input: $input) {
+    accessToken
+    refreshToken
+    user {
+      ...UserFields
+    }
+  }
+}

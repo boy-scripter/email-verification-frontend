@@ -1,0 +1,18 @@
+# codegen.yml
+schema: https://email-verification-backend-production-a377.up.railway.app/graphql
+documents: './src/app/graphql/**/*.gql'
+
+generates:
+  ./src/app/graphql/generated.ts:
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - typescript
+      - typescript-operations
+      - '@apollo-orbit/codegen'
+    config:
+      operationResultSuffix: Data
+      dedupeOperationSuffix: true
+      inlineFragmentTypes: combine
+      avoidOptionals:
+        field: true
