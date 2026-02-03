@@ -10,7 +10,7 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-  
+
     "target": "ES2022",
     "module": "preserve",
     "baseUrl": ".",
@@ -21,9 +21,10 @@
       "@pages/*": ["./src/app/pages/*"],
       "@store/*": ["./src/app/store/*"],
       "@decorater": ["./src/app/decorater/index"],
+      "@service": ["./src/app/services/index"],
       "@util/*": ["./src/app/util/*"],
       "@directive/*": ["./src/app/directive/*"],
-      "@provider/*": ["./src/app/providers/*"],
+      "@provider/*": ["./src/app/providers/*"]
     }
   },
   "angularCompilerOptions": {
