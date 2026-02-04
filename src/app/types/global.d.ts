@@ -1,6 +1,3 @@
-import { Signal } from '@angular/core';
-import { MutationResult } from '@apollo-orbit/angular';
-
 export {};
 
 declare global {
@@ -8,5 +5,5 @@ declare global {
     data: T;
   };
 
-  type SignalMutationResult<T = unknown> = Signal<PatchedMutationResult<T>>;
+  type MutationResult<T = unknown> = PatchedMutationResult<T>;
 }

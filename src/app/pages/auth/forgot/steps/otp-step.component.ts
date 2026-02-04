@@ -5,8 +5,8 @@ import { InputComponent } from '@components/input.component';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputOtpModule } from 'primeng/inputotp';
-import { CountdownManager } from '@util/service/countdown.service';
-import { CountdownFormatPipe } from '@util/service/countdown.pipe';
+import { CountdownManager } from '@util/service/countdown/countdown.service';
+import { CountdownFormatPipe } from '@util/service/countdown/countdown.pipe';
 
 interface OtpForm {
     otp: FormControl<string>;

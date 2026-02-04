@@ -32,32 +32,33 @@ export const AuthStore = signalStore(
         persist(null, null);
       },
 
-      register(email: string, password: string, name: string) {
+      async register(email: string, password: string, name: string) {
         patchState(store, { loading: true });
-        const res = authService.register(email, password, name)();
+        const data = await authService.register(email, password, name);
         patchState(store, { loading: false });
+        return data.data?.register;
       },
 
-      loginEmail(email: string, password: string) {
+      async loginEmail(email: string, password: string) {
         patchState(store, { loading: true });
-        const res = authService.loginWithEmail(email, password)();
-        const { accessToken, refreshToken } = res.data.loginWithEmail;
+        const res = await authService.loginWithEmail(email, password);
+        const { accessToken, refreshToken } = res.data?.loginWithEmail;
         this.setTokens(accessToken, refreshToken);
         patchState(store, { loading: false });
       },
 
-      loginGoogle() {
+      async loginGoogle() {
         patchState(store, { loading: true });
-        const res = authService.loginWithGoogle()();
-        const { accessToken, refreshToken } = res?.data?.loginWithGoogle;
+        const res = await authService.loginWithGoogle();
+        const { accessToken, refreshToken } = res.data?.loginWithEmail;
         this.setTokens(accessToken, refreshToken);
         patchState(store, { loading: false });
       },
 
-      refresh() {
+      async refresh() {
         const token = store.refreshToken()!;
-        const res = authService.refreshToken(token)();
-        const { accessToken, refreshToken } = res?.data.refreshToken;
+        const res = await authService.refreshToken(token);
+        const { accessToken, refreshToken } = res.data?.loginWithEmail;
         this.setTokens(accessToken, refreshToken);
       },
 

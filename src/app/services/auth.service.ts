@@ -1,9 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Apollo } from '@apollo-orbit/angular';
 import { enviroment } from '@env';
 import { googleLogin } from '@util/factory';
-import { from, switchMap } from 'rxjs';
+import { ApolloService } from '@util/service/apollo/apollo.service';
 import {
   gqlLoginWithEmailMutation,
   gqlLoginWithGoogleMutation,
@@ -15,53 +13,42 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apollo = inject(Apollo);
+  private readonly apollo = inject(ApolloService);
 
   /** Register */
-  register(email: string, password: string, name: string) {
-    return toSignal(
-      this.apollo.mutate(
-        gqlRegisterMutation({
-          input: { email, password, name },
-        }),
-      ),
+  register(email: string, password: string, name: string): Promise {
+    return this.apollo.mutate(
+      gqlRegisterMutation({
+        input: { email, password, name },
+      }),
     );
   }
 
   /** Google Login */
-  loginWithGoogle() {
-    return toSignal(
-      from(googleLogin(enviroment.google_auth_client_id)).pipe(
-        switchMap((credential) =>
-          this.apollo.mutate(
-            gqlLoginWithGoogleMutation({
-              input: credential,
-            }),
-          ),
-        ),
-      ),
+  async loginWithGoogle() {
+    const credential = await googleLogin(enviroment.google_auth_client_id);
+    return this.apollo.mutate(
+      gqlLoginWithGoogleMutation({
+        input: credential,
+      }),
     );
   }
 
   /** Email Login */
   loginWithEmail(email: string, password: string) {
-    return toSignal(
-      this.apollo.mutate(
-        gqlLoginWithEmailMutation({
-          input: { email, password },
-        }),
-      ),
+    return this.apollo.mutate(
+      gqlLoginWithEmailMutation({
+        input: { email, password },
+      }),
     );
   }
 
   /** Refresh Token */
   refreshToken(refreshToken: string) {
-    return toSignal(
-      this.apollo.mutate(
-        gqlRefreshTokenMutation({
-          token: refreshToken,
-        }),
-      ),
+    return this.apollo.mutate(
+      gqlRefreshTokenMutation({
+        token: refreshToken,
+      }),
     );
   }
 
