@@ -20,7 +20,7 @@ export class ApolloService {
   // -------------------------
   async query<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
     options: QueryOptions<TData, TVariables>,
-  ): Promise<QueryResult<TData>> {
+  ): Promise<PatchedQueryResult<TData>> {
     return firstValueFrom(
       this.apollo.query<TData, TVariables>(options).pipe(
         map((result) => {
@@ -34,7 +34,7 @@ export class ApolloService {
       console.error('Apollo Query Error:', error);
       console.log('Query Options:', options);
       throw error;
-    });
+    }) as Promise<PatchedQueryResult<TData>>;
   }
 
   // -------------------------
@@ -42,7 +42,7 @@ export class ApolloService {
   // -------------------------
   async mutate<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
     options: MutationOptions<TData, TVariables>,
-  ): Promise<MutationResult<TData>> {
+  ): Promise<PatchedMutationResult<TData>> {
     return firstValueFrom(
       this.apollo.mutate<TData, TVariables>(options).pipe(
         map((result) => {
@@ -56,10 +56,16 @@ export class ApolloService {
       console.error('Apollo Mutation Error:', error);
       console.log('Mutation Options:', options);
       throw error;
-    });
+    }) as Promise<PatchedMutationResult<TData>>;
   }
 }
 
-type PatchData<T = unknown> = Omit<MutationResult, 'data'> & {
-  data: T;
+type PatchData<
+  ResultType extends MutationResult<TData> | QueryResult<TData>,
+  TData = unknown,
+> = Omit<ResultType, 'data'> & {
+  data: TData;
 };
+
+type PatchedMutationResult<TData = unknown> = PatchData<MutationResult<TData>, TData>;
+type PatchedQueryResult<TData = unknown> = PatchData<QueryResult<TData>, TData>;

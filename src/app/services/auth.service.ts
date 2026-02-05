@@ -16,7 +16,7 @@ export class AuthService {
   private readonly apollo = inject(ApolloService);
 
   /** Register */
-  register(email: string, password: string, name: string): Promise {
+  register(email: string, password: string, name: string) {
     return this.apollo.mutate(
       gqlRegisterMutation({
         input: { email, password, name },

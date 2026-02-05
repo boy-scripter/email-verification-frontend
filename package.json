@@ -6,6 +6,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "start": "ng serve",
     "start:codegen": "concurrently --raw \"npm codegen --watch\" \"ng serve\"",
     "codegen": "graphql-codegen --config ./codegen.yml",
     "serve:ssr:email-verfication-frontend": "node dist/email-verfication-frontend/server/server.mjs",
