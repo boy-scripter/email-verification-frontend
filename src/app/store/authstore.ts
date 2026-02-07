@@ -1,4 +1,5 @@
 import { computed, inject } from '@angular/core';
+import { withStorage } from '@larscom/ngrx-signals-storage';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { AuthService } from '@service';
 import { User } from '../graphql/generated';
@@ -9,17 +10,18 @@ interface AuthState {
   user: User | null;
   loading: boolean;
 }
-console.log(window);
+
 const initialState: AuthState = {
-  accessToken: localStorage.getItem('accessToken'),
-  refreshToken: localStorage.getItem('refreshToken'),
+  accessToken: null,
+  refreshToken: null,
   loading: false,
-  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
+  user: null,
 };
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withStorage('auth', () => localStorage),
   withComputed((store) => ({
     isAuthenticated: computed(() => store.accessToken() !== null),
   })),
@@ -27,7 +29,6 @@ export const AuthStore = signalStore(
     return {
       setTokens(access: string, refresh: string) {
         patchState(store, { accessToken: access, refreshToken: refresh });
-        persist(access, refresh);
       },
 
       setUserData(user: User) {
@@ -37,7 +38,6 @@ export const AuthStore = signalStore(
 
       clear() {
         patchState(store, { accessToken: null, refreshToken: null, user: null });
-        persist(null, null);
       },
 
       async register(email: string, password: string, name: string) {
@@ -79,11 +79,3 @@ export const AuthStore = signalStore(
     };
   }),
 );
-
-function persist(access: string | null, refresh: string | null) {
-  if (access) localStorage.setItem('accessToken', access);
-  else localStorage.removeItem('accessToken');
-
-  if (refresh) localStorage.setItem('refreshToken', refresh);
-  else localStorage.removeItem('refreshToken');
-}

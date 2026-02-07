@@ -6,6 +6,7 @@ import { PasswordModule } from 'primeng/password';
 import { InputComponent , FormComponent, FormType } from '@components/index';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
+import { AuthStore } from '@store/authstore';
 
 export interface LoginForm {
     email: FormControl<string>;
@@ -38,6 +39,7 @@ export interface LoginForm {
 export class LoginComponent {
     loginForm: FormGroup<LoginForm>;
 
+    private authStore = inject(AuthStore);
     private fb = inject(FormBuilder);
     
     constructor() {
@@ -47,8 +49,10 @@ export class LoginComponent {
         } , { updateOn: 'change' });
     }
 
-    onFormSubmit(value: FormType<typeof this.loginForm>) {
-        
-      console.log(value)
+    async onFormSubmit(value: FormType<typeof this.loginForm>) {
+       await this.authStore.loginEmail(value.email, value.password);
+       if(this.authStore.isAuthenticated()) {
+           console.log('Login successful, navigating to home page');
+       }
     }
 }

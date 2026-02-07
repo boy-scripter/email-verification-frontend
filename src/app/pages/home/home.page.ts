@@ -4,13 +4,11 @@ import {
   FeaturesComponent,
   FooterComponent,
   HeroComponent,
-PricingCardComponent,
+  PricingCardComponent,
   TestimonialsComponent,
   TickerComponent,
   WhyChooseUsComponent,
 } from './components';
-
-
 
 @Component({
   imports: [
@@ -26,4 +24,6 @@ PricingCardComponent,
   selector: 'app-home',
   templateUrl: './home.page.html',
 })
-export class HomePage { }
+export class HomePage {
+  constructor() {}
+}

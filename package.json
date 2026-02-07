@@ -28,6 +28,7 @@
     "@angular/ssr": "^20.2.2",
     "@apollo-orbit/angular": "^2.2.0",
     "@apollo/client": "^4.1.3",
+    "@larscom/ngrx-signals-storage": "^4.1.0",
     "@ng-icons/core": "^32.1.0",
     "@ng-icons/heroicons": "^32.1.0",
     "@ngrx/signals": "^20.1.0",

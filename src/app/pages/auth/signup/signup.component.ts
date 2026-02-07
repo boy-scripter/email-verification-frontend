@@ -2,9 +2,10 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputComponent, FormComponent, RawValue } from '@components/index';
 import { ButtonModule } from 'primeng/button';
+import { RouterLink } from '@angular/router';
+import { AuthStore } from '@store/authstore'; 
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
-import { RouterLink } from '@angular/router';
 
 export interface SignupForm {
     name: FormControl<string>;
@@ -33,12 +34,13 @@ export interface SignupForm {
             <p-button label="Already Have account ?" [outlined]="true" fluid  [routerLink]="['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]"  ></p-button>
         </app-form>
     </div>
-`,
-})
+`})
 export class SignupComponent {
     signupForm: FormGroup<SignupForm>;
 
+    private authStore = inject(AuthStore);
     private fb = inject(FormBuilder);
+    
     constructor() {
         this.signupForm = new FormGroup({
             name: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3)] }),
@@ -48,8 +50,8 @@ export class SignupComponent {
     }
 
     async onFormSubmit(value: RawValue<typeof this.signupForm>) {
-
-        console.log( value);
+       await this.authStore.register(value.email, value.password, value.name);
+       
     }
 }
 
