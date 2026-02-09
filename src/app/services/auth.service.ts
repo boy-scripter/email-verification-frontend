@@ -5,7 +5,6 @@ import { ApolloService } from '@util/service/apollo/apollo.service';
 import {
   gqlLoginWithEmailMutation,
   gqlLoginWithGoogleMutation,
-  gqlRefreshTokenMutation,
   gqlRegisterMutation,
 } from '../graphql/generated';
 
@@ -41,19 +40,5 @@ export class AuthService {
         input: { email, password },
       }),
     );
-  }
-
-  /** Refresh Token */
-  refreshToken(refreshToken: string) {
-    return this.apollo.mutate(
-      gqlRefreshTokenMutation({
-        token: refreshToken,
-      }),
-    );
-  }
-
-  logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
   }
 }

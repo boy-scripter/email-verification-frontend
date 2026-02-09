@@ -3,17 +3,14 @@ import { withStorage } from '@larscom/ngrx-signals-storage';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { AuthService } from '@service';
 import { User } from '../graphql/generated';
+import { TokenStore } from './token.store';
 
 interface AuthState {
-  accessToken: string | null;
-  refreshToken: string | null;
   user: User | null;
   loading: boolean;
 }
 
 const initialState: AuthState = {
-  accessToken: null,
-  refreshToken: null,
   loading: false,
   user: null,
 };
@@ -23,21 +20,20 @@ export const AuthStore = signalStore(
   withState(initialState),
   withStorage('auth', () => localStorage),
   withComputed((store) => ({
-    isAuthenticated: computed(() => store.accessToken() !== null),
+    isAuthenticated: computed(() => store.user() !== null),
   })),
-  withMethods((store, authService = inject(AuthService)) => {
-    return {
-      setTokens(access: string, refresh: string) {
-        patchState(store, { accessToken: access, refreshToken: refresh });
-      },
+  withMethods((store) => {
+    const authService = inject(AuthService)
+    const tokenStore = inject(TokenStore)
 
+    return {
       setUserData(user: User) {
         localStorage.setItem('user', JSON.stringify(user));
         patchState(store, { user });
       },
 
       clear() {
-        patchState(store, { accessToken: null, refreshToken: null, user: null });
+        patchState(store, { user: null });
       },
 
       async register(email: string, password: string, name: string) {
@@ -49,8 +45,8 @@ export const AuthStore = signalStore(
       async loginEmail(email: string, password: string) {
         patchState(store, { loading: true });
         const res = await authService.loginWithEmail(email, password);
-        const { accessToken, refreshToken, user } = res.data.loginWithEmail;
-        this.setTokens(accessToken, refreshToken);
+        const { user } = res.data.loginWithEmail;
+        tokenStore.setTokens(res.data.loginWithEmail.accessToken, res.data.loginWithEmail.refreshToken);
         this.setUserData(user as User);
         patchState(store, { loading: false });
       },
@@ -58,24 +54,17 @@ export const AuthStore = signalStore(
       async loginGoogle() {
         patchState(store, { loading: true });
         const res = await authService.loginWithGoogle();
-        const { accessToken, refreshToken, user } = res.data.loginWithGoogle;
-        this.setTokens(accessToken, refreshToken);
+        const { user } = res.data.loginWithGoogle;
+        tokenStore.setTokens(res.data.loginWithGoogle.accessToken, res.data.loginWithGoogle.refreshToken);
         this.setUserData(user as User);
         patchState(store, { loading: false });
       },
 
-      async refreshMyAccessToken() {
-        const token = store.refreshToken()!;
-        const res = await authService.refreshToken(token);
-        const { accessToken } = res.data.refreshToken;
-        patchState(store, { loading: false });
-        this.setTokens(accessToken, token);
-      },
-
       logout() {
-        authService.logout();
+        tokenStore.clear();
         this.clear();
       },
     };
   }),
 );
+

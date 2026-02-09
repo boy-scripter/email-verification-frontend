@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { InputComponent, FormComponent, RawValue } from '@components/index';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
-import { AuthStore } from '@store/authstore'; 
+import { AuthStore } from '@store/auth.store'; 
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
 

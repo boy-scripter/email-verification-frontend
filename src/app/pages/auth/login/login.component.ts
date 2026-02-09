@@ -6,7 +6,7 @@ import { PasswordModule } from 'primeng/password';
 import { InputComponent , FormComponent, FormType } from '@components/index';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthStore } from '@store/authstore';
+import { AuthStore } from '@store/auth.store';
 
 export interface LoginForm {
     email: FormControl<string>;

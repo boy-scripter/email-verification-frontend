@@ -1,57 +1,50 @@
-import { HttpHeaders } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { InMemoryCache, provideApollo, withApolloOptions } from '@apollo-orbit/angular';
 import { HttpLinkFactory, withHttpLink } from '@apollo-orbit/angular/http';
-import { ApolloLink } from '@apollo/client';
+import { ApolloLink, Observable } from '@apollo/client';
 import { ErrorLink } from '@apollo/client/link/error';
-import { Observable } from '@apollo/client/utilities';
 import { enviroment } from '@env';
-import { AuthStore } from '@store/authstore';
+import { TokenStore } from '@store/index';
 
 export const provideApolloConfig = () => {
   return provideApollo(
     withHttpLink(),
     withApolloOptions(() => {
       const httpLink = inject(HttpLinkFactory);
-      const authStore = inject(AuthStore);
+      const tokenStore = inject(TokenStore);
 
       const httpLinkhandler = httpLink.create({ uri: enviroment.gql_base_url });
       const errorLink = new ErrorLink(({ error, operation, forward }) => {
-        console.error('GraphQL Error:', error);
-
-        const isUnauthorized = error?.message === 'Unauthorized';
+        const isUnauthorized = error?.message?.includes('Unauthorized');
         if (!isUnauthorized) {
-          console.warn(`Non-unauthorized error on ${operation.operationName}:`, error);
+          console.log('Not A Unauthorized Error', error);
           return;
         }
 
-        console.warn(`Unauthorized on ${operation.operationName}`);
+        if (operation.getContext()['alreadyRetried']) return;
+        operation.setContext({ alreadyRetried: true });
+
         return new Observable((observer) => {
-          authStore
+          tokenStore
             .refreshMyAccessToken()
             .then(() => {
-              const token = authStore.accessToken();
+              const token = tokenStore.accessToken();
               operation.setContext(({ headers = {} }) => ({
                 headers: {
                   ...headers,
                   Authorization: `Bearer ${token}`,
                 },
               }));
-              forward(operation).subscribe({
-                next: (v) => observer.next(v),
-                error: (e) => observer.error(e),
-                complete: () => observer.complete(),
-              });
+              forward(operation).subscribe(observer);
             })
             .catch((err) => {
-              console.error('[REFRESH_TOKEN] Unable to refresh a token', err);
               observer.error(err);
             });
         });
       });
 
       const authMiddleware = new ApolloLink((operation, forward) => {
-        const token = authStore.accessToken();
+        const token = tokenStore.accessToken();
 
         if (!token) {
           console.warn(
@@ -60,27 +53,20 @@ export const provideApolloConfig = () => {
           return forward(operation);
         }
 
-        operation.setContext({
-          headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-        });
+        operation.setContext(({ headers = {} }) => ({
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${token}`,
+          },
+        }));
 
         return forward(operation);
       });
 
       return {
         cache: new InMemoryCache(),
-        link: ApolloLink.from([authMiddleware, errorLink, httpLinkhandler]),
+        link: ApolloLink.from([errorLink, authMiddleware, httpLinkhandler]),
       };
     }),
   );
 };
-
-/***
-
-httpclient --> authstore
-authstore --> httpcleint
-
-authstore --> apollo (for requests) 
-apollo --> httpclient (for refresh token mutation)
-
-***/
