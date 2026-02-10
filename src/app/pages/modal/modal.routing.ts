@@ -7,7 +7,6 @@ export const ModalRoutes: Routes = [
   },
   {
     path: 'dashboard',
-    loadChildren: () =>
-      import('../dashboard/dashboard.routing').then((r) => r.DashboardModalRouting),
+    loadChildren: () => import('../dashboard/dashboard.routing').then((r) => r.DashboardModalRouting),
   },
 ];

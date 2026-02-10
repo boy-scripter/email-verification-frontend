@@ -23,8 +23,8 @@ export const AuthStore = signalStore(
     isAuthenticated: computed(() => store.user() !== null),
   })),
   withMethods((store) => {
-    const authService = inject(AuthService)
-    const tokenStore = inject(TokenStore)
+    const authService = inject(AuthService);
+    const tokenStore = inject(TokenStore);
 
     return {
       setUserData(user: User) {
@@ -36,7 +36,7 @@ export const AuthStore = signalStore(
         patchState(store, { user: null });
       },
 
-      async register(email: string, password: string, name: string) {
+      async register(email: string, password: string, name: string ) {
         patchState(store, { loading: true });
         await authService.register(email, password, name);
         patchState(store, { loading: false });
@@ -46,7 +46,10 @@ export const AuthStore = signalStore(
         patchState(store, { loading: true });
         const res = await authService.loginWithEmail(email, password);
         const { user } = res.data.loginWithEmail;
-        tokenStore.setTokens(res.data.loginWithEmail.accessToken, res.data.loginWithEmail.refreshToken);
+        tokenStore.setTokens(
+          res.data.loginWithEmail.accessToken,
+          res.data.loginWithEmail.refreshToken,
+        );
         this.setUserData(user as User);
         patchState(store, { loading: false });
       },
@@ -55,10 +58,15 @@ export const AuthStore = signalStore(
         patchState(store, { loading: true });
         const res = await authService.loginWithGoogle();
         const { user } = res.data.loginWithGoogle;
-        tokenStore.setTokens(res.data.loginWithGoogle.accessToken, res.data.loginWithGoogle.refreshToken);
+        tokenStore.setTokens(
+          res.data.loginWithGoogle.accessToken,
+          res.data.loginWithGoogle.refreshToken,
+        );
         this.setUserData(user as User);
         patchState(store, { loading: false });
       },
+
+   
 
       logout() {
         tokenStore.clear();
@@ -67,4 +75,3 @@ export const AuthStore = signalStore(
     };
   }),
 );
-

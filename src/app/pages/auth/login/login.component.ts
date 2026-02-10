@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PasswordModule } from 'primeng/password';
 import { InputComponent , FormComponent, FormType } from '@components/index';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -24,14 +24,14 @@ export interface LoginForm {
             <app-input icon="pi-lock">  <p-password [showClear]="true" [toggleMask]="true" [feedback]="false"  placeholder="Enter new password" type="password" formControlName="password" />  </app-input>
             <p-button [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','forgot' ] } }]" class="ml-auto" variant="text" styleClass="bg-transparent text-sm underline " label="forgot password ?"  ></p-button>
             <p-button #submitBtn type="submit" label="Login" icon="pi pi-sign-in" fluid ></p-button>
-            <p-button type="button" label="Login With Google" fluid >
+            <p-button (click)="onGoogleSignup()" type="button" label="Login With Google" fluid >
                 <ng-template pTemplate="icon">   
                     <div class="p-1 rounded-3xl bg-white">
                         <img src="/assets/icons/google.svg" alt="google-login" />        
                     </div>
                </ng-template>
             </p-button><br>
-            <p-button label="Don't have account ?" outlined fluid  [routerLink]="['' , { outlets: { modal: ['modal' , 'auth','signup' ] } }]" ></p-button>
+            <p-button label="Don't have account ?" outlined fluid  [routerLink]="['' , { outlets: { modal: ['modal' ,'auth','signup' ] } }]" ></p-button>
         </app-form>
     </div>
 `,
@@ -41,6 +41,7 @@ export class LoginComponent {
 
     private authStore = inject(AuthStore);
     private fb = inject(FormBuilder);
+    private router = inject(Router)
     
     constructor() {
         this.loginForm = new FormGroup({
@@ -50,9 +51,20 @@ export class LoginComponent {
     }
 
     async onFormSubmit(value: FormType<typeof this.loginForm>) {
-       await this.authStore.loginEmail(value.email, value.password);
+       const { email, password, nextTask } = value
+       await this.authStore.loginEmail(email, password).finally(nextTask);
        if(this.authStore.isAuthenticated()) {
            console.log('Login successful, navigating to home page');
+           this.router.navigate(['/dashboard']);
        }
+    }
+
+    async onGoogleSignup() {
+        console.log('Google signup clicked');
+        await this.authStore.loginGoogle();
+        if(this.authStore.isAuthenticated()) {
+            console.log('Google signup successful, navigating to home page');
+            this.router.navigate(['/dashboard']);
+        }
     }
 }

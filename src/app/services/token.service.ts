@@ -14,7 +14,7 @@ export class TokenService {
 
 
   private readonly apolloClient = new ApolloClient({
-    link: ApolloLink.from([ this.http]),
+    link: ApolloLink.from([this.http]),
     cache: new InMemoryCache(),
   });
 

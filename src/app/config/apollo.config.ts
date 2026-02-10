@@ -5,6 +5,7 @@ import { ApolloLink, Observable } from '@apollo/client';
 import { ErrorLink } from '@apollo/client/link/error';
 import { enviroment } from '@env';
 import { TokenStore } from '@store/index';
+import { MessageService } from 'primeng/api';
 
 export const provideApolloConfig = () => {
   return provideApollo(
@@ -12,37 +13,17 @@ export const provideApolloConfig = () => {
     withApolloOptions(() => {
       const httpLink = inject(HttpLinkFactory);
       const tokenStore = inject(TokenStore);
+      const messageService = inject(MessageService);
 
       const httpLinkhandler = httpLink.create({ uri: enviroment.gql_base_url });
-      const errorLink = new ErrorLink(({ error, operation, forward }) => {
-        const isUnauthorized = error?.message?.includes('Unauthorized');
-        if (!isUnauthorized) {
-          console.log('Not A Unauthorized Error', error);
-          return;
-        }
-
-        if (operation.getContext()['alreadyRetried']) return;
-        operation.setContext({ alreadyRetried: true });
-
-        return new Observable((observer) => {
-          tokenStore
-            .refreshMyAccessToken()
-            .then(() => {
-              const token = tokenStore.accessToken();
-              operation.setContext(({ headers = {} }) => ({
-                headers: {
-                  ...headers,
-                  Authorization: `Bearer ${token}`,
-                },
-              }));
-              forward(operation).subscribe(observer);
-            })
-            .catch((err) => {
-              observer.error(err);
-            });
+      const defaultOptionsContextLink = new ApolloLink((operation, forward) => {
+        operation.setContext({
+          showError: true, // default
+          ...operation.getContext(), // allow override
         });
-      });
 
+        return forward(operation);
+      });
       const authMiddleware = new ApolloLink((operation, forward) => {
         const token = tokenStore.accessToken();
 
@@ -63,9 +44,51 @@ export const provideApolloConfig = () => {
         return forward(operation);
       });
 
+      const errorLink = new ErrorLink(({ error, operation, forward }) => {
+        if (operation.getContext()['showError']) {
+          messageService.add({
+            severity: 'error',
+            summary: 'API Error',
+            detail: error.message.toString(),
+          });
+        }
+
+        const isUnauthorized = error?.message?.includes('Unauthorized');
+
+        if (!isUnauthorized) {
+          console.log(
+            'this request does not have have unauthoized error , so refrehs token no needed',
+          );
+          return;
+        }
+
+        return new Observable((observer) => {
+          tokenStore
+            .refreshMyAccessToken()
+            .then(() => {
+              const token = tokenStore.accessToken();
+              operation.setContext(({ headers = {} }) => ({
+                headers: {
+                  ...headers,
+                  Authorization: `Bearer ${token}`,
+                },
+              }));
+              forward(operation).subscribe(observer);
+            })
+            .catch((err) => {
+              observer.error(err);
+            });
+        });
+      });
+
       return {
         cache: new InMemoryCache(),
-        link: ApolloLink.from([errorLink, authMiddleware, httpLinkhandler]),
+        link: ApolloLink.from([
+          defaultOptionsContextLink,
+          authMiddleware,
+          errorLink,
+          httpLinkhandler, //must be last beacuse it not returing a request like forWard(operation)
+        ]),
       };
     }),
   );

@@ -1,0 +1,8 @@
+{
+  "/graphql": {
+    "target": "https://email-verification-backend-production-a377.up.railway.app",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

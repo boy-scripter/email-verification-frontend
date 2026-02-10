@@ -3,11 +3,7 @@ import { DashboardLayout } from './dashboard/dashboard.layout';
 import { ModalLayoutComponent } from './modal/modal.layout';
 
 export const RootRouting: Routes = [
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'home',
-  },
+
   {
     path: 'modal',
     outlet: 'modal',
@@ -17,11 +13,16 @@ export const RootRouting: Routes = [
   {
     path: 'dashboard',
     component: DashboardLayout,
-    loadChildren: () => import('./dashboard/dashboard.routing').then((r) => r.DashboardRouting),
+    loadChildren: () => import('./dashboard/dashboard.routing').then((r) => r.DashboardRoutes),
   },
   {
     path: 'home',
     title: 'Home',
     loadComponent: () => import('./home/home.page').then((c) => c.HomePage),
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'home',
   },
 ];

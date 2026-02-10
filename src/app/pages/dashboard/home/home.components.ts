@@ -13,10 +13,7 @@ import { VerificationChartComponent } from './components/verification-chart/veri
         <h1 class="text-3xl font-bold tracking-widest">Dashboard</h1>
       </div>
       <div class="flex flex-col gap-6">
-        <!-- Stats Card Component -->
         <app-stats-card></app-stats-card>
-
-        <!-- Verification Chart Component -->
         <app-verification-chart></app-verification-chart>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputOtpModule } from 'primeng/inputotp';
 import { CountdownManager } from '@util/service/countdown/countdown.service';
 import { CountdownFormatPipe } from '@util/service/countdown/countdown.pipe';
+import { ForgotPasswordService } from 'src/app/services/forgot-password.service';
 
 interface OtpForm {
     otp: FormControl<string>;
@@ -24,7 +25,7 @@ export type OtpFormGroup = FormGroup<OtpForm>
                 <p-inputOtp formControlName="otp" [length]="6"  class="text-center"></p-inputOtp>
             </app-input>
             <p-button fluid type="button" label=" " [disabled]="countDownService.isRunning()" (onClick)="resendOtp()"  icon="pi pi-refresh">
-               <span> Resend Code ? {{countDownService.timeLeft() | countdownFormat:true}} </span>   
+               <span> Resend Code ? {{countDownService.timeLeft() | countdownFormat:true }} </span>   
             </p-button>
             <p-button fluid type="submit" severity="success" label="Verify Code" #submitBtn icon="pi pi-check" ></p-button>
             <p-button fluid type="button" label="Entered a Wrong Email ?" (onClick)="backRequested.emit()" variant="text" ></p-button>
@@ -32,6 +33,10 @@ export type OtpFormGroup = FormGroup<OtpForm>
     `,
 })
 export class OtpStepComponent {
+    
+    private forgotPasswordService = inject(ForgotPasswordService);
+    protected countDownService = inject(CountdownManager)
+
     // Inputs
     email = input.required<string>();
 
@@ -40,8 +45,6 @@ export class OtpStepComponent {
     backRequested = output<void>();
 
     otpForm: OtpFormGroup;
-
-    countDownService = inject(CountdownManager)
 
     constructor() {
         this.otpForm = new FormGroup<OtpForm>({
@@ -54,8 +57,13 @@ export class OtpStepComponent {
     }
 
     async onOtpSubmit(data: FormType<OtpFormGroup>) {
-        console.log('OTP submitted:', data);
-        this.workDone.emit(data);
+        const { otp } = data
+        const response = await this.forgotPasswordService.verifyOtp({
+            email: this.email(),
+            otpToken: otp,
+        });
+        const token = response.data?.verifyOtp.reset_token;
+        this.workDone.emit({ reset_token: token });
     }
 
     onBack() {
@@ -65,6 +73,6 @@ export class OtpStepComponent {
     async resendOtp() {
         console.log(this.otpForm)
         console.log('Resending OTP to:', this.email());
-
+        this.forgotPasswordService.sendOtp(this.email());
     }
 }

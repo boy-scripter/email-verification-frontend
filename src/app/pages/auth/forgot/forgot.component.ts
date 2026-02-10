@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { StepperModule } from 'primeng/stepper';
 import { RawValue } from '@components/form.component';
 import { EmailStepComponent, EmailFormGroup, OtpFormGroup, OtpStepComponent, PasswordStepComponent, PasswordFormGroup } from './steps';
+import { ForgotPasswordService } from 'src/app/services/forgot-password.service';
 
 export type StepsType = 1 | 2 | 3;
 @Component({
@@ -34,13 +35,17 @@ export type StepsType = 1 | 2 | 3;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPasswordComponent {
+    
+    private readonly forgotPasswordService = inject(ForgotPasswordService);
+    
     currentStep = signal<StepsType>(1);
     submittedEmail = signal('');
 
+
     onEmailSubmitted(data: RawValue<EmailFormGroup>) {
-        this.submittedEmail.set(data.email);
+        const { email  } = data
+        this.submittedEmail.set(email);
         this.currentStep.set(2);
-        console.log(data.email)
     }
 
     onOtpVerified(otp: RawValue<OtpFormGroup>) {
