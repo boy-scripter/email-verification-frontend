@@ -56,7 +56,7 @@ export class SignupComponent {
        await this.authStore.register(email, password, name).finally(nextTask);
        if(this.authStore.isAuthenticated()) {
            console.log('Signup successful, navigating to home page');
-        //    this.router.navigate(['/dashboard']);
+          this.router.navigate(['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]);
        }
     }
     
@@ -65,7 +65,7 @@ export class SignupComponent {
         await this.authStore.loginGoogle();
         if(this.authStore.isAuthenticated()) {
             console.log('Google signup successful, navigating to home page');
-            // this.router.navigate(['/dashboard']);
+            this.router.navigate(['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]);
         }
     }
 }

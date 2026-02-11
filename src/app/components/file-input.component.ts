@@ -103,7 +103,7 @@ export class FileInputComponent implements AfterViewInit {
         const t = Object.assign(file, {
             startUpload: () => stratergy.upload(file, {
                 onProgress: (progress) => {
-                    console.log('progress', this.progressState());
+                    
                     this.progressState.set({
                         count: progress,
                         status: 'uploading'
@@ -126,7 +126,6 @@ export class FileInputComponent implements AfterViewInit {
 
 
 }
-
 
 
 type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"

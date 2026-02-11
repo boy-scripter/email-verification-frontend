@@ -21,10 +21,18 @@ export const AuthStore = signalStore(
   withStorage('auth', () => localStorage),
   withComputed((store) => ({
     isAuthenticated: computed(() => store.user() !== null),
+    authenticateUser: computed(() => {
+      const user = store.user();
+      if (!user) {
+        throw new Error('User should exist here');
+      }
+      return user;
+    }),
+    profile_image: computed(() => store.user()?.image?.key),
   })),
   withMethods((store) => {
-    const authService = inject(AuthService);
-    const tokenStore = inject(TokenStore);
+    const authService = inject(AuthService); 
+    const tokenStore = inject(TokenStore) ;
 
     return {
       setUserData(user: User) {
@@ -36,7 +44,7 @@ export const AuthStore = signalStore(
         patchState(store, { user: null });
       },
 
-      async register(email: string, password: string, name: string ) {
+      async register(email: string, password: string, name: string) {
         patchState(store, { loading: true });
         await authService.register(email, password, name);
         patchState(store, { loading: false });
@@ -65,8 +73,6 @@ export const AuthStore = signalStore(
         this.setUserData(user as User);
         patchState(store, { loading: false });
       },
-
-   
 
       logout() {
         tokenStore.clear();

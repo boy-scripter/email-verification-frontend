@@ -45,7 +45,7 @@ export class EmailStepComponent {
 
     async onEmailSubmit(data: FormType<EmailFormGroup>) {
         const { email , nextTask } = data
-         await this.forgotPasswordService.sendOtp(email).finally(nextTask)
+        await this.forgotPasswordService.sendOtp(email).finally(nextTask)
         this.workDone.emit({ email })
     }
 }

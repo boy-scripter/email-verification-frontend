@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { provideApolloConfig, provideRoutingConfig } from './config';
 import { ModernRadixPreset } from './theme/present';
+import { provideSocialAuth } from './config/social.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideApolloConfig(),
     provideRoutingConfig(),
+    provideSocialAuth(),
     provideAnimations(),
     providePrimeNG({
       theme: {

@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormComponent, FormType, RawValue } from '@components/form.component';
 import { InputComponent } from '@components/input.component';
@@ -6,6 +6,7 @@ import { PasswordMatch } from '@util/validator';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { ForgotPasswordService } from 'src/app/services/forgot-password.service';
 
 interface PasswordForm {
     password: FormControl<string>;
@@ -31,9 +32,15 @@ export type PasswordFormGroup = FormGroup<PasswordForm>;
     `,
 })
 export class PasswordStepComponent {
+
+    private forgotPasswordService = inject(ForgotPasswordService);
+
     // Outputs
     workDone = output<RawValue<PasswordFormGroup>>();
     backRequested = output<void>();
+
+    // Inputs
+    token = input.required<string>();
 
     passwordForm: PasswordFormGroup;
 
@@ -51,8 +58,11 @@ export class PasswordStepComponent {
     }
 
     async onPasswordSubmit(data: FormType<PasswordFormGroup>) {
-        console.log('Password reset completed:', data);
-        // Here you would typically call your API to reset the password
+        const token = this.token()
+        this.forgotPasswordService.setNewPassword({
+            password : data.password,
+            token,
+        });
         this.workDone.emit(data);
     }
 

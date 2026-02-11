@@ -1,13 +1,17 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormComponent, FormType, RawValue } from '@components/form.component';
+import { FormComponent, FormType } from '@components/form.component';
 import { InputComponent } from '@components/input.component';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputOtpModule } from 'primeng/inputotp';
-import { CountdownManager } from '@util/service/countdown/countdown.service';
 import { CountdownFormatPipe } from '@util/service/countdown/countdown.pipe';
+import { CountdownManager } from '@util/service/countdown/countdown.service';
+import { ButtonModule } from 'primeng/button';
+import { InputOtpModule } from 'primeng/inputotp';
+import { InputTextModule } from 'primeng/inputtext';
 import { ForgotPasswordService } from 'src/app/services/forgot-password.service';
+
+interface workDoneOutput {
+    reset_token: string;
+}
 
 interface OtpForm {
     otp: FormControl<string>;
@@ -41,7 +45,7 @@ export class OtpStepComponent {
     email = input.required<string>();
 
     // Outputs
-    workDone = output<RawValue<OtpFormGroup>>();
+    workDone = output<workDoneOutput>();
     backRequested = output<void>();
 
     otpForm: OtpFormGroup;
@@ -57,11 +61,11 @@ export class OtpStepComponent {
     }
 
     async onOtpSubmit(data: FormType<OtpFormGroup>) {
-        const { otp } = data
+        const { otp , nextTask } = data
         const response = await this.forgotPasswordService.verifyOtp({
             email: this.email(),
             otpToken: otp,
-        });
+        }).finally(nextTask);
         const token = response.data?.verifyOtp.reset_token;
         this.workDone.emit({ reset_token: token });
     }
@@ -71,8 +75,7 @@ export class OtpStepComponent {
     }
 
     async resendOtp() {
-        console.log(this.otpForm)
-        console.log('Resending OTP to:', this.email());
         this.forgotPasswordService.sendOtp(this.email());
+        this.countDownService.start(100);
     }
 }

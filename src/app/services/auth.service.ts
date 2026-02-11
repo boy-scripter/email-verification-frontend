@@ -1,6 +1,5 @@
+import { GoogleLoginProvider, SocialAuthService } from '@abacritt/angularx-social-login';
 import { Injectable, inject } from '@angular/core';
-import { enviroment } from '@env';
-import { googleLogin } from '@util/factory';
 import { ApolloService } from '@util/service/apollo/apollo.service';
 import {
   gqlLoginWithEmailMutation,
@@ -13,6 +12,7 @@ import {
 })
 export class AuthService {
   private readonly apollo = inject(ApolloService);
+  private readonly socialAuth = inject(SocialAuthService);
 
   /** Register */
   register(email: string, password: string, name: string) {
@@ -25,10 +25,12 @@ export class AuthService {
 
   /** Google Login */
   async loginWithGoogle() {
-    const credential = await googleLogin(enviroment.google_auth_client_id);
+    // Trigger Google sign-in popup
+    const credential : any = await this.socialAuth.signIn(GoogleLoginProvider.PROVIDER_ID);
+    console.log(credential);
     return this.apollo.mutate(
       gqlLoginWithGoogleMutation({
-        input: credential,
+        input: credential
       }),
     );
   }
@@ -40,5 +42,10 @@ export class AuthService {
         input: { email, password },
       }),
     );
+  }
+
+  /** Optional: Logout */
+  logout() {
+    return this.socialAuth.signOut();
   }
 }

@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LogoComponent } from '@components/logo.component';
 import { NgxHaloComponent } from '@omnedia/ngx-halo';
+import { AuthStore } from '@store/index';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
 import { MenuModule } from 'primeng/menu';
@@ -57,7 +58,6 @@ import { MenuModule } from 'primeng/menu';
               <a
                 class="clickable-link flex cursor-pointer items-center rounded-xl px-4 py-3"
                 [routerLink]="'/dashboard/' + item.routerLink"
-               
                 routerLinkActive="bg-surface-400"
               >
                 <i [class]="item.icon"></i>
@@ -78,12 +78,13 @@ import { MenuModule } from 'primeng/menu';
               >
                 <p-avatar
                   class="mr-3"
-                  image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+                  [label]="authStore.authenticateUser().name.at(0)"
+                  [image]="authStore.profile_image()"
                   shape="circle"
                   size="large"
                 ></p-avatar>
                 <div>
-                  <span class="block font-bold">Amy Elsner</span>
+                  <span class="block font-bold">{{authStore.authenticateUser().name}}</span>
                 </div>
               </div>
             </ng-template>
@@ -110,7 +111,13 @@ export class DashboardLayout {
     { label: 'Logout', icon: 'pi pi-sign-out', routerLink: 'logout' },
   ];
 
-  router = inject(Router);
+ protected router = inject(Router);
+ protected authStore = inject(AuthStore);
+
+ constructor(){
+  console.log(this.authStore.user())
+ }
+
   isMenuOpen = signal(false);
   toggleMenu() {
     this.isMenuOpen.set(!this.isMenuOpen());
