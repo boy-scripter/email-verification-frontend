@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputComponent, FormComponent, FormType } from '@components/index';
+import { InputComponent, FormComponent, FormType, GoogleBtnComponent, GoogleOAuthTokenResponse } from '@components/index';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterLink } from '@angular/router';
 import { AuthStore } from '@store/auth.store'; 
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
-
+ 
 export interface SignupForm {
     name: FormControl<string>;
     email: FormControl<string>;
@@ -14,7 +14,7 @@ export interface SignupForm {
 }
 
 @Component({
-    imports: [ReactiveFormsModule, InputComponent, InputGroupModule, ButtonModule, InputTextModule, FormComponent, RouterLink],
+    imports: [ReactiveFormsModule, InputComponent, InputGroupModule, ButtonModule, InputTextModule, FormComponent, RouterLink, GoogleBtnComponent],
     selector: 'app-login',
     standalone: true,
     template: `
@@ -25,14 +25,10 @@ export interface SignupForm {
             <app-input icon="pi-lock"><input pInputText name="password"  placeholder="password" type="password" formControlName="password" />   </app-input>
             <!-- <app-input icon="pi-phone"><input pInputText name="phone"  placeholder="phone" type="text" formControlName="phone" />   </app-input> -->
              <p-button #submitBtn type="submit" label="Signup" icon="pi pi-user-plus" fluid ></p-button>
-             <p-button (click)="onGoogleSignup()" type="button" label="Signup With Google" icon="pi pi-google" fluid >
-               <ng-template pTemplate="icon">   
-                    <div class="p-1 rounded-3xl bg-white">
-                        <img src="/assets/icons/google.svg" alt="google-login"/>        
-                    </div>
-               </ng-template>
-            </p-button> <br>
+             <app-google-btn (credential)="onGoogleSignup($event)" label="Signup With Google"  > </app-google-btn>
+             <br>
             <p-button label="Already Have account ?" [outlined]="true" fluid  [routerLink]="['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]"  ></p-button>
+            
         </app-form>
     </div>
 `})
@@ -60,9 +56,9 @@ export class SignupComponent {
        }
     }
     
-    async onGoogleSignup() {
-        console.log('Google signup clicked');
-        await this.authStore.loginGoogle();
+    async onGoogleSignup(creds : GoogleOAuthTokenResponse) {
+        console.log('Google signup clicked', creds);
+        await this.authStore.loginGoogle(creds);
         if(this.authStore.isAuthenticated()) {
             console.log('Google signup successful, navigating to home page');
             this.router.navigate(['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]);

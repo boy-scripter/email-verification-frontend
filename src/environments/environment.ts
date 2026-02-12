@@ -6,3 +6,4 @@ export const enviroment = {
   s3_base_url: 'http://localhost:3000',
   production: false,
 };
+

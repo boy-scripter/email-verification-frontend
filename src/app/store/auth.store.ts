@@ -4,6 +4,7 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { AuthService } from '@service';
 import { User } from '../graphql/generated';
 import { TokenStore } from './token.store';
+import { GoogleOAuthTokenResponse } from '@components/googlebtn.component';
 
 interface AuthState {
   user: User | null;
@@ -62,9 +63,9 @@ export const AuthStore = signalStore(
         patchState(store, { loading: false });
       },
 
-      async loginGoogle() {
+      async loginGoogle(credential: GoogleOAuthTokenResponse) {
         patchState(store, { loading: true });
-        const res = await authService.loginWithGoogle();
+        const res = await authService.loginWithGoogle(credential);
         const { user } = res.data.loginWithGoogle;
         tokenStore.setTokens(
           res.data.loginWithGoogle.accessToken,

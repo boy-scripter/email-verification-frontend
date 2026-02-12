@@ -1,4 +1,4 @@
-import { GoogleLoginProvider, SocialAuthService } from '@abacritt/angularx-social-login';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { Injectable, inject } from '@angular/core';
 import { ApolloService } from '@util/service/apollo/apollo.service';
 import {
@@ -6,6 +6,7 @@ import {
   gqlLoginWithGoogleMutation,
   gqlRegisterMutation,
 } from '../graphql/generated';
+import { GoogleOAuthTokenResponse } from '@components/googlebtn.component';
 
 @Injectable({
   providedIn: 'root',
@@ -24,10 +25,7 @@ export class AuthService {
   }
 
   /** Google Login */
-  async loginWithGoogle() {
-    // Trigger Google sign-in popup
-    const credential : any = await this.socialAuth.signIn(GoogleLoginProvider.PROVIDER_ID);
-    console.log(credential);
+  async loginWithGoogle(credential: GoogleOAuthTokenResponse ) {
     return this.apollo.mutate(
       gqlLoginWithGoogleMutation({
         input: credential

@@ -1,0 +1,48 @@
+diff --git a/node_modules/@abacritt/angularx-social-login/LICENSE b/node_modules/@abacritt/angularx-social-login/LICENSE
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@abacritt/angularx-social-login/README.md b/node_modules/@abacritt/angularx-social-login/README.md
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@abacritt/angularx-social-login/fesm2022/abacritt-angularx-social-login.mjs b/node_modules/@abacritt/angularx-social-login/fesm2022/abacritt-angularx-social-login.mjs
+old mode 100644
+new mode 100755
+index f56e64f..6a1d7d4
+--- a/node_modules/@abacritt/angularx-social-login/fesm2022/abacritt-angularx-social-login.mjs
++++ b/node_modules/@abacritt/angularx-social-login/fesm2022/abacritt-angularx-social-login.mjs
+@@ -990,6 +990,7 @@ class MicrosoftLoginProvider extends BaseLoginProvider {
+ }
+ 
+ class GoogleSigninButtonDirective {
++    #display = 'none'
+     constructor() {
+         this.type = 'icon';
+         this.size = 'medium';
+@@ -1012,6 +1013,7 @@ class GoogleSigninButtonDirective {
+                         type: this.type,
+                         size: this.size,
+                         text: this.text,
++                        display : this.#display,
+                         width: this.width,
+                         shape: this.shape,
+                         theme: this.theme,
+@@ -1029,10 +1031,11 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "20.3.0", ngImpor
+             type: Directive,
+             args: [{
+                     // eslint-disable-next-line @angular-eslint/directive-selector
+-                    selector: 'asl-google-signin-button',
++                    selector: '[asl-google-signin-button]',
+                     standalone: true
+                 }]
+-        }], ctorParameters: () => [], propDecorators: { type: [{
++        }], ctorParameters: () => [], propDecorators: { type:
++             [{
+                 type: Input
+             }], size: [{
+                 type: Input
+diff --git a/node_modules/@abacritt/angularx-social-login/fesm2022/abacritt-angularx-social-login.mjs.map b/node_modules/@abacritt/angularx-social-login/fesm2022/abacritt-angularx-social-login.mjs.map
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@abacritt/angularx-social-login/index.d.ts b/node_modules/@abacritt/angularx-social-login/index.d.ts
+old mode 100644
+new mode 100755
