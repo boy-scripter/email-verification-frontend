@@ -61,7 +61,7 @@ export class SignupComponent {
         await this.authStore.loginGoogle(creds);
         if(this.authStore.isAuthenticated()) {
             console.log('Google signup successful, navigating to home page');
-            this.router.navigate(['' , { outlets: { modal: ['modal','auth' , 'login' ] } }]);
+           this.router.navigate(['/dashboard']);
         }
     }
 }

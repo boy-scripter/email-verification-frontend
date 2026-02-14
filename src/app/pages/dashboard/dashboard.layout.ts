@@ -78,7 +78,7 @@ import { MenuModule } from 'primeng/menu';
               >
                 <p-avatar
                   class="mr-3"
-                  [label]="authStore.authenticateUser().name.at(0)"
+                  [label]="authStore.profile_image() ? undefined : authStore.authenticateUser().name.at(0)"
                   [image]="authStore.profile_image()"
                   shape="circle"
                   size="large"
@@ -114,9 +114,6 @@ export class DashboardLayout {
  protected router = inject(Router);
  protected authStore = inject(AuthStore);
 
- constructor(){
-  console.log(this.authStore.user())
- }
 
   isMenuOpen = signal(false);
   toggleMenu() {

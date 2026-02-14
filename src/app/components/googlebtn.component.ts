@@ -43,11 +43,19 @@ export class GoogleBtnComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadScript();
-    this.codeClient = window.google.accounts.oauth2['initTokenClient']({
+    this.codeClient = window.google.accounts.oauth2.initCodeClient({
       client_id: enviroment.google_auth_client_id,
       scope: 'openid profile email',
       callback: (res: GoogleOAuthTokenResponse) => {
-        this.credential.emit(res);
+        console.log(res)
+        this.credential.emit(
+          new GoogleOAuthTokenResponse({
+            code: res.code,
+            scope : res.scope,
+            authuser : res.authuser,
+            prompt : res.prompt
+        })
+      );
       },
     });
 
@@ -55,8 +63,7 @@ export class GoogleBtnComponent implements OnInit {
   }
 
   login() {
-    this.codeClient.requestAccessToken({ prompt: 'consent' });
-
+    this.codeClient.requestCode({ prompt: 'consent' });
   }
 
   private loadScript(): Promise<void> {
@@ -72,11 +79,22 @@ export class GoogleBtnComponent implements OnInit {
   }
 }
 
-export interface GoogleOAuthTokenResponse {
-  access_token: string;
-  expires_in: number;
+export class GoogleOAuthTokenResponse {
+  code : string;
   scope: string;
-  token_type: 'Bearer';
-  expiry_date : string
+  authuser: string;
   prompt?: string;
+
+  constructor(data: {
+    code: string;
+    scope: string;
+    authuser: string;
+    prompt?: string;
+  }) {
+    this.code = data.code;
+    this.scope = data.scope;
+    this.authuser = data.authuser;
+    this.prompt = data.prompt;
+  }
+
 }

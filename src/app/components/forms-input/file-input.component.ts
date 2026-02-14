@@ -1,7 +1,6 @@
-import {  Directive, forwardRef, inject } from '@angular/core';
+import { Directive, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { getPreviewUrl } from "@util/index";
-import { ChangeDetectorRef } from '@angular/core';
 
 export interface PreviewableFile extends File {
     preview: string

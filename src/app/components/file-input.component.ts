@@ -12,6 +12,7 @@ import { UploadStrategyFactory, UploadStrategyType } from "@util/uploader";
 
 
 
+type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
 @Component({
     selector: 'app-file-input',
     imports: [ErrorControlComponent, NgTemplateOutlet, AvatarModule],
@@ -87,7 +88,6 @@ export class FileInputComponent implements AfterViewInit {
         ).subscribe();
 
         const wrapper = this.elementRef.nativeElement;
-
         const fileInput = wrapper.querySelector('input[type="file"]');
         fileInput.style.position = 'absolute';
         fileInput.style.width = '100%';
@@ -102,35 +102,26 @@ export class FileInputComponent implements AfterViewInit {
         const stratergy = this.uploadStrategyFactory.getStrategy(this.uploadStrategy());
         const t = Object.assign(file, {
             startUpload: () => stratergy.upload(file, {
-                onProgress: (progress) => {
-                    
+              onProgress: (progress) => {
                     this.progressState.set({
                         count: progress,
                         status: 'uploading'
                     })
                 },
-                onComplete: () => {
+              onComplete: () => {
                     this.progressState.set({
                         count: 100,
                         status: 'completed'
                     })
                 },
             }),
-
             fileType: this.fileType()
-
         })
         return t;
     }
-
-
-
 }
 
-
-type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
 export interface UploadableFile extends File {
-    fileType: FILE_SUPPORTED_BACKEND | undefined;
+    mediaCode: FILE_SUPPORTED_BACKEND | undefined;
     startUpload: () => Promise<string>;
-
 }

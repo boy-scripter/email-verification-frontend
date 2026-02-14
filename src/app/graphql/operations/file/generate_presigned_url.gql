@@ -1,0 +1,7 @@
+mutation GenerateTempUpload($input: GenerateTempUploadInput!) {
+  generateTempUpload(input: $input) {
+    _id
+    presignedData
+  }
+}
+

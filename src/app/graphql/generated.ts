@@ -109,12 +109,10 @@ export type GenerateTempUploadInput = {
 };
 
 export type GoogleLoginInput = {
-  access_token: Scalars['String']['input'];
-  expiry_date: Scalars['String']['input'];
-  id_token: Scalars['String']['input'];
-  refresh_token: Scalars['String']['input'];
+  authuser?: InputMaybe<Scalars['String']['input']>;
+  code: Scalars['String']['input'];
+  prompt?: InputMaybe<Scalars['String']['input']>;
   scope: Scalars['String']['input'];
-  token_type: Scalars['String']['input'];
 };
 
 export type InvoiceModel = {
@@ -458,7 +456,7 @@ export type User = {
   /** Name of the user */
   name: Scalars['String']['output'];
   /** Phone Number of the user */
-  phone: Scalars['String']['output'];
+  phone: Maybe<Scalars['String']['output']>;
   /** Timestamp when the user was last updated */
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -490,7 +488,7 @@ export type VerifyOtpResponse = {
   reset_token: Scalars['String']['output'];
 };
 
-export type UserFieldsFragment = { __typename?: 'User', _id: string, updatedAt: any, phone: string, name: string, email: string, createdAt: any, image: { __typename?: 'MediaObject', key: string } | null };
+export type UserFieldsFragment = { __typename?: 'User', _id: string, updatedAt: any, phone: string | null, name: string, email: string, createdAt: any, image: { __typename?: 'MediaObject', key: string } | null };
 
 export type LoginWithEmailMutationVariables = Exact<{
   input: LoginInput;
@@ -528,6 +526,13 @@ export type RegisterMutationData = { __typename?: 'Mutation', register: (
     { __typename?: 'User' }
     & UserFieldsFragment
   ) };
+
+export type GenerateTempUploadMutationVariables = Exact<{
+  input: GenerateTempUploadInput;
+}>;
+
+
+export type GenerateTempUploadMutationData = { __typename?: 'Mutation', generateTempUpload: { __typename?: 'TempUploadResponse', _id: string, presignedData: any } };
 
 export type SendOtpMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -647,6 +652,22 @@ export const REGISTER_MUTATION = gql`
 export function gqlRegisterMutation(variables: RegisterMutationVariables): { mutation: typeof REGISTER_MUTATION, variables: typeof variables } {
   return {
     mutation: REGISTER_MUTATION,
+    variables
+  };
+}
+
+export const GENERATE_TEMP_UPLOAD_MUTATION = gql`
+    mutation GenerateTempUpload($input: GenerateTempUploadInput!) {
+  generateTempUpload(input: $input) {
+    _id
+    presignedData
+  }
+}
+    ` as DocumentNode<GenerateTempUploadMutationData, GenerateTempUploadMutationVariables>;
+
+export function gqlGenerateTempUploadMutation(variables: GenerateTempUploadMutationVariables): { mutation: typeof GENERATE_TEMP_UPLOAD_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GENERATE_TEMP_UPLOAD_MUTATION,
     variables
   };
 }
