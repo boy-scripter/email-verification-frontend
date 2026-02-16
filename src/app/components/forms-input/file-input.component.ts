@@ -1,10 +1,6 @@
 import { Directive, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { getPreviewUrl } from "@util/index";
 
-export interface PreviewableFile extends File {
-    preview: string
-}
 export type FileInputType = File | File[] | null
 
 @Directive({
@@ -26,8 +22,12 @@ export class FileInputDirective implements ControlValueAccessor {
     value: FileInputType = null;
 
     // Callbacks assigned by Angular
-    onChange: (value: FileInputType) => void = () => { };
-    onTouched: () => void = () => { };
+    onChange: (value: FileInputType) => void = () => {
+        //empty
+     };
+    onTouched: () => void = () => {
+        //empty
+     };
 
     // Angular calls this to update the input value
     writeValue(value: File | null): void {
@@ -53,19 +53,13 @@ export class FileInputDirective implements ControlValueAccessor {
             return;
         }
         
-        const files = Array.from(input.files) as PreviewableFile[];
-        
-        const uploadableFiles = files.map(file =>
-            Object.assign(file, {
-                preview: getPreviewUrl(file)
-            })
-        );
+        const files = Array.from(input.files);
 
         // Detect if multiple attribute is set on input element
         if (input.multiple) {
-            this.onChange(uploadableFiles);
+            this.onChange(files);
         } else {
-            this.onChange(uploadableFiles[0]);
+            this.onChange(files[0]);
         }
     }
 

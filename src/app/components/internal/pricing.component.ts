@@ -73,8 +73,6 @@ interface PricingPlan {
             <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto"> </button>
           </p-card>
         </ng-template>
-      
-
   `
 })
 export class PricingComponent {

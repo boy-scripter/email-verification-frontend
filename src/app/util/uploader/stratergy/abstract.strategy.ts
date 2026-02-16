@@ -3,8 +3,14 @@ export interface UploadCallbacks {
   onComplete?: () => void;
   onError?: (err: Error) => void;
 }
+export interface SetFileAndMediaCodeParamsI {
+  file: File;
+  mediaCode: string;
+}
 
 export abstract class UploadStrategy {
-  abstract upload(file: File, callbacks: UploadCallbacks): void;
+  abstract setFileAndMediaCode(params: SetFileAndMediaCodeParamsI): void;
+  abstract setProgressHandler(callback: UploadCallbacks): void;
+  abstract upload(): void;
   abstract cancel?(): void;
 }

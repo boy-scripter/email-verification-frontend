@@ -7,12 +7,16 @@ import { errorConfigType } from "@util/error-handler";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { twMerge } from "tailwind-merge";
 import { ErrorControlComponent } from "./errorcontrol/errorcontrol.component";
-import { PreviewableFile } from "./forms-input/file-input.component";
 import { UploadStrategyFactory, UploadStrategyType } from "@util/uploader";
-
-
+import { UploadableFile } from "@util/uploader/classes/uploadable";
+import { createFileAdvanced, FileAdvancedBase } from "@util/uploader/classes/file";
 
 type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
+
+interface ProgressState  {
+    count: number;
+    status: 'idle' | 'uploading' | 'completed';
+}       
 @Component({
     selector: 'app-file-input',
     imports: [ErrorControlComponent, NgTemplateOutlet, AvatarModule],
@@ -21,24 +25,41 @@ type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
     <div class="file-input-wrapper">
 
         <div [class]="computedClass()">
-            <ng-container *ngTemplateOutlet="(previewTemplate() || defaultTemplate);  context: { $implicit: file_data(), fallBack: fallBack() };"> </ng-container>
-            <ng-content> </ng-content>
+            <ng-container 
+               *ngTemplateOutlet="(previewFileTemplate() || defaultTemplate); 
+                context: { 
+                    $implicit: file(), 
+                    imageBadge: imageBadge() 
+                }"> 
+            </ng-container>
+            <ng-content></ng-content>
         </div>
         
-       @if(progressTemplate() && progressState().status === 'uploading'){
-        <ng-container *ngTemplateOutlet="progressTemplate();  context: { $implicit: progressState() };"> </ng-container>
+       @if(progressFileTemplate() && progressState().status === 'uploading'){
+            <ng-container 
+                *ngTemplateOutlet="progressFileTemplate();  
+                context: {
+                     $implicit: progressState()
+                }
+                ">
+            </ng-container>
        }
 
         @if(ngControl()){
-             <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>
+             <app-error-control
+                [controlName]="controlName()" 
+                [errorConfig]="errorConfig()"
+              >
+             </app-error-control>
         }
 
-       <ng-template let-data let-fallback="fallBack" #defaultTemplate>
-        @if(data?.preview){
-            <p-avatar class="mx-auto" [image]="data?.preview" size="xlarge" shape="circle" />
-        } @else {
-            <p-avatar class="mx-auto" [label]="fallback"  size="xlarge" shape="circle" />
-        }
+       <ng-template let-data let-imageBadge="imageBadge" #defaultTemplate>
+            @if(data && data.preview()){
+                <p-avatar class="mx-auto" [image]="data.preview()" size="xlarge" shape="circle" />
+            } 
+            @if(!data && imageBadge){
+                <p-avatar class="mx-auto" [label]="imageBadge"  size="xlarge" shape="circle" />
+            }
        </ng-template>
     </div>
     `,
@@ -46,45 +67,51 @@ type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
 })
 
 export class FileInputComponent implements AfterViewInit {
-
-
-    // inputs
-    fileType = input.required<FILE_SUPPORTED_BACKEND>()
-    uploadStrategy = input<UploadStrategyType>('normal');
-    errorConfig = input<errorConfigType>();
-    fallBack = input<string>('3');
-
-    // styling passing
-    styleClass = input<string>();
-    computedClass = computed(() => twMerge('file-box relative w-max', this.styleClass()));
-
-    // content children
-    previewTemplate = contentChild('preview', { read: TemplateRef });
-    progressTemplate = contentChild('progress', { read: TemplateRef });
-    ngControl = contentChild.required(NgControl);
-    controlName = computed(() => this.ngControl().name + '');
-
+    
     // injections
     elementRef = inject(ElementRef)
     destroyRef = inject(DestroyRef);
     uploadStrategyFactory = inject(UploadStrategyFactory);
 
     //state
-    protected file_data = signal<UploadableFile | null>(null)
-    protected progressState = signal<{ count: number; status: 'idle' | 'uploading' | 'completed' }>({
+    protected file = signal<FileAdvancedBase | null>(null)
+    protected progressState = signal<ProgressState>({
         count: 0,
         status: 'idle'
     })
 
+    // inputs
+    mediaCode = input.required<FILE_SUPPORTED_BACKEND>()
+    imageBadge = input<string>();
+    uploadStrategyName = input<UploadStrategyType>('normal');
+    errorConfig = input<errorConfigType>();
+    styleClass = input<string>();
+
+    // content children
+    previewFileTemplate = contentChild('preview', { read: TemplateRef });
+    progressFileTemplate = contentChild('progress', { read: TemplateRef });
+    ngControl = contentChild.required(NgControl);
+    
+    //computed properties
+    computedClass = computed(() => twMerge('file-box relative w-max', this.styleClass()));
+    controlName = computed(() => {
+        const control = this.ngControl();
+        if (!control) {
+            throw new Error('NgControl is required');
+        }
+        return control.name?.toString() || '';
+    });
+    
     ngAfterViewInit() {
-        // file data provider
         this.ngControl().valueChanges?.pipe(
             filter((v) => v !== null),
             takeUntilDestroyed(this.destroyRef),
-            tap((v: PreviewableFile) => {
-                const uploadableFile = this.toUploadableFile(v);
-                this.file_data.set(uploadableFile);
-            }),
+            tap((file: File) => {
+                const fileAdvanced = createFileAdvanced(file);
+                const uploadableFile = this.createUploadableFile(fileAdvanced);
+                console.log(fileAdvanced)
+                this.file.set(fileAdvanced);
+            })
         ).subscribe();
 
         const wrapper = this.elementRef.nativeElement;
@@ -98,30 +125,26 @@ export class FileInputComponent implements AfterViewInit {
         fileInput.style.cursor = 'pointer';
     }
 
-    toUploadableFile(file: File): UploadableFile {
-        const stratergy = this.uploadStrategyFactory.getStrategy(this.uploadStrategy());
-        const t = Object.assign(file, {
-            startUpload: () => stratergy.upload(file, {
-              onProgress: (progress) => {
+    createUploadableFile(file: FileAdvancedBase): UploadableFile {
+            const stratergy = this.uploadStrategyFactory.getStrategy(this.uploadStrategyName());
+            const uploadableFile = new UploadableFile(file, this.mediaCode());
+            uploadableFile.setStrategy(stratergy);
+            uploadableFile.setProgressHandler({
+                onProgress: (progress) => {
                     this.progressState.set({
                         count: progress,
                         status: 'uploading'
                     })
                 },
-              onComplete: () => {
+                onComplete: () => {
                     this.progressState.set({
                         count: 100,
                         status: 'completed'
                     })
-                },
-            }),
-            fileType: this.fileType()
-        })
-        return t;
+                }
+            });
+        return uploadableFile;
     }
+
 }
 
-export interface UploadableFile extends File {
-    mediaCode: FILE_SUPPORTED_BACKEND | undefined;
-    startUpload: () => Promise<string>;
-}

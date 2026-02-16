@@ -21,7 +21,11 @@ import { ErrorControlComponent } from '@components/index';
       </p-inputgroup>
 
             @if(ngControl()){
-              <app-error-control [controlName]="controlName()" [errorConfig]="errorConfig()"> </app-error-control>
+                <app-error-control 
+                  [controlName]="controlName()" 
+                  [errorConfig]="errorConfig()"
+                > 
+                </app-error-control>
             }
     </div>
   `
@@ -38,7 +42,13 @@ export class InputComponent {
 
   // contentchild
   ngControl = contentChild(NgControl);
-  controlName = computed(() => this.ngControl()?.name + '' || '');
+  controlName = computed(() => {
+    const control = this.ngControl();
+    if (!control) {
+      throw new Error('NgControl is required');
+    }
+    return control.name?.toString() || '';
+  });
 
 
 }

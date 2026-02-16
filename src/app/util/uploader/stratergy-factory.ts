@@ -1,18 +1,20 @@
-import { EnvironmentInjector, inject, Injectable, runInInjectionContext } from '@angular/core';
+import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
 import { NormalUploadStrategy } from './stratergy/normal.startegy';
 
-export type UploadStrategyType = 'normal';
+export type UploadStrategyType = 'normal' | 'multipart';
 
 @Injectable({ providedIn: 'root' })
 export class UploadStrategyFactory {
-  private injector = inject(EnvironmentInjector);
+  private parentInjector = inject(EnvironmentInjector);
 
-  getStrategy(type: 'normal' | 'multipart') {
+  getStrategy(type: UploadStrategyType) {
+    const childInjector = createEnvironmentInjector([NormalUploadStrategy], this.parentInjector);
+
     switch (type) {
       case 'normal':
-        return runInInjectionContext(this.injector, () => inject(NormalUploadStrategy));
+        return childInjector.get(NormalUploadStrategy);
       default:
-        return runInInjectionContext(this.injector, () => inject(NormalUploadStrategy));
+        return childInjector.get(NormalUploadStrategy);
     }
   }
 }

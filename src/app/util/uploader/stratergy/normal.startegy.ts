@@ -3,38 +3,48 @@ import { inject, Injectable } from '@angular/core';
 import { ApolloService } from '@util/service/apollo/apollo.service';
 import { tap } from 'rxjs';
 import { gqlGenerateTempUploadMutation } from 'src/app/graphql/generated';
-import { UploadCallbacks, UploadStrategy } from './abstract.strategy';
+import { SetFileAndMediaCodeParamsI, UploadCallbacks, UploadStrategy } from './abstract.strategy';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class NormalUploadStrategy implements UploadStrategy {
   private apollo = inject(ApolloService);
   private http = inject(HttpClient);
+  private file: File | null = null;
+  private mediaCode: string | null = null;
+  private callbacks: UploadCallbacks = {};
 
-  async upload(file: File, callbacks: UploadCallbacks): Promise<string> {
+  setFileAndMediaCode(params: SetFileAndMediaCodeParamsI): void {
+    this.file = params.file;
+    this.mediaCode = params.mediaCode;
+  }
+
+  setProgressHandler(callbacks: UploadCallbacks): void {
+    this.callbacks = callbacks;
+  }
+
+  async upload(): Promise<string> {
+    this.preCheck();
     try {
-      const { data } = await this.getPresignedUrl(file);
+      const { data } = await this.getPresignedUrl();
       this.uploadToS3({
-        file,
+        file: this.file!,
         url: data.generateTempUpload.presignedData.url,
         headers: data.generateTempUpload.presignedData.headers,
-        callbacks,
       });
       return data.generateTempUpload._id;
     } catch (err) {
-      callbacks.onError?.(err as Error);
+      this.callbacks!.onError?.(err as Error);
       throw err;
     }
   }
 
-  private getPresignedUrl(file: File) {
+  private getPresignedUrl() {
     return this.apollo.mutate(
       gqlGenerateTempUploadMutation({
         input: {
-          filename: file.name,
-          contentType: file.type,
-          mediaCode: 'test',
+          filename: this.file!.name,
+          contentType: this.file!.type,
+          mediaCode: this.mediaCode!,
         },
       }),
     );
@@ -44,12 +54,10 @@ export class NormalUploadStrategy implements UploadStrategy {
     file,
     url,
     headers,
-    callbacks,
   }: {
     file: File;
     url: string;
     headers: Record<string, string>;
-    callbacks: UploadCallbacks;
   }) {
     return this.http
       .request('PUT', url, {
@@ -62,24 +70,25 @@ export class NormalUploadStrategy implements UploadStrategy {
         tap((event) => {
           if (event.type === HttpEventType.UploadProgress && event.total) {
             const percentDone = Math.round((event.loaded / event.total) * 100);
-            callbacks.onProgress?.(percentDone);
+            this.callbacks!.onProgress?.(percentDone);
           } else if (event.type === HttpEventType.Response) {
-            callbacks.onComplete?.();
+            this.callbacks!.onComplete?.();
           }
         }),
       );
   }
+
+  private preCheck() {
+    if (!this.file) {
+      throw new Error('File not set');
+    }
+
+    if (!this.mediaCode) {
+      throw new Error('Media code not set');
+    }
+
+    if (!this.callbacks) {
+      throw new Error('Callbacks not set');
+    }
+  }
 }
-
-// async function mockUpload(callbacks: UploadCallbacks) {
-//   const totalSteps = 10;
-
-//   for (let step = 1; step <= totalSteps; step++) {
-//     console.log('Step', step);
-//     await new Promise((resolve) => setTimeout(resolve, 2000));
-//     const percentDone = Math.round((step / totalSteps) * 100);
-//     callbacks.onProgress?.(percentDone);
-//   }
-
-//   callbacks.onComplete?.();
-// }
