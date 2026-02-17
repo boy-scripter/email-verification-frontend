@@ -1,10 +1,10 @@
 import { computed, inject } from '@angular/core';
+import { GoogleOAuthTokenResponse } from '@components/googlebtn.component';
 import { withStorage } from '@larscom/ngrx-signals-storage';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { AuthService } from '@service';
-import { User } from '../graphql/generated';
+import { User, UserDto } from '../graphql/generated';
 import { TokenStore } from './token.store';
-import { GoogleOAuthTokenResponse } from '@components/googlebtn.component';
 
 interface AuthState {
   user: User | null;
@@ -32,15 +32,10 @@ export const AuthStore = signalStore(
     profile_image: computed(() => store.user()?.image?.key),
   })),
   withMethods((store) => {
-    const authService = inject(AuthService); 
-    const tokenStore = inject(TokenStore) ;
+    const authService = inject(AuthService);
+    const tokenStore = inject(TokenStore);
 
     return {
-      setUserData(user: User) {
-        localStorage.setItem('user', JSON.stringify(user));
-        patchState(store, { user });
-      },
-
       clear() {
         patchState(store, { user: null });
       },
@@ -59,8 +54,7 @@ export const AuthStore = signalStore(
           res.data.loginWithEmail.accessToken,
           res.data.loginWithEmail.refreshToken,
         );
-        this.setUserData(user as User);
-        patchState(store, { loading: false });
+        patchState(store, { loading: false, user: user as User });
       },
 
       async loginGoogle(credential: GoogleOAuthTokenResponse) {
@@ -71,8 +65,27 @@ export const AuthStore = signalStore(
           res.data.loginWithGoogle.accessToken,
           res.data.loginWithGoogle.refreshToken,
         );
-        this.setUserData(user as User);
-        patchState(store, { loading: false });
+        patchState(store, { loading: false, user: user as User });
+      },
+
+      async updateProfile(userDto: UserDto) {
+        patchState(store, { loading: true });
+        const res = await authService.updateUserProfile(userDto);
+        const user = res.data.updateProfile;
+        patchState(store, {
+          loading: false,
+          user: user as User,
+        });
+      },
+
+      async updateProfileImage(fileId: string) {
+        patchState(store, { loading: true });
+        const res = await authService.updateProfileAvtar(fileId);
+        const user = res.data.updateProfileImage;
+        patchState(store, { 
+          loading: false, 
+          user: user as User 
+        });
       },
 
       logout() {
@@ -82,3 +95,4 @@ export const AuthStore = signalStore(
     };
   }),
 );
+

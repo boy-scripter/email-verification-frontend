@@ -6,7 +6,6 @@ import { ButtonModule } from 'primeng/button';
 import { fileSizeValidator, fileTypeValidator } from '@util/error-handler';
 import { ProgressBarModule } from 'primeng/progressbar';
 
-
 export interface FileEmailVerficationForm {
     file: FormControl<string>;
 }
@@ -62,13 +61,14 @@ export class BulkUploadComponent {
                 nonNullable: true, 
                 validators: [
                     Validators.required, 
-                    fileSizeValidator(0 ,50 * 1024 * 1024) , 
+                    fileSizeValidator(0 , 50 * 1024 * 1024) , 
                     fileTypeValidator(['csv'])
                 ] }),
         } );
     }
  
      onSubmit(value: FormType<typeof this.fileEmailVerficationForm>) {
+        console.log(value)
         // withFileResolves(value)
         // .then((data) => {
         //     console.log(data);

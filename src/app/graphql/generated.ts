@@ -463,9 +463,9 @@ export type User = {
 
 export type UserDto = {
   /** Name of the user */
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   /** Phone Number of the user */
-  phone: Scalars['String']['input'];
+  phone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type VerificationModel = {

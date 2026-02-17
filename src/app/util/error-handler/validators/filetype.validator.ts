@@ -3,14 +3,14 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 export const FILETYPE_ERROR = 'filetype';
 export function fileTypeValidator(allowedExtensions: string[]): ValidatorFn {
   return (control: AbstractControl) => {
-    const file: File = control.value;
+    const file = control.value;
+console.log(file)
     if (!file) {
       return null;
     }
     
     const fileName = file.name?.toLowerCase() || '';
     const extension = fileName.split('.').pop();
-    
 
     if (!extension || !allowedExtensions.map((e) => e.toLowerCase()).includes(extension)) {
       return {

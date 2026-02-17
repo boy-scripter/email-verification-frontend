@@ -56,9 +56,7 @@ export const provideApolloConfig = () => {
         const isUnauthorized = error?.message?.includes('Unauthorized');
 
         if (!isUnauthorized) {
-          console.log(
-            'this request does not have have unauthoized error , so refrehs token no needed',
-          );
+            console.log(  'this request does not have have unauthoized error , so refresh token no needed');
           return;
         }
 

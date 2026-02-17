@@ -1,4 +1,4 @@
-import { UploadStrategy , UploadCallbacks } from '../stratergy/abstract.strategy';
+import { UploadCallbacks, UploadStrategy } from '../stratergy/abstract.strategy';
 import { createFileAdvanced, FileAdvancedBase } from './file';
 
 export class UploadableFile {
@@ -13,27 +13,20 @@ export class UploadableFile {
     this.strategy = strategy;
   }
 
-  setProgressHandler(callback: UploadCallbacks) {
-    if (!this.strategy) {
-      throw new Error('No strategy set');
-    }
-    this.strategy.setProgressHandler(callback);
-  }
-
-  async startUpload(callback: UploadCallbacks) {
+  startUpload(callback: UploadCallbacks) {
     if (!this.strategy) {
       throw new Error('No strategy set');
     }
     this.strategy.setFileAndMediaCode({
-      file: await this.file.toFile(),
-      mediaCode: this.mediaCode
-    })
+      file: this.file.toFile(),
+      mediaCode: this.mediaCode,
+    });
     this.strategy.setProgressHandler(callback);
     return this.strategy.upload();
   }
 
-  async toFile(): Promise<FileAdvancedBase> {
-    const file = await this.file.toFile();
-    return createFileAdvanced(file);
+  toFile(): File {
+    const file = this.file.toFile();
+    return createFileAdvanced(file).toFile();
   }
 }

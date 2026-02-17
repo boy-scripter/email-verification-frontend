@@ -1,12 +1,15 @@
 import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { Injectable, inject } from '@angular/core';
+import { GoogleOAuthTokenResponse } from '@components/googlebtn.component';
 import { ApolloService } from '@util/service/apollo/apollo.service';
 import {
   gqlLoginWithEmailMutation,
   gqlLoginWithGoogleMutation,
   gqlRegisterMutation,
+  gqlUpdateProfileImageMutation,
+  gqlUpdateProfileMutation,
+  UserDto,
 } from '../graphql/generated';
-import { GoogleOAuthTokenResponse } from '@components/googlebtn.component';
 
 @Injectable({
   providedIn: 'root',
@@ -25,10 +28,10 @@ export class AuthService {
   }
 
   /** Google Login */
-  async loginWithGoogle(credential: GoogleOAuthTokenResponse ) {
+  async loginWithGoogle(credential: GoogleOAuthTokenResponse) {
     return this.apollo.mutate(
       gqlLoginWithGoogleMutation({
-        input: credential
+        input: credential,
       }),
     );
   }
@@ -38,6 +41,22 @@ export class AuthService {
     return this.apollo.mutate(
       gqlLoginWithEmailMutation({
         input: { email, password },
+      }),
+    );
+  }
+
+  updateUserProfile(input: UserDto) {
+    return this.apollo.mutate(
+      gqlUpdateProfileMutation({
+        input,
+      }),
+    );
+  }
+
+  updateProfileAvtar(fileId: string) {
+    return this.apollo.mutate(
+      gqlUpdateProfileImageMutation({
+        fileId,
       }),
     );
   }

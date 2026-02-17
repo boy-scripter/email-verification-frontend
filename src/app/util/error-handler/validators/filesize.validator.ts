@@ -16,7 +16,7 @@ export function fileSizeValidator(minSizeKB = 0, maxSizeKB?: number): ValidatorF
   const minSizeBytes = minSizeKB * 1024;
   const maxSizeBytes = maxSizeKB ? maxSizeKB * 1024 : undefined;
 
-  return (control: AbstractControl) => {
+  return async (control: AbstractControl) => {
     const file = control.value;
 
     if (file && file.size != null) {
