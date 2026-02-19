@@ -1,23 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { NgxBorderBeamComponent } from "@omnedia/ngx-border-beam";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { NgTemplateOutlet } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-
-
-interface PricingPlan {
-  name: string;
-  price: {
-    dollar: string;
-    ruppee: string;
-  };
-  features: string[];
-  buttonLabel: string;
-  buttonStyle: string;
-  highlight?: boolean;
-}
+import { PlanService } from "src/app/services/plan.service";
+import { PlanModel } from "src/app/graphql/generated";
 
 
 @Component({
@@ -35,6 +24,7 @@ interface PricingPlan {
       }
   `,
   template: `
+   <ng-container>
         <div class="flex text-2xl mb-6 items-center justify-center space-x-2">
           <span>$ Dollar</span>
                <p-toggleSwitch [(ngModel)]="checked" class="p-button-outlined"></p-toggleSwitch>
@@ -43,7 +33,7 @@ interface PricingPlan {
 
         <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           @for (plan of plans; track $index) {
-            @if (plan.highlight) {
+            @if (plan) {
               <om-border-beam gradientColorStart="#ffaa40" gradientColorEnd="#9c40ff" borderRadius="1rem" animationDuration="8s" class="rounded-2xl shadow-xl" >
                 <ng-container *ngTemplateOutlet="cardTemplate; context: { $implicit: plan }"></ng-container>
               </om-border-beam>
@@ -58,7 +48,7 @@ interface PricingPlan {
         <ng-template #cardTemplate let-plan>
           <p-card class="rounded-2xl flex flex-col bg-transparent  h-full shadow-5xl" [header]="plan.name">
             <div class="text-3xl font-bold mb-6">
-              {{ checked ? plan.price.ruppee : plan.price.dollar }}
+              {{ checked ? '₹' + plan.price.ruppee : '$' + plan.price.dollar }}
               @if ((checked ? plan.price.ruppee : plan.price.dollar) !== 'Custom') {
                 <span class="text-sm">/mo</span>
               }
@@ -73,67 +63,22 @@ interface PricingPlan {
             <button pButton [label]="plan.buttonLabel" [class]="plan.buttonStyle" type="button" class="mt-auto"> </button>
           </p-card>
         </ng-template>
+   </ng-container>
   `
 })
-export class PricingComponent {
+export class PricingComponent implements OnInit {
 
+  planservice = inject(PlanService)
+  
   checked = false;
+  plans: PlanModel[] = [];
 
+  async ngOnInit(): Promise<void> {
+    const { data , loading } = await this.planservice.getPlans();
+    this.plans = data.plans
+  }
 
-  plans: PricingPlan[] = [
-    {
-      buttonLabel: "Choose Plan",
-      buttonStyle: "p-button-info",
-      features: [
-        "10,000 Verifications per month",
-        "Basic API Access",
-        "Bulk Upload via CSV",
-        "Standard Email Validation",
-        "Dashboard Analytics",
-        "Community Support"
-      ],
-      name: "Starter",
-      price: {
-        dollar: "$9",
-        ruppee: "₹699"
-      }
-    },
-    {
-      buttonLabel: "Choose Plan",
-      buttonStyle: "p-button-warning",
-      features: [
-        "100,000 Verifications per month",
-        "Full API + SDK Access",
-        "Bulk Upload + Batch Processing",
-        "Advanced Email Validation (MX, Syntax, Disposable)",
-        "Priority Dashboard Analytics",
-        "Priority Support",
-        "Team Access & Role Management"
-      ],
-      highlight: true,
-      name: "Pro (Recommended)",
-      price: {
-        dollar: "$49",
-        ruppee: "₹3999"
-      }
-    },
-    {
-      buttonLabel: "Contact Sales",
-      buttonStyle: "p-button-danger",
-      features: [
-        "Unlimited Verifications",
-        "Dedicated API Cluster",
-        "99.99% Uptime SLA",
-        "Custom Integrations",
-        "24/7 Dedicated Account Manager",
-        "Advanced Security & Compliance (GDPR, SOC2)",
-        "Custom Reports & White-labeling"
-      ],
-      name: "Enterprise",
-      price: {
-        dollar: "Custom",
-        ruppee: "Custom"
-      }
-    }
-  ];
 }
+
+
+

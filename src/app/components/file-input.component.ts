@@ -10,7 +10,7 @@ import {  UploadStrategyType } from "@util/uploader";
 import { createFileAdvanced, FileAdvancedBase } from "@util/uploader/classes/file";
 import { UploadStoreService , UploadItemState } from "@util/uploader/service/uploadstore.service";
 
-type FILE_SUPPORTED_BACKEND = "AVTAR_IMAGE"
+type FILE_SUPPORTED_BACKEND = "AVATAR_IMAGE" | "CSV_VERIFICATION"
 
 @Component({
     selector: 'app-file-input',
@@ -59,7 +59,6 @@ export class FileInputComponent implements AfterViewInit {
     elementRef = inject(ElementRef)
     destroyRef = inject(DestroyRef);
     uploadStoreService = inject(UploadStoreService);
-
 
     //state
     protected file = signal<FileAdvancedBase | null>(null)

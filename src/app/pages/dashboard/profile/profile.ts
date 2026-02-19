@@ -38,11 +38,10 @@ export interface ProfileForm {
       header="Profile"
       updateOn="change"
     >
-      <app-file-input mediaCode="AVTAR_IMAGE">
+      <app-file-input mediaCode="AVATAR_IMAGE">
         <input [multiple]="false" appFileInput formControlName="avatar" type="file" />
         <ng-template #preview let-fileInfo>
-          @let previewUrl = fileInfo && fileInfo?.preview();
-          <!-- @let fileObj = fileInfo && fileInfo?.toFile(); -->
+          @let previewUrl = fileInfo && fileInfo?.preview() || authStore.profile_image(); 
           @if (previewUrl) {
             <p-avatar class="mx-auto" [image]="previewUrl" shape="circle" size="xlarge" />
           } @else {
@@ -100,9 +99,8 @@ export class ProfileComponent {
     if (avatar) {
       const fileId = await this.uploadStore.startUpload('avatar');
       await this.authStore.updateProfileImage(fileId);
-    } else {
-      await this.authStore.updateProfile({ name });
-    }
+    } 
+    await this.authStore.updateProfile({ name });
     nextTask();
   }
 }

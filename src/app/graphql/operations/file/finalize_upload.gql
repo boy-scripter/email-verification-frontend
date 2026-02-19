@@ -1,0 +1,15 @@
+mutation FinalizeUpload($fileId: String!) {
+  finalizeUpload(fileId: $fileId) {
+    _id
+    acl
+    uploaded_at
+    uploadRuleId
+    size
+    presigned_url
+    mimeType
+    key
+    marked
+    hash
+    filename
+  }
+}

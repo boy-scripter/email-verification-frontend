@@ -45,7 +45,9 @@ export const provideApolloConfig = () => {
       });
 
       const errorLink = new ErrorLink(({ error, operation, forward }) => {
-        if (operation.getContext()['showError']) {
+        const isUnauthorized = error?.message?.includes('Unauthorized');
+
+        if (operation.getContext()['showError'] && !isUnauthorized) {
           messageService.add({
             severity: 'error',
             summary: 'API Error',
@@ -53,10 +55,10 @@ export const provideApolloConfig = () => {
           });
         }
 
-        const isUnauthorized = error?.message?.includes('Unauthorized');
-
         if (!isUnauthorized) {
-            console.log(  'this request does not have have unauthoized error , so refresh token no needed');
+          console.log(
+            'this request does not have have unauthoized error , so refresh token no needed',
+          );
           return;
         }
 

@@ -1,0 +1,12 @@
+query Plans {
+  plans {
+    _id
+    credits
+    features
+    label
+    name
+    highlight
+    price
+    recommended
+  }
+}

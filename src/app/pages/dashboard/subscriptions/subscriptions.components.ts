@@ -20,7 +20,7 @@ import { TableModule } from 'primeng/table';
           </app-card>
           <div class="md:p-5">
             <p-button
-              icon="pi pi-arrow-right"
+              icon="pi pi-crown"
               label="Active subscription"
               severity="warn"
               size="large"

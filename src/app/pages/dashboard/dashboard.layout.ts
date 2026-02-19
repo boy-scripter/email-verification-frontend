@@ -91,7 +91,7 @@ import { MenuModule } from 'primeng/menu';
           </p-menu>
 
           <div
-            class="border-surface-200 bg-surface-400/10 w-full rounded-lg border-dashed p-2 backdrop-blur-md sm:p-5 md:flex-1 md:overflow-y-auto lg:border-2"
+            class="border-surface-200 bg-surface-400/10 w-full rounded-lg border-solid p-2 backdrop-blur-md sm:p-5 md:flex-1 md:overflow-y-auto lg:border-2"
           >
             <router-outlet />
           </div>

@@ -373,6 +373,7 @@ export type PlanModel = {
   _id: Scalars['ID']['output'];
   credits: Scalars['Int']['output'];
   features: Array<Scalars['String']['output']>;
+  highlight: Maybe<Scalars['Boolean']['output']>;
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
@@ -527,6 +528,13 @@ export type RegisterMutationData = { __typename?: 'Mutation', register: (
     & UserFieldsFragment
   ) };
 
+export type FinalizeUploadMutationVariables = Exact<{
+  fileId: Scalars['String']['input'];
+}>;
+
+
+export type FinalizeUploadMutationData = { __typename?: 'Mutation', finalizeUpload: { __typename?: 'FinalizeUploadResponse', _id: string, acl: FileAcl, uploaded_at: any, uploadRuleId: string | null, size: number, presigned_url: string, mimeType: string, key: string, marked: boolean, hash: string, filename: string } };
+
 export type GenerateTempUploadMutationVariables = Exact<{
   input: GenerateTempUploadInput;
 }>;
@@ -554,6 +562,18 @@ export type VerifyOtpMutationVariables = Exact<{
 
 
 export type VerifyOtpMutationData = { __typename?: 'Mutation', verifyOtp: { __typename?: 'VerifyOtpResponse', reset_token: string } };
+
+export type BuyPlanMutationVariables = Exact<{
+  planId: Scalars['String']['input'];
+}>;
+
+
+export type BuyPlanMutationData = { __typename?: 'Mutation', buyPlan: { __typename?: 'PlanBuyResponse', status: OrderPaymentStatus, payment_session_id: string, metadata: any | null, gateway: PaymentGateway, amount: number, plan: { __typename?: 'PlanModel', _id: string } } };
+
+export type PlansQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PlansQueryData = { __typename?: 'Query', plans: Array<{ __typename?: 'PlanModel', _id: string, credits: number, features: Array<string>, label: string, name: string, highlight: boolean | null, price: number, recommended: boolean | null }> };
 
 export type UpdateProfileMutationVariables = Exact<{
   input: UserDto;
@@ -656,6 +676,31 @@ export function gqlRegisterMutation(variables: RegisterMutationVariables): { mut
   };
 }
 
+export const FINALIZE_UPLOAD_MUTATION = gql`
+    mutation FinalizeUpload($fileId: String!) {
+  finalizeUpload(fileId: $fileId) {
+    _id
+    acl
+    uploaded_at
+    uploadRuleId
+    size
+    presigned_url
+    mimeType
+    key
+    marked
+    hash
+    filename
+  }
+}
+    ` as DocumentNode<FinalizeUploadMutationData, FinalizeUploadMutationVariables>;
+
+export function gqlFinalizeUploadMutation(variables: FinalizeUploadMutationVariables): { mutation: typeof FINALIZE_UPLOAD_MUTATION, variables: typeof variables } {
+  return {
+    mutation: FINALIZE_UPLOAD_MUTATION,
+    variables
+  };
+}
+
 export const GENERATE_TEMP_UPLOAD_MUTATION = gql`
     mutation GenerateTempUpload($input: GenerateTempUploadInput!) {
   generateTempUpload(input: $input) {
@@ -716,6 +761,49 @@ export function gqlVerifyOtpMutation(variables: VerifyOtpMutationVariables): { m
   return {
     mutation: VERIFY_OTP_MUTATION,
     variables
+  };
+}
+
+export const BUY_PLAN_MUTATION = gql`
+    mutation BuyPlan($planId: String!) {
+  buyPlan(planId: $planId) {
+    status
+    payment_session_id
+    metadata
+    gateway
+    amount
+    plan {
+      _id
+    }
+  }
+}
+    ` as DocumentNode<BuyPlanMutationData, BuyPlanMutationVariables>;
+
+export function gqlBuyPlanMutation(variables: BuyPlanMutationVariables): { mutation: typeof BUY_PLAN_MUTATION, variables: typeof variables } {
+  return {
+    mutation: BUY_PLAN_MUTATION,
+    variables
+  };
+}
+
+export const PLANS_QUERY = gql`
+    query Plans {
+  plans {
+    _id
+    credits
+    features
+    label
+    name
+    highlight
+    price
+    recommended
+  }
+}
+    ` as DocumentNode<PlansQueryData, PlansQueryVariables>;
+
+export function gqlPlansQuery(): { query: typeof PLANS_QUERY } {
+  return {
+    query: PLANS_QUERY
   };
 }
 

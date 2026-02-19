@@ -69,3 +69,6 @@ type PatchData<
 
 type PatchedMutationResult<TData = unknown> = PatchData<MutationResult<TData>, TData>;
 type PatchedQueryResult<TData = unknown> = PatchData<QueryResult<TData>, TData>;
+
+export type ApolloMutationResult<TData = unknown> = Promise<PatchData<MutationResult<TData>, TData>>;
+export type ApolloQueryResult<TData = unknown> = Promise<PatchData<QueryResult<TData>, TData>>;

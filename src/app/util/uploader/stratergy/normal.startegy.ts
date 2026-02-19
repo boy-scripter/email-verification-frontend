@@ -2,7 +2,7 @@ import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApolloService } from '@util/service/apollo/apollo.service';
 import { tap } from 'rxjs';
-import { gqlGenerateTempUploadMutation } from 'src/app/graphql/generated';
+import { gqlFinalizeUploadMutation, gqlGenerateTempUploadMutation } from 'src/app/graphql/generated';
 import { SetFileAndMediaCodeParamsI, UploadCallbacks, UploadStrategy } from './abstract.strategy';
 
 @Injectable()
@@ -25,13 +25,14 @@ export class NormalUploadStrategy implements UploadStrategy {
   async upload(): Promise<string> {
     this.preCheck();
     try {
-      const { data } = await this.getPresignedUrl();
-      this.uploadToS3({
+     const { data } = await this.getPresignedUrl();
+      await this.uploadToS3({
         file: this.file!,
         url: data.generateTempUpload.presignedData.url,
         headers: data.generateTempUpload.presignedData.headers,
       });
-      return data.generateTempUpload._id;
+     const fileInfo =  await this.finalizeUpload(data.generateTempUpload._id);
+      return fileInfo.data.finalizeUpload._id;
     } catch (err) {
       this.callbacks!.onError?.(err as Error);
       throw err;
@@ -75,7 +76,16 @@ export class NormalUploadStrategy implements UploadStrategy {
             this.callbacks!.onComplete?.();
           }
         }),
-      );
+      ).toPromise();
+  }
+
+
+  private finalizeUpload(fileId: string) {
+    return this.apollo.mutate(
+      gqlFinalizeUploadMutation({
+        fileId,
+      }),
+    );
   }
 
   private preCheck() {

@@ -80,7 +80,7 @@ export const AuthStore = signalStore(
 
       async updateProfileImage(fileId: string) {
         patchState(store, { loading: true });
-        const res = await authService.updateProfileAvtar(fileId);
+        const res = await authService.updateProfileImage(fileId);
         const user = res.data.updateProfileImage;
         patchState(store, { 
           loading: false, 

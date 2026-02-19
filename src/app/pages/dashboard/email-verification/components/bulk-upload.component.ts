@@ -13,7 +13,7 @@ export interface FileEmailVerficationForm {
 @Component({
   selector: 'app-bulk-upload',
   standalone: true,
-  imports: [CardComponent, ButtonModule, FileInputComponent, FileInputDirective , FormComponent, ReactiveFormsModule , ProgressBarModule],
+  imports: [CardComponent, ButtonModule, FileInputComponent, FileInputDirective , FormComponent, ReactiveFormsModule , ProgressBarModule ],
   styles : `
         @media (max-width: 500px) {
             ::ng-deep app-file-input p-button .p-button-label {
@@ -26,18 +26,20 @@ export interface FileEmailVerficationForm {
         <app-card icon="pi pi-upload" label="Bulk Upload">
             <p class="text-gray-600">Our accurate bulk email verifier can verify and validate email addresses in large quantities.</p>
          <app-form updateOn="change" [formGroup]="fileEmailVerficationForm" (formSubmit)="onSubmit($event)">
-            <app-file-input mediaCode="AVTAR_IMAGE"  styleClass="min-w-full whitespace-normal sm:truncate ">
+            <app-file-input mediaCode="CSV_VERIFICATION"  styleClass="min-w-full whitespace-normal sm:truncate ">
                     <input appFileInput class="my-5" name="file" formControlName="file" type="file"  />   
                     <ng-template #preview let-file>
-                        @let fileObject = file.toFile();
-                        <div class="py-20 md:py-36 border-2 rounded-xl border-dashed border-surface-400 p-4 gap-2 flex flex-col md:flex-row justify-center items-center">
-                            @if(fileObject){
-                                <p-button icon="pi pi-file" size="small" [label]="'Selected File: ' + fileObject.name" severity="warn" styleClass="px-6 w-36 md:w-full" type="button" ></p-button>
-                            } @else() {
-                               <i class="pi pi-upload text-4xl text-surface-400"></i>
-                               <p class="text-gray-600 text-sm md:text-base ml-4"> Select Your File <b>OR</b><br> Drag & drop a CSV file</p>
-                            }
-                        </div>
+                          @let fileObject = file?.toFile();
+                          @let fileName = fileObject?.name || 'Not Found';
+                          <div class="py-20 text-black md:py-36 border-2 rounded-xl border-dashed border-surface-400 p-4 gap-2 flex flex-col md:flex-row justify-center items-center">
+                              @if(fileObject){
+                                  <p-button icon="pi pi-file" size="small" [label]="'Selected File: ' + fileName" severity="warn" styleClass="px-6 w-36 md:w-full" type="button" ></p-button>
+                                } @else {
+                                    <i class="pi pi-upload text-4xl text-surface-400"></i>
+                                    <p class="text-gray-600 text-sm md:text-base ml-4"> Select Your File <b>OR</b><br> Drag & drop a CSV file</p>
+                                }
+                            </div>
+                      
                     </ng-template>
                     <ng-template #progress let-progress>
                         <div class="w-full mt-4" >

@@ -1,0 +1,12 @@
+mutation BuyPlan($planId: String!) {
+  buyPlan(planId: $planId) {
+    status
+    payment_session_id
+    metadata
+    gateway
+    amount
+    plan {
+      _id
+    }
+  }
+}

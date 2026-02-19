@@ -53,7 +53,7 @@ export class AuthService {
     );
   }
 
-  updateProfileAvtar(fileId: string) {
+  updateProfileImage(fileId: string) {
     return this.apollo.mutate(
       gqlUpdateProfileImageMutation({
         fileId,
