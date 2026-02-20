@@ -9,132 +9,84 @@ import {
   Type,
   ViewContainerRef,
 } from '@angular/core';
-
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { from, isObservable, Observable, Subscription } from 'rxjs';
-
-interface WithLoaderContext<T> {
-  $implicit: T;
-  withLoader: T;
-  error?: any;
-}
 
 @Directive({
   selector: '[appWithLoader]',
   standalone: true,
 })
-export class WithLoaderDirective<T> {
-  // ================================
-  // Dependencies
-  // ================================
-
-  private readonly templateRef = inject<TemplateRef<WithLoaderContext<T>>>(TemplateRef);
+export class WithLoaderDirective {
+  private readonly templateRef = inject<TemplateRef<unknown>>(TemplateRef); // original template
   private readonly vcr = inject(ViewContainerRef);
   private readonly destroyRef = inject(DestroyRef);
 
-  // ================================
-  // Inputs (Signals)
-  // ================================
-  readonly withLoader = input.required<Promise<T> | Observable<T>>();
+  readonly withLoader = input.required<Promise<any> | Observable<any>>();
   readonly withLoaderLoading = input<TemplateRef<unknown> | null>(null);
-  readonly withLoaderError = input<TemplateRef<{ $implicit: unknown }> | null>(null);
 
-  // ================================
-  // Internal State
-  // ================================
   private subscription?: Subscription;
   private spinnerRef?: ComponentRef<ProgressSpinner>;
 
-  // ================================
-  // Constructor
-  // ================================
   constructor() {
     effect(() => {
-      const source = this.withLoader();
-      this.execute(source);
+      if (this.withLoader()) {
+        this.execute(this.withLoader());
+      }
     });
-  }
+  } 
 
-  // ================================
-  // Core Execution
-  // ================================
-  private execute(source: Promise<T> | Observable<T>): void {
-    this.cleanupSubscription();
+  private execute(source: Promise<any> | Observable<any>): void {
+    this.cleanup();
     this.renderLoading();
 
-    const observable$ = this.toObservable(source);
+    const observable$ = isObservable(source) ? source : from(source);
 
-    this.subscription = observable$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (value) => this.handleSuccess(value),
-      error: (err) => this.handleError(err),
-    });
+    this.subscription = observable$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.renderTemplate(), // render original content on success
+        error: (err) => this.handleError(err),
+      });
   }
 
-  // ================================
-  // Handlers
-  // ================================
-  private handleSuccess(value: T): void {
+  private renderTemplate(): void {
     this.clearView();
-    this.templateRef.createEmbeddedView(this.templateRef, {
-      $implicit: value,
-      withLoader: value,
-    });
-    this.vcr.insert(
-      this.templateRef.createEmbeddedView({
-        $implicit: value,
-        withLoader: value,
-      }),
-    );
+    this.vcr.createEmbeddedView(this.templateRef);
   }
 
   private handleError(error: any): void {
     this.clearView();
 
-    const errorTemplate = this.withLoaderError();
+    const div = document.createElement('div');
+    div.textContent = 'Something went wrong.';
+    div.style.color = 'red';
+    this.vcr.element.nativeElement.appendChild(div);
 
-    if (errorTemplate) {
-      this.vcr.createEmbeddedView(errorTemplate, {
-        $implicit: error,
-      });
-    } else {
-      console.error('[withLoader] Error:', error);
-    }
+    console.error('[WithLoaderDirective] Error:', error);
   }
 
-  // ================================
-  // Loading Renderer
-  // ================================
   private renderLoading(): void {
     this.clearView();
 
-    const loadingTemplate = this.withLoaderLoading();
-
-    if (loadingTemplate) {
-      this.vcr.createEmbeddedView(loadingTemplate);
-      return;
+    if (this.withLoaderLoading()) {
+      this.vcr.createEmbeddedView(this.withLoaderLoading()!);
+    } else {
+      this.spinnerRef = this.vcr.createComponent(ProgressSpinner as Type<ProgressSpinner>);
     }
-
-    // Default PrimeNG spinner (Angular-safe)
-    this.spinnerRef = this.vcr.createComponent(ProgressSpinner as Type<ProgressSpinner>);
   }
 
-  // ================================
-  // Utilities
-  // ================================
-  private toObservable(source: Promise<T> | Observable<T>): Observable<T> {
-    return isObservable(source) ? source : from(source);
-  }
-
-  private cleanupSubscription(): void {
+  private cleanup(): void {
     this.subscription?.unsubscribe();
     this.subscription = undefined;
+
+    this.spinnerRef?.destroy();
+    this.spinnerRef = undefined;
+
+    this.vcr.clear();
   }
 
   private clearView(): void {
-    this.cleanupSubscription();
-    this.spinnerRef?.destroy();
-    this.spinnerRef = undefined;
-    this.vcr.clear();
+    this.cleanup();
   }
 }
