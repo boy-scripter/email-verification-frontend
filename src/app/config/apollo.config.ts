@@ -50,7 +50,7 @@ export const provideApolloConfig = () => {
         if (operation.getContext()['showError'] && !isUnauthorized) {
           messageService.add({
             severity: 'error',
-            summary: 'API Error',
+            summary: 'Error',
             detail: error.message.toString(),
           });
         }

@@ -1,35 +1,45 @@
-import { computed, Directive, inject, input, signal } from '@angular/core';
+import { Directive, inject, input, signal } from '@angular/core';
 import { Button } from 'primeng/button';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, isObservable, Observable } from 'rxjs';
 
 @Directive({
   selector: '[appAsyncTask]',
   standalone: true,
   host: {
-    '(click)': 'handleClick()',
+    '(click)': 'handleClick($event)',
   },
 })
 export class AsyncTaskDirective {
-  private btnRef = inject<Button>(Button);
+  private btnRef = inject(Button);
 
-  asyncTask = input.required<Promise<any> | Observable<any>>();
-  isLoading = computed(() => this.loading());
+  appAsyncTask = input.required<() => Promise<unknown> | Observable<unknown>>();
+
   private loading = signal(false);
 
-  async handleClick() {
-    if (!this.asyncTask()) {
-      console.warn('asyncTask directive: No task provided!');
+  async handleClick(event: Event) {
+    if (this.loading()) {
+      event.preventDefault();
+      return;
+    }
+
+    const taskFactory = this.appAsyncTask();
+    if (!taskFactory) {
+      console.warn('appAsyncTask directive: No task provided!');
       return;
     }
 
     try {
       this.taskStart();
-      const task = this.asyncTask();
-      if (task instanceof Promise) {
-        await task;
+
+      const task = taskFactory();
+
+      if (isObservable(task)) {
+        await firstValueFrom(task);
       } else {
-        await firstValueFrom(task as Observable<any>);
+        await task;
       }
+
+      this.taskComplete();
     } catch (err) {
       this.taskError(err instanceof Error ? err : new Error('Task failed'));
     }
@@ -38,16 +48,20 @@ export class AsyncTaskDirective {
   private taskStart() {
     this.loading.set(true);
     this.btnRef.loading = true;
+    this.btnRef.disabled = true;
   }
 
   private taskComplete() {
     this.loading.set(false);
     this.btnRef.loading = false;
+    this.btnRef.disabled = false;
   }
 
-  private taskError(error: Error) {
-    console.error(error);
+  private taskError(err : Error) {
+    
     this.loading.set(false);
     this.btnRef.loading = false;
+    this.btnRef.disabled = false;
+    this.btnRef.cd.detectChanges()
   }
 }

@@ -1,0 +1,14 @@
+mutation BulkVerify($input: FileVerificationInput!) {
+  bulkVerify(input: $input) {
+    verifiedFile
+    user
+    updatedAt
+    totalRows
+    status
+    startedAt
+    originalFile
+    createdAt
+    completedAt
+    _id
+  }
+}

@@ -361,22 +361,24 @@ export type PlanBuyResponse = {
   amount: Scalars['Float']['output'];
   gateway: PaymentGateway;
   metadata: Maybe<Scalars['JSON']['output']>;
-  /** temporary payment session if for checkingout in payment gateway  */
+  /** temporary payment session for checkingout in payment gateway  */
   payment_session_id: Scalars['String']['output'];
-  plan: PlanModel;
+  plan: Scalars['ID']['output'];
   status: OrderPaymentStatus;
-  user: User;
+  user: Scalars['ID']['output'];
 };
 
 export type PlanModel = {
   __typename?: 'PlanModel';
   _id: Scalars['ID']['output'];
+  active: Scalars['Boolean']['output'];
+  buttonLabel: Scalars['String']['output'];
+  buttonStyle: Scalars['String']['output'];
   credits: Scalars['Int']['output'];
   features: Array<Scalars['String']['output']>;
   highlight: Maybe<Scalars['Boolean']['output']>;
-  label: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  price: Scalars['Float']['output'];
+  price: Scalars['Int']['output'];
   recommended: Maybe<Scalars['Boolean']['output']>;
 };
 
@@ -568,12 +570,12 @@ export type BuyPlanMutationVariables = Exact<{
 }>;
 
 
-export type BuyPlanMutationData = { __typename?: 'Mutation', buyPlan: { __typename?: 'PlanBuyResponse', status: OrderPaymentStatus, payment_session_id: string, metadata: any | null, gateway: PaymentGateway, amount: number, plan: { __typename?: 'PlanModel', _id: string } } };
+export type BuyPlanMutationData = { __typename?: 'Mutation', buyPlan: { __typename?: 'PlanBuyResponse', gateway: PaymentGateway, payment_session_id: string, amount: number, plan: string, status: OrderPaymentStatus, user: string, metadata: any | null } };
 
 export type PlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PlansQueryData = { __typename?: 'Query', plans: Array<{ __typename?: 'PlanModel', _id: string, credits: number, features: Array<string>, label: string, name: string, highlight: boolean | null, price: number, recommended: boolean | null }> };
+export type PlansQueryData = { __typename?: 'Query', plans: Array<{ __typename?: 'PlanModel', _id: string, active: boolean, buttonLabel: string, buttonStyle: string, credits: number, features: Array<string>, highlight: boolean | null, name: string, price: number, recommended: boolean | null }> };
 
 export type UpdateProfileMutationVariables = Exact<{
   input: UserDto;
@@ -594,6 +596,20 @@ export type UpdateProfileImageMutationData = { __typename?: 'Mutation', updatePr
     { __typename?: 'User' }
     & UserFieldsFragment
   ) };
+
+export type BulkVerifyMutationVariables = Exact<{
+  input: FileVerificationInput;
+}>;
+
+
+export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFile: string | null, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, originalFile: string, createdAt: any, completedAt: any | null, _id: string } };
+
+export type SingleEmailMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+}>;
+
+
+export type SingleEmailMutationData = { __typename?: 'Mutation', checkEmail: { __typename?: 'VerificationModel', username: string | null, status: string, mx_record: string | null, email: string, domain: string | null, checks: { __typename?: 'EmailChecks', syntax_valid: boolean, smtp_connect: boolean, smtp_block: boolean, is_role: boolean, is_catchall: boolean } } };
 
 export const UserFieldsFragmentDoc = gql`
     fragment UserFields on User {
@@ -767,14 +783,13 @@ export function gqlVerifyOtpMutation(variables: VerifyOtpMutationVariables): { m
 export const BUY_PLAN_MUTATION = gql`
     mutation BuyPlan($planId: String!) {
   buyPlan(planId: $planId) {
-    status
-    payment_session_id
-    metadata
     gateway
+    payment_session_id
     amount
-    plan {
-      _id
-    }
+    plan
+    status
+    user
+    metadata
   }
 }
     ` as DocumentNode<BuyPlanMutationData, BuyPlanMutationVariables>;
@@ -790,11 +805,13 @@ export const PLANS_QUERY = gql`
     query Plans {
   plans {
     _id
+    active
+    buttonLabel
+    buttonStyle
     credits
     features
-    label
-    name
     highlight
+    name
     price
     recommended
   }
@@ -833,6 +850,56 @@ export const UPDATE_PROFILE_IMAGE_MUTATION = gql`
 export function gqlUpdateProfileImageMutation(variables: UpdateProfileImageMutationVariables): { mutation: typeof UPDATE_PROFILE_IMAGE_MUTATION, variables: typeof variables } {
   return {
     mutation: UPDATE_PROFILE_IMAGE_MUTATION,
+    variables
+  };
+}
+
+export const BULK_VERIFY_MUTATION = gql`
+    mutation BulkVerify($input: FileVerificationInput!) {
+  bulkVerify(input: $input) {
+    verifiedFile
+    user
+    updatedAt
+    totalRows
+    status
+    startedAt
+    originalFile
+    createdAt
+    completedAt
+    _id
+  }
+}
+    ` as DocumentNode<BulkVerifyMutationData, BulkVerifyMutationVariables>;
+
+export function gqlBulkVerifyMutation(variables: BulkVerifyMutationVariables): { mutation: typeof BULK_VERIFY_MUTATION, variables: typeof variables } {
+  return {
+    mutation: BULK_VERIFY_MUTATION,
+    variables
+  };
+}
+
+export const SINGLE_EMAIL_MUTATION = gql`
+    mutation SingleEmail($email: String!) {
+  checkEmail(email: $email) {
+    checks {
+      syntax_valid
+      smtp_connect
+      smtp_block
+      is_role
+      is_catchall
+    }
+    username
+    status
+    mx_record
+    email
+    domain
+  }
+}
+    ` as DocumentNode<SingleEmailMutationData, SingleEmailMutationVariables>;
+
+export function gqlSingleEmailMutation(variables: SingleEmailMutationVariables): { mutation: typeof SINGLE_EMAIL_MUTATION, variables: typeof variables } {
+  return {
+    mutation: SINGLE_EMAIL_MUTATION,
     variables
   };
 }

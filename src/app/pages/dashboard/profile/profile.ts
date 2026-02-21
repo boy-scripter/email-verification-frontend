@@ -16,6 +16,7 @@ import { InputTextModule } from 'primeng/inputtext';
 
 export interface ProfileForm {
   name: FormControl<string>;
+  phone: FormControl<string>;
   avatar: FormControl<File | null>;
 }
 @Component({
@@ -57,6 +58,9 @@ export interface ProfileForm {
       <app-input icon="pi-user">
         <input formControlName="name" pInputText placeholder="Name" />
       </app-input>
+      <app-input icon="pi-phone">
+        <input formControlName="phone" pInputText placeholder="Phone No." />
+      </app-input>
       <app-input icon="pi-envelope">
         <input
           [disabled]="true"
@@ -83,6 +87,10 @@ export class ProfileComponent {
           nonNullable: true,
           validators: [Validators.required],
         }),
+        phone: new FormControl<string>(user.phone || '', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
         avatar: new FormControl<File | null>(null, {
           validators: [
             fileSizeValidator(0, 1024),
@@ -95,12 +103,12 @@ export class ProfileComponent {
   }
 
   async onSubmit(value: FormType<typeof this.profileForm>) {
-    const { nextTask, name, avatar } = value;
+    const { nextTask, name, phone, avatar } = value;
     if (avatar) {
       const fileId = await this.uploadStore.startUpload('avatar');
       await this.authStore.updateProfileImage(fileId);
     } 
-    await this.authStore.updateProfile({ name });
+    await this.authStore.updateProfile({ name, phone });
     nextTask();
   }
 }

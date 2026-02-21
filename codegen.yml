@@ -1,5 +1,5 @@
 # codegen.yml
-schema: https://email-verification-backend-production-a377.up.railway.app/graphql
+schema: http://localhost:8000/graphql
 documents: './src/app/graphql/**/*.gql'
 
 generates:

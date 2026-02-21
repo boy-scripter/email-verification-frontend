@@ -5,5 +5,6 @@ export const enviroment = {
   image_base_url: 'http://localhost:3000',
   s3_base_url: 'http://localhost:3000',
   production: false,
+  cashfree_mode: 'sandbox',
 };
 

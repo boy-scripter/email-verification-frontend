@@ -1,11 +1,14 @@
+
 query Plans {
   plans {
     _id
+    active
+    buttonLabel
+    buttonStyle
     credits
     features
-    label
-    name
     highlight
+    name
     price
     recommended
   }

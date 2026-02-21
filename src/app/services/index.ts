@@ -1,2 +1,6 @@
 export * from './auth.service';
 export * from './token.service'
+
+export * from './forgot-password.service'
+export * from './verification.service'
+export * from './plan.service'

@@ -67,11 +67,12 @@ export class UploadStoreService {
         });
       },
       onComplete: () => {
-        currentItem.set({
-          ...currentItem(),
-          count: 100,
-          status: 'completed',
-        });
+        this.remove(key);
+          currentItem.set({
+              ...currentItem(),
+              count: 100,
+              status: 'completed',
+          });
       },
     });
 
@@ -80,10 +81,14 @@ export class UploadStoreService {
 
   startAll() {
     Object.keys(this.filesMap).forEach((key) => this.startUpload(key));
+
   }
 
 
-  get(key: string) {
-    return this.filesMap.get(key) ?? null;
+  get(key: string) :WritableSignal<UploadItemState> {
+    if(!this.filesMap.has(key)) {
+      throw new Error(`${ key } key not exist`);
+    }
+    return this.filesMap.get(key) as WritableSignal<UploadItemState>;
   }
 }

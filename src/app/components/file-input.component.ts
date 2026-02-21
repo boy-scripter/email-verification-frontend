@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, contentChild, input, computed, TemplateRef, ChangeDetectionStrategy, signal, ElementRef, inject, DestroyRef, Signal } from "@angular/core";
+import { Component, AfterViewInit, contentChild, input, computed, TemplateRef, ChangeDetectionStrategy, signal, ElementRef, inject, DestroyRef, WritableSignal, Signal } from "@angular/core";
 import { NgControl } from "@angular/forms";
 import { filter, tap } from "rxjs";
-import { NgTemplateOutlet } from "@angular/common";
+import { JsonPipe, NgTemplateOutlet } from "@angular/common";
 import { errorConfigType } from "@util/error-handler";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { twMerge } from "tailwind-merge";
@@ -14,7 +14,7 @@ type FILE_SUPPORTED_BACKEND = "AVATAR_IMAGE" | "CSV_VERIFICATION"
 
 @Component({
     selector: 'app-file-input',
-    imports: [ErrorControlComponent, NgTemplateOutlet],
+    imports: [ErrorControlComponent, NgTemplateOutlet , JsonPipe],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <div class="file-input-wrapper">
@@ -30,8 +30,10 @@ type FILE_SUPPORTED_BACKEND = "AVATAR_IMAGE" | "CSV_VERIFICATION"
             }
             <ng-content></ng-content>
         </div>
+
+        {{progressState()?.status}}
         
-       @if(progressFileTemplate() && progressState && progressState().status === 'uploading'){
+       @if(progressFileTemplate() &&  progressState()?.status === 'uploading'){
             <ng-container 
                 *ngTemplateOutlet="progressFileTemplate();  
                 context: {
@@ -62,7 +64,7 @@ export class FileInputComponent implements AfterViewInit {
 
     //state
     protected file = signal<FileAdvancedBase | null>(null)
-    protected progressState : Signal<UploadItemState> | null = null
+    protected progressState : Signal<UploadItemState |null> = signal(null)
     
     // inputs
     mediaCode = input.required<FILE_SUPPORTED_BACKEND>()
@@ -97,7 +99,8 @@ export class FileInputComponent implements AfterViewInit {
                     mediaCode: this.mediaCode(),
                     strategyName: this.uploadStrategyName()
                 });
-                this.progressState = this.uploadStoreService.get(this.controlName());
+                const fileProgressState = this.uploadStoreService.get(this.controlName());
+                this.progressState = computed(() => fileProgressState());
                 this.file.set(fileAdvanced);
             })
         ).subscribe();

@@ -1,12 +1,11 @@
 mutation BuyPlan($planId: String!) {
   buyPlan(planId: $planId) {
-    status
+   gateway
     payment_session_id
-    metadata
-    gateway
     amount
-    plan {
-      _id
-    }
+    plan
+    status
+    user
+    metadata
   }
 }

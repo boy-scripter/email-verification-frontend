@@ -1,0 +1,16 @@
+mutation SingleEmail($email: String!) {
+  checkEmail(email: $email) {
+    checks {
+      syntax_valid
+      smtp_connect
+      smtp_block
+      is_role
+      is_catchall
+    }
+    username
+    status
+    mx_record
+    email
+    domain
+  }
+}

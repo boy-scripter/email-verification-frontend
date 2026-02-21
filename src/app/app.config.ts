@@ -11,6 +11,7 @@ import { providePrimeNG } from 'primeng/config';
 import { provideApolloConfig, provideRoutingConfig } from './config';
 import { ModernRadixPreset } from './theme/present';
 import { provideSocialAuth } from './config/social.config';
+import { DialogService } from 'primeng/dynamicdialog';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,5 +35,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     MessageService,
+    DialogService
   ],
 };

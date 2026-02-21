@@ -1,10 +1,12 @@
-import { Component  } from '@angular/core';
+import { Component, inject  } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormControl, FormGroup } from '@angular/forms';
 import { CardComponent, FileInputComponent, FileInputDirective, FormComponent, FormType } from '@components/index';
 import { ButtonModule } from 'primeng/button';
 import { fileSizeValidator, fileTypeValidator } from '@util/error-handler';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { UploadStoreService } from '@util/uploader/service/uploadstore.service';
+import { VerificationService } from '@service';
 
 export interface FileEmailVerficationForm {
     file: FormControl<string>;
@@ -20,7 +22,7 @@ export interface FileEmailVerficationForm {
                 font-size: 12px; /* smaller font on mobile */
             }
         }
-  `,
+  `, 
   template: `
     <div class="w-full">
         <app-card icon="pi pi-upload" label="Bulk Upload">
@@ -39,7 +41,6 @@ export interface FileEmailVerficationForm {
                                     <p class="text-gray-600 text-sm md:text-base ml-4"> Select Your File <b>OR</b><br> Drag & drop a CSV file</p>
                                 }
                             </div>
-                      
                     </ng-template>
                     <ng-template #progress let-progress>
                         <div class="w-full mt-4" >
@@ -54,7 +55,9 @@ export interface FileEmailVerficationForm {
   `,
 })
 export class BulkUploadComponent {
-  
+    private uploadService = inject(UploadStoreService)
+    private verificationService = inject(VerificationService)
+
     fileEmailVerficationForm: FormGroup<FileEmailVerficationForm>;
 
     constructor() {
@@ -69,12 +72,10 @@ export class BulkUploadComponent {
         } );
     }
  
-     onSubmit(value: FormType<typeof this.fileEmailVerficationForm>) {
-        console.log(value)
-        // withFileResolves(value)
-        // .then((data) => {
-        //     console.log(data);
-        //     value.nextTask()
-        // })
+     async onSubmit(value: FormType<typeof this.fileEmailVerficationForm>) {
+       const { nextTask } = value
+       const fileId = await this.uploadService.startUpload('file')
+       await this.verificationService.bulkVerifyEmail(fileId)
+       nextTask()
      }
 }

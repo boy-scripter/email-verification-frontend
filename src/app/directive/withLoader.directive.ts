@@ -2,54 +2,68 @@ import {
   ComponentRef,
   DestroyRef,
   Directive,
-  effect,
   inject,
   input,
+  OnInit,
   TemplateRef,
   Type,
   ViewContainerRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ProgressSpinner } from 'primeng/progressspinner';
+import { SpinnerComponent } from '@components/loaders/spinner.component';
 import { from, isObservable, Observable, Subscription } from 'rxjs';
 
 @Directive({
   selector: '[appWithLoader]',
   standalone: true,
 })
-export class WithLoaderDirective {
+export class WithLoaderDirective implements OnInit {
   private readonly templateRef = inject<TemplateRef<unknown>>(TemplateRef); // original template
   private readonly vcr = inject(ViewContainerRef);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly withLoader = input.required<Promise<any> | Observable<any>>();
-  readonly withLoaderLoading = input<TemplateRef<unknown> | null>(null);
+  // ================================
+  // Inputs (using input.required as requested)
+  // ================================
+  readonly appWithLoader = input.required<Promise<any> | Observable<any>>();
+  readonly appWithLoaderLoading = input<TemplateRef<unknown> | null>(null);
 
+  // ================================
+  // Internal State
+  // ================================
   private subscription?: Subscription;
-  private spinnerRef?: ComponentRef<ProgressSpinner>;
+  private spinnerRef?: ComponentRef<SpinnerComponent>;
+  private source?: Promise<any> | Observable<any>; // store promise/observable
 
-  constructor() {
-    effect(() => {
-      if (this.withLoader()) {
-        this.execute(this.withLoader());
-      }
-    });
-  } 
+  // ================================
+  // ngOnInit — execute once
+  // ================================
+  ngOnInit(): void {
+    const loader = this.appWithLoader();
+    if (loader) {
+      this.source = loader;
+      this.execute(this.source);
+    }
+  }
 
+  // ================================
+  // Core Execution
+  // ================================
   private execute(source: Promise<any> | Observable<any>): void {
     this.cleanup();
     this.renderLoading();
 
     const observable$ = isObservable(source) ? source : from(source);
 
-    this.subscription = observable$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => this.renderTemplate(), // render original content on success
-        error: (err) => this.handleError(err),
-      });
+    this.subscription = observable$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.renderTemplate(), // render original content on success
+      error: (err) => this.handleError(err),
+    });
   }
 
+  // ================================
+  // Template Renderers
+  // ================================
   private renderTemplate(): void {
     this.clearView();
     this.vcr.createEmbeddedView(this.templateRef);
@@ -69,13 +83,18 @@ export class WithLoaderDirective {
   private renderLoading(): void {
     this.clearView();
 
-    if (this.withLoaderLoading()) {
-      this.vcr.createEmbeddedView(this.withLoaderLoading()!);
+    const loadingTemplate = this.appWithLoaderLoading();
+    if (loadingTemplate) {
+      this.vcr.createEmbeddedView(loadingTemplate);
     } else {
-      this.spinnerRef = this.vcr.createComponent(ProgressSpinner as Type<ProgressSpinner>);
+      this.spinnerRef = this.vcr.createComponent(SpinnerComponent as Type<SpinnerComponent>);
+      
     }
   }
 
+  // ================================
+  // Cleanup
+  // ================================
   private cleanup(): void {
     this.subscription?.unsubscribe();
     this.subscription = undefined;

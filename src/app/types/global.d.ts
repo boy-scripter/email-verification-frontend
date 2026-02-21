@@ -18,3 +18,5 @@ declare module 'google-one-tap' {
     export default googleOneTap;
     export type { CredentialResponse };
 }
+
+declare module '@cashfreepayments/cashfree-js'
