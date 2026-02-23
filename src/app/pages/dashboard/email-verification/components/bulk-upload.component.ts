@@ -19,7 +19,7 @@ export interface FileEmailVerficationForm {
   styles : `
         @media (max-width: 500px) {
             ::ng-deep app-file-input p-button .p-button-label {
-                font-size: 12px; /* smaller font on mobile */
+                font-size: 12px; 
             }
         }
   `, 
@@ -32,6 +32,7 @@ export interface FileEmailVerficationForm {
                     <input appFileInput class="my-5" name="file" formControlName="file" type="file"  />   
                     <ng-template #preview let-file>
                           @let fileObject = file?.toFile();
+
                           @let fileName = fileObject?.name || 'Not Found';
                           <div class="py-20 text-black md:py-36 border-2 rounded-xl border-dashed border-surface-400 p-4 gap-2 flex flex-col md:flex-row justify-center items-center">
                               @if(fileObject){
@@ -42,11 +43,16 @@ export interface FileEmailVerficationForm {
                                 }
                             </div>
                     </ng-template>
-                    <ng-template #progress let-progress>
-                        <div class="w-full mt-4" >
-                          <p-progressbar [value]="progress.count" />
+                 <ng-template #progress let-progress>
+                     @if(progress?.count){
+                         <div class="w-full mt-4 transition-opacity duration-300 ease-in-out"
+                            [class.opacity-0]="!progress?.count"
+                            [class.opacity-100]="progress?.count"
+                        >
+                            <p-progressbar [value]="progress?.count || 0"></p-progressbar>
                         </div>
-                    </ng-template>
+                     }
+                 </ng-template>
             </app-file-input>
             <p-button #submitBtn styleClass="p-2 px-6" size="small" severity="info" type="submit" label="Start Upload" icon="pi pi-upload" ></p-button>
          </app-form>
@@ -75,7 +81,8 @@ export class BulkUploadComponent {
      async onSubmit(value: FormType<typeof this.fileEmailVerficationForm>) {
        const { nextTask } = value
        const fileId = await this.uploadService.startUpload('file')
-       await this.verificationService.bulkVerifyEmail(fileId)
+       await this.verificationService.bulkVerifyEmail(fileId).catch(nextTask)
+       this.fileEmailVerficationForm.reset()
        nextTask()
      }
 }

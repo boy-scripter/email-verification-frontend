@@ -1,8 +1,11 @@
 import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApolloService } from '@util/service/apollo/apollo.service';
-import { tap } from 'rxjs';
-import { gqlFinalizeUploadMutation, gqlGenerateTempUploadMutation } from 'src/app/graphql/generated';
+import { lastValueFrom, tap } from 'rxjs';
+import {
+  gqlFinalizeUploadMutation,
+  gqlGenerateTempUploadMutation,
+} from 'src/app/graphql/generated';
 import { SetFileAndMediaCodeParamsI, UploadCallbacks, UploadStrategy } from './abstract.strategy';
 
 @Injectable()
@@ -25,13 +28,13 @@ export class NormalUploadStrategy implements UploadStrategy {
   async upload(): Promise<string> {
     this.preCheck();
     try {
-     const { data } = await this.getPresignedUrl();
+      const { data } = await this.getPresignedUrl();
       await this.uploadToS3({
         file: this.file!,
         url: data.generateTempUpload.presignedData.url,
         headers: data.generateTempUpload.presignedData.headers,
       });
-     const fileInfo =  await this.finalizeUpload(data.generateTempUpload._id);
+      const fileInfo = await this.finalizeUpload(data.generateTempUpload._id);
       return fileInfo.data.finalizeUpload._id;
     } catch (err) {
       this.callbacks!.onError?.(err as Error);
@@ -60,25 +63,27 @@ export class NormalUploadStrategy implements UploadStrategy {
     url: string;
     headers: Record<string, string>;
   }) {
-    return this.http
-      .request('PUT', url, {
-        body: file,
-        headers: new HttpHeaders(headers),
-        reportProgress: true,
-        observe: 'events',
-      })
-      .pipe(
-        tap((event) => {
-          if (event.type === HttpEventType.UploadProgress && event.total) {
-            const percentDone = Math.round((event.loaded / event.total) * 100);
-            this.callbacks!.onProgress?.(percentDone);
-          } else if (event.type === HttpEventType.Response) {
-            this.callbacks!.onComplete?.();
-          }
-        }),
-      ).toPromise();
-  }
+    // Using http.put() shorthand
+    this.callbacks?.onProgress?.(0);
+    const request$ = this.http.put(url, file, {
+      headers: new HttpHeaders(headers),
+      reportProgress: true,       // enables upload progress events
+      observe: 'events',          // needed to receive progress events
+    }).pipe(
+      tap((event) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          const percentDone = Math.round((event.loaded / event.total) * 100);
+          this.callbacks?.onProgress?.(percentDone);
+        }
 
+        if (event.type === HttpEventType.Response) {
+          this.callbacks?.onComplete?.();
+        }
+      }),
+    );
+
+    return lastValueFrom(request$);
+  }
 
   private finalizeUpload(fileId: string) {
     return this.apollo.mutate(

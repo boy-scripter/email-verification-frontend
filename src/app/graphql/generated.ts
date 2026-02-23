@@ -577,6 +577,23 @@ export type PlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type PlansQueryData = { __typename?: 'Query', plans: Array<{ __typename?: 'PlanModel', _id: string, active: boolean, buttonLabel: string, buttonStyle: string, credits: number, features: Array<string>, highlight: boolean | null, name: string, price: number, recommended: boolean | null }> };
 
+export type CreditsHistoryMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreditsHistoryMutationData = { __typename?: 'Mutation', creditsHistory: { __typename?: 'CreditsHistoryTotals', validCount: number, totalCount: number, invalidCount: number } };
+
+export type CreditsByRangeMutationVariables = Exact<{
+  input: CreditsFilterDto;
+}>;
+
+
+export type CreditsByRangeMutationData = { __typename?: 'Mutation', creditsByRange: Array<{ __typename?: 'CreditsHistoryModel', date: any, invalidCount: number, totalCount: number, validCount: number }> };
+
+export type GetTotalCreditsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTotalCreditsMutationData = { __typename?: 'Mutation', getTotalCredits: { __typename?: 'TotalCreditsResponse', remaining_credits: number, total_credits: number } };
+
 export type UpdateProfileMutationVariables = Exact<{
   input: UserDto;
 }>;
@@ -821,6 +838,55 @@ export const PLANS_QUERY = gql`
 export function gqlPlansQuery(): { query: typeof PLANS_QUERY } {
   return {
     query: PLANS_QUERY
+  };
+}
+
+export const CREDITS_HISTORY_MUTATION = gql`
+    mutation CreditsHistory {
+  creditsHistory {
+    validCount
+    totalCount
+    invalidCount
+  }
+}
+    ` as DocumentNode<CreditsHistoryMutationData, CreditsHistoryMutationVariables>;
+
+export function gqlCreditsHistoryMutation(): { mutation: typeof CREDITS_HISTORY_MUTATION } {
+  return {
+    mutation: CREDITS_HISTORY_MUTATION
+  };
+}
+
+export const CREDITS_BY_RANGE_MUTATION = gql`
+    mutation CreditsByRange($input: CreditsFilterDto!) {
+  creditsByRange(input: $input) {
+    date
+    invalidCount
+    totalCount
+    validCount
+  }
+}
+    ` as DocumentNode<CreditsByRangeMutationData, CreditsByRangeMutationVariables>;
+
+export function gqlCreditsByRangeMutation(variables: CreditsByRangeMutationVariables): { mutation: typeof CREDITS_BY_RANGE_MUTATION, variables: typeof variables } {
+  return {
+    mutation: CREDITS_BY_RANGE_MUTATION,
+    variables
+  };
+}
+
+export const GET_TOTAL_CREDITS_MUTATION = gql`
+    mutation GetTotalCredits {
+  getTotalCredits {
+    remaining_credits
+    total_credits
+  }
+}
+    ` as DocumentNode<GetTotalCreditsMutationData, GetTotalCreditsMutationVariables>;
+
+export function gqlGetTotalCreditsMutation(): { mutation: typeof GET_TOTAL_CREDITS_MUTATION } {
+  return {
+    mutation: GET_TOTAL_CREDITS_MUTATION
   };
 }
 

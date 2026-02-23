@@ -1,20 +1,22 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ProgressCircleComponent } from '../progress-circle/progress-circle.component';
+import { WithLoaderDirective } from "@directive/withLoader.directive";
+import { CreditService } from '@service';
 
 
 @Component({
   selector: 'app-stats-card',
   standalone: true,
-  imports: [CommonModule, CardModule, ProgressCircleComponent],
+  imports: [CommonModule, CardModule, ProgressCircleComponent, WithLoaderDirective],
   template: `
     <p-card class="transparent-bg">
       <div class="flex  items-center  justify-between">
         <!-- Stats Section -->
        <div class="flex flex-col md:flex-row w-full md:w-auto gap-5">
 
-          <div class="bg-white/90 rounded-xl p-5 ">
+          <div *appWithLoader="" class="bg-white/90 rounded-xl p-5">
 
               <div class="text-4xl font-bold text-blue-600 mb-2">{{totalVerified}}</div>
               <div class="text-lg font-semibold text-gray-900 mb-4">Verified till now</div>
@@ -35,6 +37,7 @@ import { ProgressCircleComponent } from '../progress-circle/progress-circle.comp
 
             <!-- Progress Circle Section -->
             <app-progress-circle 
+             *appWithLoader="loadInitialData()"
               [percentage]="creditUsagePercentage()"
               [remainingCredits]="remainingCredits()"
               [usedCredits]="usedCredits()">
@@ -52,10 +55,39 @@ import { ProgressCircleComponent } from '../progress-circle/progress-circle.comp
   `
 })
 export class StatsCardComponent {
-  totalVerified = 50;
-  validCount = 25;
-  invalidCount = 25;
-  creditUsagePercentage = signal(75);
-  remainingCredits = signal(35);
-  usedCredits = signal(75);
+ 
+  private creditService  =  inject(CreditService)
+
+  private verficationCounts = signal({
+    valid: 0,
+    invalid: 0,
+    totalVerified: 0
+  })
+
+  private creditsUsage = signal({
+    remainingCredits: 35,
+    usedCredits: 75,
+    usedPercentage: 75,
+  })
+
+  constructor() {
+
+     this.creditService.getTotalCredits().then(({data}) => {
+        this.creditsUsage.update((value) => ({
+          ...value,
+          remainingCredits: data.getTotalCredits.remaining_credits,
+          usedCredits: data.getTotalCredits.total_credits,
+          usedPercentage: data.getTotalCredits.total_credits
+        }));
+      })
+
+      this.creditService.getCreditsHistory().then(({data}) => {
+        this.creditsUsage.update((value) => ({
+          ...value,
+          usedCredits: data.creditsHistory.
+        }));
+      })
+    }
+
+    
 }

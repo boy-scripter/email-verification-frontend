@@ -1,0 +1,8 @@
+mutation CreditHistoryRange($input: CreditsFilterDto!) {
+  creditsByRange(input: $input) {
+    date
+    invalidCount
+    totalCount
+    validCount
+  }
+}

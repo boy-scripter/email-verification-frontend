@@ -1,0 +1,7 @@
+mutation CreditsHistory {
+  creditsHistory {
+    validCount
+    totalCount
+    invalidCount
+  }
+}

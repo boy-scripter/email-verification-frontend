@@ -88,7 +88,6 @@ export class WithLoaderDirective implements OnInit {
       this.vcr.createEmbeddedView(loadingTemplate);
     } else {
       this.spinnerRef = this.vcr.createComponent(SpinnerComponent as Type<SpinnerComponent>);
-      
     }
   }
 

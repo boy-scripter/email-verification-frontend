@@ -1,0 +1,6 @@
+mutation GetTotalCredits {
+  getTotalCredits {
+    remaining_credits
+    total_credits
+  }
+}

@@ -44,19 +44,19 @@ export class UploadStoreService {
     this.filesMap.delete(key);
   }
 
- async startUpload(key: string) :Promise<string> {
+  async startUpload(key: string): Promise<string> {
     const currentItem = this.filesMap.get(key);
 
     if (!currentItem) {
       throw new Error('File not found');
     }
 
-     const fileId = await currentItem().file.startUpload({
+    const fileId = await currentItem().file.startUpload({
       onProgress: (progress: number) => {
         currentItem.set({
           ...currentItem(),
-          count : progress,
-          status : 'uploading'
+          count: progress,
+          status: 'uploading',
         });
       },
       onError: () => {
@@ -68,26 +68,24 @@ export class UploadStoreService {
       },
       onComplete: () => {
         this.remove(key);
-          currentItem.set({
-              ...currentItem(),
-              count: 100,
-              status: 'completed',
-          });
+        currentItem.set({
+          ...currentItem(),
+          count: 100,
+          status: 'completed',
+        });
       },
     });
 
-    return fileId
+    return fileId;
   }
 
   startAll() {
     Object.keys(this.filesMap).forEach((key) => this.startUpload(key));
-
   }
 
-
-  get(key: string) :WritableSignal<UploadItemState> {
-    if(!this.filesMap.has(key)) {
-      throw new Error(`${ key } key not exist`);
+  get(key: string): WritableSignal<UploadItemState> {
+    if (!this.filesMap.has(key)) {
+      throw new Error(`${key} key not exist`);
     }
     return this.filesMap.get(key) as WritableSignal<UploadItemState>;
   }

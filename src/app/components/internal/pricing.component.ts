@@ -76,13 +76,11 @@ export class PricingComponent  {
   
   checked = false;
   plans: WritableSignal<PlanModel[]> = signal([]);
-  
   loadPlansPromise: Promise<void>;
 
   constructor(){
    this.loadPlansPromise = this.planservice.getPlans()
    .then(({ data }) => this.plans.set(data.plans))
-  //  .then( () => console.log('test') )
   }
 
   async onBuyNow(plan: PlanModel) {
