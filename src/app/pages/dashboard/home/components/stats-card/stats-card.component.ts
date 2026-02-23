@@ -73,12 +73,11 @@ export class StatsCardComponent {
   constructor() {
 
      this.creditService.getTotalCredits().then(({data}) => {
-        this.creditsUsage.update((value) => ({
-          ...value,
+        this.creditsUsage.set({
           remainingCredits: data.getTotalCredits.remaining_credits,
           usedCredits: data.getTotalCredits.total_credits,
           usedPercentage: data.getTotalCredits.total_credits
-        }));
+        });
       })
 
       this.creditService.getCreditsHistory().then(({data}) => {
