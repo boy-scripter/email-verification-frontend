@@ -77,11 +77,6 @@ export class StatsCardComponent {
         const usedCredits = totalCredits - remainingCredits;
         const usedPercentage = (usedCredits/totalCredits) * 100;
         
-        console.log({
-                  remainingCredits: remainingCredits,
-                  usedCredits: usedCredits,
-                  usedPercentage: isNaN(usedPercentage) ? 0 : usedPercentage
-                })
         this.creditsUsage.set({
           remainingCredits: remainingCredits,
           usedCredits: usedCredits,
