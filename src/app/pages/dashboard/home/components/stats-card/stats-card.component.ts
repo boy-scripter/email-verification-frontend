@@ -16,20 +16,20 @@ import { CreditService } from '@service';
         <!-- Stats Section -->
        <div class="flex flex-col md:flex-row w-full md:w-auto gap-5">
 
-          <div *appWithLoader="" class="bg-white/90 rounded-xl p-5">
+          <div *appWithLoader="totalCreditsPromise" class="bg-white/90 rounded-xl p-5">
 
-              <div class="text-4xl font-bold text-blue-600 mb-2">{{totalVerified}}</div>
+              <div class="text-4xl font-bold text-blue-600 mb-2">{{verficationCounts().totalVerified}}</div>
               <div class="text-lg font-semibold text-gray-900 mb-4">Verified till now</div>
 
               <div class="flex items-center space-x-6">
                 <div class="flex items-center space-x-2">
                   <i class="pi pi-thumbs-up text-green-500"></i>
-                  <span class="text-green-500 font-medium">{{validCount}} Valid</span>
+                  <span class="text-green-500 font-medium">{{verficationCounts().valid}} Valid</span>
                 </div>
 
                 <div class="flex items-center space-x-2">
                   <i class="pi pi-thumbs-down text-red-500"></i>
-                  <span class="text-red-500 font-medium">{{invalidCount}} Invalid</span>
+                  <span class="text-red-500 font-medium">{{verficationCounts().invalid}} Invalid</span>
                 </div>
                 
               </div>
@@ -37,10 +37,9 @@ import { CreditService } from '@service';
 
             <!-- Progress Circle Section -->
             <app-progress-circle 
-             *appWithLoader="loadInitialData()"
-              [percentage]="creditUsagePercentage()"
-              [remainingCredits]="remainingCredits()"
-              [usedCredits]="usedCredits()">
+             *appWithLoader="creditHistory"
+             [creditsUsage]="creditsUsage()"
+              >
             </app-progress-circle>
        </div>
 
@@ -57,34 +56,46 @@ import { CreditService } from '@service';
 export class StatsCardComponent {
  
   private creditService  =  inject(CreditService)
-
-  private verficationCounts = signal({
+  public verficationCounts = signal({
     valid: 0,
     invalid: 0,
     totalVerified: 0
   })
-
-  private creditsUsage = signal({
+  public creditsUsage = signal({
     remainingCredits: 35,
     usedCredits: 75,
     usedPercentage: 75,
   })
+  public totalCreditsPromise : Promise<void> 
+  public creditHistory : Promise<void> 
 
   constructor() {
 
-     this.creditService.getTotalCredits().then(({data}) => {
+      this.totalCreditsPromise = this.creditService.getTotalCredits().then(({data}) => {
+        const totalCredits = data.getTotalCredits.total_credits;
+        const remainingCredits = data.getTotalCredits.remaining_credits;
+        const usedCredits = totalCredits - remainingCredits;
+        const usedPercentage = (usedCredits/totalCredits) * 100;
+        
+        console.log({
+                  remainingCredits: remainingCredits,
+                  usedCredits: usedCredits,
+                  usedPercentage: isNaN(usedPercentage) ? 0 : usedPercentage
+                })
         this.creditsUsage.set({
-          remainingCredits: data.getTotalCredits.remaining_credits,
-          usedCredits: data.getTotalCredits.total_credits,
-          usedPercentage: data.getTotalCredits.total_credits
+          remainingCredits: remainingCredits,
+          usedCredits: usedCredits,
+          usedPercentage: isNaN(usedPercentage) ? 0 : usedPercentage
         });
       })
 
-      this.creditService.getCreditsHistory().then(({data}) => {
-        this.creditsUsage.update((value) => ({
-          ...value,
-          usedCredits: data.creditsHistory.
-        }));
+      this.creditHistory = this.creditService.getCreditsHistory().then(
+        ({data}) => {
+        this.verficationCounts.set({
+          valid: data.creditsHistory.validCount,
+          invalid: data.creditsHistory.invalidCount,
+          totalVerified: data.creditsHistory.totalCount
+        });
       })
     }
 

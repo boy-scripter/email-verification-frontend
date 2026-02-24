@@ -80,7 +80,9 @@ export class PricingComponent  {
 
   constructor(){
    this.loadPlansPromise = this.planservice.getPlans()
-   .then(({ data }) => this.plans.set(data.plans))
+   .then(({ data }) => {
+    this.plans.set(data.plans)
+   })
   }
 
   async onBuyNow(plan: PlanModel) {

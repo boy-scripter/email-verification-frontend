@@ -50,13 +50,20 @@ export class WithLoaderDirective implements OnInit {
   // Core Execution
   // ================================
   private execute(source: Promise<any> | Observable<any>): void {
-    this.cleanup();
-    this.renderLoading();
+    const DEBOUNCE = 1000 * 2;
+
+    const taskId = setTimeout(() => {
+      this.cleanup();
+      this.renderLoading();
+    }, DEBOUNCE);
 
     const observable$ = isObservable(source) ? source : from(source);
 
     this.subscription = observable$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => this.renderTemplate(), // render original content on success
+      next: () => {
+        clearTimeout(taskId);
+        this.renderTemplate(); // render original content on success
+      },
       error: (err) => this.handleError(err),
     });
   }

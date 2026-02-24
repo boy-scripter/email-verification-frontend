@@ -79,8 +79,6 @@ export class CircleProgressComponent {
     return this.circumference * (1 - progress);
   }
 
-
-  
   get viewBox(): string {
     return `0 0 ${this.size()} ${this.size()}`;
   }
