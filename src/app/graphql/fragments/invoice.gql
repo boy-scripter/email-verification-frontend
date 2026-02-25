@@ -1,0 +1,9 @@
+fragment InvoiceFields on Invoice {
+        currency
+        invoiceDate
+        userId
+        totalAmount
+        taxAmount
+        subTotal
+        orderId
+}

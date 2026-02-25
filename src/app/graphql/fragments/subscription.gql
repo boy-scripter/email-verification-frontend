@@ -1,0 +1,8 @@
+fragment SubscriptionFields on Subscription {
+        _id
+        createdAt
+        left_credits
+        status
+        total_credits
+        updatedAt
+}

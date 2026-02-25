@@ -1,0 +1,22 @@
+mutation GetInvoices($input: PaginatedInvoiceDto!) {
+  getInvoices(input: $input) {
+    edges {
+      cursor
+      node {
+        currency
+        invoiceDate
+        userId
+        totalAmount
+        taxAmount
+        subTotal
+        orderId
+      }
+    }
+    pageInfo {
+      startCursor
+      hasPreviousPage
+      hasNextPage
+      endCursor
+    }
+  }
+}

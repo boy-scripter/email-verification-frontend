@@ -37,9 +37,10 @@
   };
 
  const chartData = {
-    labels: ['Feb 22nd', 'Feb 27th', 'Mar 4th', 'Mar 9th', 'Mar 14th'],
+    labels: Array.from({length: 24}, (_, i) => `${i % 12 || 12} ${i % 24 >= 12 ? 'PM' : 'AM'}`),
     datasets: [{
-      data: [0.2, 0.6, 0.5, 0.8, 0.9],
+      label: 'Total',
+      data: Array.from({length: 24}, () => 0),
       fill: true,
       borderColor: '#3b82f6',
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -56,21 +57,56 @@
     Last30Days = 'Last 30 Days',
     Last12Months = 'Last 12 Months'
   }
-  
-  export interface timeRangeOptionType {
-    label: string;
-    value: () => string;
+
+  export interface TimeRangeValue {
+    key: TimeRange;
+    gte: string;
+    lte: string;
   }
 
+  export interface timeRangeOptionType {
+    name: string;
+    value(): TimeRangeValue;
+  }
+
+  const now = DateTime.local();
+
   const timeRangeOptions: timeRangeOptionType[] = [
-    { label: TimeRange.Last24Hours, value: (() => DateTime.local().minus({ days: 1 }).toISODate()) },
-    { label: TimeRange.Last7Days, value: (() => DateTime.local().minus({ days: 7 }).toISODate()) },
-    { label: TimeRange.Last30Days, value: (() => DateTime.local().minus({ days: 30 }).toISODate()) },
-    { label: TimeRange.Last12Months, value: (() => DateTime.local().minus({ months: 12 }).toISODate()) }
+    {
+      name: TimeRange.Last24Hours,
+      value: () => ({
+        key: TimeRange.Last24Hours,
+        gte: now.minus({ days: 1 }).toISODate()!,
+        lte: now.toISODate()!
+      })
+    },
+    {
+      name: TimeRange.Last7Days,
+      value: () => ({
+        key: TimeRange.Last7Days,
+        gte: now.minus({ days: 7 }).toISODate()!,
+        lte: now.toISODate()!
+      })
+    },
+    {
+      name: TimeRange.Last30Days,
+      value: () => ({
+        key: TimeRange.Last30Days,
+        gte: now.minus({ days: 30 }).toISODate()!,
+        lte: now.toISODate()!
+      })
+    },
+    {
+      name: TimeRange.Last12Months,
+      value: () => ({
+        key: TimeRange.Last12Months,
+        gte: now.minus({ months: 12 }).toISODate()!,
+        lte: now.toISODate()!
+      })
+    }
   ];
 
-
-  export const CHART_CONFIG = {
+export const CHART_CONFIG = {
     chartOptions,
     chartData,
     timeRangeOptions

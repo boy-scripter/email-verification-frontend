@@ -1,0 +1,21 @@
+mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
+  getSubscriptions(input: $input) {
+    edges {
+      cursor
+      node {
+        _id
+        createdAt
+        left_credits
+        status
+        total_credits
+        updatedAt
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
