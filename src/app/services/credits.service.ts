@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { ApolloMutationResult, ApolloService } from '@util/service/apollo/apollo.service';
 import {
-  CreditsByRangeMutationData,
+  CreditHistoryRangeMutationData,
   CreditsHistoryMutationData,
   GetTotalCreditsMutationData,
-  gqlCreditsByRangeMutation,
+  gqlCreditHistoryRangeMutation,
   gqlCreditsHistoryMutation,
   gqlGetTotalCreditsMutation,
 } from '../graphql/generated';
@@ -21,12 +21,12 @@ export class CreditService {
   }
 
   // Get credits by a date range
-  getCreditsByRange(
+  getCreditsHistoryRange(
     startDate: string,
     endDate: string,
-  ): ApolloMutationResult<CreditsByRangeMutationData> {
+  ): ApolloMutationResult<CreditHistoryRangeMutationData> {
     return this.apollo.mutate(
-      gqlCreditsByRangeMutation({
+      gqlCreditHistoryRangeMutation({
         input: {
           createdAt: {
             gte: startDate,

@@ -39,6 +39,8 @@ export class WithLoaderDirective implements OnInit {
   // ngOnInit — execute once
   // ================================
   ngOnInit(): void {
+    this.renderTemplate(); // Always render content first
+
     const loader = this.appWithLoader();
     if (loader) {
       this.source = loader;
@@ -59,7 +61,9 @@ export class WithLoaderDirective implements OnInit {
 
     const observable$ = isObservable(source) ? source : from(source);
 
-    this.subscription = observable$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.subscription = observable$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: () => {
         clearTimeout(taskId);
         this.renderTemplate(); // render original content on success
@@ -78,12 +82,10 @@ export class WithLoaderDirective implements OnInit {
 
   private handleError(error: any): void {
     this.clearView();
-
     const div = document.createElement('div');
     div.textContent = 'Something went wrong.';
     div.style.color = 'red';
     this.vcr.element.nativeElement.appendChild(div);
-
     console.error('[WithLoaderDirective] Error:', error);
   }
 
@@ -114,4 +116,5 @@ export class WithLoaderDirective implements OnInit {
   private clearView(): void {
     this.cleanup();
   }
+  
 }

@@ -10,6 +10,7 @@
 
 @theme {
   --animate-float: float 3s ease-in-out infinite;
+  --spacing-unset: 'unset';
 
   @keyframes float {
     0%,

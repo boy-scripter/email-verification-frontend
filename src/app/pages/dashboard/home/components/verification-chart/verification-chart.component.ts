@@ -5,9 +5,9 @@ import { SelectModule } from 'primeng/select';
 import { ChartModule } from 'primeng/chart';
 import { FormsModule  } from '@angular/forms';
 import { CHART_CONFIG } from './chart.constant';
-import { CreditsHistoryModel, gqlCreditsByRangeMutation } from 'src/app/graphql/generated';
+import { CreditsHistoryModel } from 'src/app/graphql/generated';
 import { TimeRangeSelectorComponent } from '../time-range-selector/time-range-selector.component';
-import { ApolloService } from '@util/service/apollo/apollo.service';
+import { CreditService } from '@service';
 
 export interface PeriodType {
   label: string;
@@ -54,7 +54,7 @@ export interface PeriodType {
   `
 })
 export class VerificationChartComponent {
-  private apolloService = inject(ApolloService)
+  private creditService = inject(CreditService)
   
   //CONSTANTS
   public chartData = signal(CHART_CONFIG.chartData);
@@ -69,16 +69,7 @@ export class VerificationChartComponent {
   }
 
   private async updateChartData(gte: string, lte: string) {
-    const { data } = await this.apolloService.mutate(
-      gqlCreditsByRangeMutation({
-        input : {
-          createdAt : {
-            gte,
-            lte
-          }
-        }
-      })
-    )
+    const { data } = await this.creditService.getCreditsHistoryRange(gte, lte)
     const chartData = this.responseToChart(data.creditsByRange)
     this.chartData.set(chartData)
   }

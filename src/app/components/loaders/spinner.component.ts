@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
@@ -8,16 +8,25 @@ import { ProgressSpinner } from 'primeng/progressspinner';
   template: `
     <div class="w-full flex justify-center">
       <p-progress-spinner
-        strokeWidth="6"
-        fill="transparent"
-        animationDuration="1s"
+        [strokeWidth]="strokeWidth()"
+        [fill]="fill()"
+        [animationDuration]="animationDuration()"
         [style]="{ 
-            width: '50px', 
-            height: '50px',
-            padding: '1rem'
+            width: width(), 
+            height: height(),
+            padding: padding()
           }"
       ></p-progress-spinner>
     </div>
   `,
 })
-export class SpinnerComponent {}
+export class SpinnerComponent {
+
+  width = input<string>('50px');
+  height = input<string>('50px');
+  padding = input<string>('1rem');
+  strokeWidth = input<string>('6');
+  fill = input<string>('transparent');
+  animationDuration = input<string>('1s');
+
+}

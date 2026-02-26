@@ -1,4 +1,4 @@
-fragment InvoiceFields on Invoice {
+fragment InvoiceFields on InvoiceModel {
         currency
         invoiceDate
         userId

@@ -3,13 +3,7 @@ mutation GetInvoices($input: PaginatedInvoiceDto!) {
     edges {
       cursor
       node {
-        currency
-        invoiceDate
-        userId
-        totalAmount
-        taxAmount
-        subTotal
-        orderId
+       ...InvoiceFields
       }
     }
     pageInfo {

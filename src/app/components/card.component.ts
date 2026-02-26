@@ -22,7 +22,7 @@ import { twMerge } from "tailwind-merge";
 })
 export class CardComponent {
   icon = input();
-  label = input('Label Comes Here');
+  label = input();
   styleClass = input<string>();
 
   computedStyleClass = computed(() => {

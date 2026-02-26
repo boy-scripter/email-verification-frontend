@@ -3,12 +3,7 @@ mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
     edges {
       cursor
       node {
-        _id
-        createdAt
-        left_credits
-        status
-        total_credits
-        updatedAt
+        ...SubscriptionFields
       }
     }
     pageInfo {
@@ -17,5 +12,5 @@ mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
       hasPreviousPage
       startCursor
     }
-  }
+}
 }

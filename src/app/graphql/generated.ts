@@ -491,6 +491,10 @@ export type VerifyOtpResponse = {
   reset_token: Scalars['String']['output'];
 };
 
+export type InvoiceFieldsFragment = { __typename?: 'InvoiceModel', currency: string, invoiceDate: any, userId: string, totalAmount: number, taxAmount: number | null, subTotal: number, orderId: string };
+
+export type SubscriptionFieldsFragment = { __typename?: 'SubscriptionModel', _id: string, createdAt: any, left_credits: number, status: SubscriptionStatus, total_credits: number, updatedAt: any, plan: { __typename?: 'PlanModel', name: string } };
+
 export type UserFieldsFragment = { __typename?: 'User', _id: string, updatedAt: any, phone: string | null, name: string, email: string, createdAt: any, image: { __typename?: 'MediaObject', key: string } | null };
 
 export type LoginWithEmailMutationVariables = Exact<{
@@ -565,6 +569,23 @@ export type VerifyOtpMutationVariables = Exact<{
 
 export type VerifyOtpMutationData = { __typename?: 'Mutation', verifyOtp: { __typename?: 'VerifyOtpResponse', reset_token: string } };
 
+export type GetInvoiceMutationVariables = Exact<{
+  invoiceId: Scalars['String']['input'];
+}>;
+
+
+export type GetInvoiceMutationData = { __typename?: 'Mutation', getInvoice: { __typename?: 'InvoiceModel', currency: string, invoiceDate: any, orderId: string, subTotal: number, taxAmount: number | null, totalAmount: number, userId: string } };
+
+export type GetInvoicesMutationVariables = Exact<{
+  input: PaginatedInvoiceDto;
+}>;
+
+
+export type GetInvoicesMutationData = { __typename?: 'Mutation', getInvoices: { __typename?: 'PaginatedInvoiceResponse', edges: Array<{ __typename?: 'InvoiceModel_Edge', cursor: string, node: (
+        { __typename?: 'InvoiceModel' }
+        & InvoiceFieldsFragment
+      ) }>, pageInfo: { __typename?: 'PageInfo', startCursor: string | null, hasPreviousPage: boolean, hasNextPage: boolean, endCursor: string | null } } };
+
 export type BuyPlanMutationVariables = Exact<{
   planId: Scalars['String']['input'];
 }>;
@@ -577,17 +598,37 @@ export type PlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type PlansQueryData = { __typename?: 'Query', plans: Array<{ __typename?: 'PlanModel', _id: string, active: boolean, buttonLabel: string, buttonStyle: string, credits: number, features: Array<string>, highlight: boolean | null, name: string, price: number, recommended: boolean | null }> };
 
+export type GetSubscriptionMutationVariables = Exact<{
+  getSubscriptionId: Scalars['String']['input'];
+}>;
+
+
+export type GetSubscriptionMutationData = { __typename?: 'Mutation', getSubscription: (
+    { __typename?: 'SubscriptionModel' }
+    & SubscriptionFieldsFragment
+  ) };
+
+export type GetSubscriptionsMutationVariables = Exact<{
+  input: PaginatedSubscriptionDto;
+}>;
+
+
+export type GetSubscriptionsMutationData = { __typename?: 'Mutation', getSubscriptions: { __typename?: 'PaginatedSubscriptionResponse', edges: Array<{ __typename?: 'SubscriptionModel_Edge', cursor: string, node: (
+        { __typename?: 'SubscriptionModel' }
+        & SubscriptionFieldsFragment
+      ) }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
+
 export type CreditsHistoryMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CreditsHistoryMutationData = { __typename?: 'Mutation', creditsHistory: { __typename?: 'CreditsHistoryTotals', validCount: number, totalCount: number, invalidCount: number } };
 
-export type CreditsByRangeMutationVariables = Exact<{
+export type CreditHistoryRangeMutationVariables = Exact<{
   input: CreditsFilterDto;
 }>;
 
 
-export type CreditsByRangeMutationData = { __typename?: 'Mutation', creditsByRange: Array<{ __typename?: 'CreditsHistoryModel', date: any, invalidCount: number, totalCount: number, validCount: number }> };
+export type CreditHistoryRangeMutationData = { __typename?: 'Mutation', creditsByRange: Array<{ __typename?: 'CreditsHistoryModel', date: any, invalidCount: number, totalCount: number, validCount: number }> };
 
 export type GetTotalCreditsMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -628,6 +669,30 @@ export type SingleEmailMutationVariables = Exact<{
 
 export type SingleEmailMutationData = { __typename?: 'Mutation', checkEmail: { __typename?: 'VerificationModel', username: string | null, status: string, mx_record: string | null, email: string, domain: string | null, checks: { __typename?: 'EmailChecks', syntax_valid: boolean, smtp_connect: boolean, smtp_block: boolean, is_role: boolean, is_catchall: boolean } } };
 
+export const InvoiceFieldsFragmentDoc = gql`
+    fragment InvoiceFields on InvoiceModel {
+  currency
+  invoiceDate
+  userId
+  totalAmount
+  taxAmount
+  subTotal
+  orderId
+}
+    ` as DocumentNode<InvoiceFieldsFragment, unknown>;
+export const SubscriptionFieldsFragmentDoc = gql`
+    fragment SubscriptionFields on SubscriptionModel {
+  _id
+  createdAt
+  left_credits
+  status
+  plan {
+    name
+  }
+  total_credits
+  updatedAt
+}
+    ` as DocumentNode<SubscriptionFieldsFragment, unknown>;
 export const UserFieldsFragmentDoc = gql`
     fragment UserFields on User {
   _id
@@ -797,6 +862,53 @@ export function gqlVerifyOtpMutation(variables: VerifyOtpMutationVariables): { m
   };
 }
 
+export const GET_INVOICE_MUTATION = gql`
+    mutation GetInvoice($invoiceId: String!) {
+  getInvoice(invoiceId: $invoiceId) {
+    currency
+    invoiceDate
+    orderId
+    subTotal
+    taxAmount
+    totalAmount
+    userId
+  }
+}
+    ` as DocumentNode<GetInvoiceMutationData, GetInvoiceMutationVariables>;
+
+export function gqlGetInvoiceMutation(variables: GetInvoiceMutationVariables): { mutation: typeof GET_INVOICE_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GET_INVOICE_MUTATION,
+    variables
+  };
+}
+
+export const GET_INVOICES_MUTATION = gql`
+    mutation GetInvoices($input: PaginatedInvoiceDto!) {
+  getInvoices(input: $input) {
+    edges {
+      cursor
+      node {
+        ...InvoiceFields
+      }
+    }
+    pageInfo {
+      startCursor
+      hasPreviousPage
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    ${InvoiceFieldsFragmentDoc}` as DocumentNode<GetInvoicesMutationData, GetInvoicesMutationVariables>;
+
+export function gqlGetInvoicesMutation(variables: GetInvoicesMutationVariables): { mutation: typeof GET_INVOICES_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GET_INVOICES_MUTATION,
+    variables
+  };
+}
+
 export const BUY_PLAN_MUTATION = gql`
     mutation BuyPlan($planId: String!) {
   buyPlan(planId: $planId) {
@@ -841,6 +953,47 @@ export function gqlPlansQuery(): { query: typeof PLANS_QUERY } {
   };
 }
 
+export const GET_SUBSCRIPTION_MUTATION = gql`
+    mutation GetSubscription($getSubscriptionId: String!) {
+  getSubscription(id: $getSubscriptionId) {
+    ...SubscriptionFields
+  }
+}
+    ${SubscriptionFieldsFragmentDoc}` as DocumentNode<GetSubscriptionMutationData, GetSubscriptionMutationVariables>;
+
+export function gqlGetSubscriptionMutation(variables: GetSubscriptionMutationVariables): { mutation: typeof GET_SUBSCRIPTION_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GET_SUBSCRIPTION_MUTATION,
+    variables
+  };
+}
+
+export const GET_SUBSCRIPTIONS_MUTATION = gql`
+    mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
+  getSubscriptions(input: $input) {
+    edges {
+      cursor
+      node {
+        ...SubscriptionFields
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+    ${SubscriptionFieldsFragmentDoc}` as DocumentNode<GetSubscriptionsMutationData, GetSubscriptionsMutationVariables>;
+
+export function gqlGetSubscriptionsMutation(variables: GetSubscriptionsMutationVariables): { mutation: typeof GET_SUBSCRIPTIONS_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GET_SUBSCRIPTIONS_MUTATION,
+    variables
+  };
+}
+
 export const CREDITS_HISTORY_MUTATION = gql`
     mutation CreditsHistory {
   creditsHistory {
@@ -857,8 +1010,8 @@ export function gqlCreditsHistoryMutation(): { mutation: typeof CREDITS_HISTORY_
   };
 }
 
-export const CREDITS_BY_RANGE_MUTATION = gql`
-    mutation CreditsByRange($input: CreditsFilterDto!) {
+export const CREDIT_HISTORY_RANGE_MUTATION = gql`
+    mutation CreditHistoryRange($input: CreditsFilterDto!) {
   creditsByRange(input: $input) {
     date
     invalidCount
@@ -866,11 +1019,11 @@ export const CREDITS_BY_RANGE_MUTATION = gql`
     validCount
   }
 }
-    ` as DocumentNode<CreditsByRangeMutationData, CreditsByRangeMutationVariables>;
+    ` as DocumentNode<CreditHistoryRangeMutationData, CreditHistoryRangeMutationVariables>;
 
-export function gqlCreditsByRangeMutation(variables: CreditsByRangeMutationVariables): { mutation: typeof CREDITS_BY_RANGE_MUTATION, variables: typeof variables } {
+export function gqlCreditHistoryRangeMutation(variables: CreditHistoryRangeMutationVariables): { mutation: typeof CREDIT_HISTORY_RANGE_MUTATION, variables: typeof variables } {
   return {
-    mutation: CREDITS_BY_RANGE_MUTATION,
+    mutation: CREDIT_HISTORY_RANGE_MUTATION,
     variables
   };
 }

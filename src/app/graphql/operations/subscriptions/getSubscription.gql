@@ -1,0 +1,5 @@
+mutation GetSubscription($getSubscriptionId: String!) {
+  getSubscription(id: $getSubscriptionId) {
+    ...SubscriptionFields
+  }
+}
