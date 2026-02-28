@@ -1,4 +1,5 @@
 fragment InvoiceFields on InvoiceModel {
+        _id
         currency
         invoiceDate
         userId

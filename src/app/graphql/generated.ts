@@ -117,6 +117,7 @@ export type GoogleLoginInput = {
 
 export type InvoiceModel = {
   __typename?: 'InvoiceModel';
+  _id: Scalars['String']['output'];
   currency: Scalars['String']['output'];
   invoiceDate: Scalars['DateTime']['output'];
   orderId: Scalars['String']['output'];
@@ -156,6 +157,7 @@ export type Mutation = {
   checkEmail: VerificationModel;
   creditsByRange: Array<CreditsHistoryModel>;
   creditsHistory: CreditsHistoryTotals;
+  fileProcessingStatus: FileVerificationModel;
   finalizeUpload: FinalizeUploadResponse;
   generateTempUpload: TempUploadResponse;
   getInvoice: InvoiceModel;
@@ -194,6 +196,11 @@ export type MutationCheckEmailArgs = {
 
 export type MutationCreditsByRangeArgs = {
   input: CreditsFilterDto;
+};
+
+
+export type MutationFileProcessingStatusArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -491,7 +498,7 @@ export type VerifyOtpResponse = {
   reset_token: Scalars['String']['output'];
 };
 
-export type InvoiceFieldsFragment = { __typename?: 'InvoiceModel', currency: string, invoiceDate: any, userId: string, totalAmount: number, taxAmount: number | null, subTotal: number, orderId: string };
+export type InvoiceFieldsFragment = { __typename?: 'InvoiceModel', _id: string, currency: string, invoiceDate: any, userId: string, totalAmount: number, taxAmount: number | null, subTotal: number, orderId: string };
 
 export type SubscriptionFieldsFragment = { __typename?: 'SubscriptionModel', _id: string, createdAt: any, left_credits: number, status: SubscriptionStatus, total_credits: number, updatedAt: any, plan: { __typename?: 'PlanModel', name: string } };
 
@@ -574,7 +581,10 @@ export type GetInvoiceMutationVariables = Exact<{
 }>;
 
 
-export type GetInvoiceMutationData = { __typename?: 'Mutation', getInvoice: { __typename?: 'InvoiceModel', currency: string, invoiceDate: any, orderId: string, subTotal: number, taxAmount: number | null, totalAmount: number, userId: string } };
+export type GetInvoiceMutationData = { __typename?: 'Mutation', getInvoice: (
+    { __typename?: 'InvoiceModel' }
+    & InvoiceFieldsFragment
+  ) };
 
 export type GetInvoicesMutationVariables = Exact<{
   input: PaginatedInvoiceDto;
@@ -660,7 +670,7 @@ export type BulkVerifyMutationVariables = Exact<{
 }>;
 
 
-export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFileId: string | null, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, originalFileId: string, createdAt: any, completedAt: any | null, _id: string } };
+export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFileId: string | null, originalFileId: string, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, createdAt: any, completedAt: any | null, _id: string } };
 
 export type SingleEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -671,6 +681,7 @@ export type SingleEmailMutationData = { __typename?: 'Mutation', checkEmail: { _
 
 export const InvoiceFieldsFragmentDoc = gql`
     fragment InvoiceFields on InvoiceModel {
+  _id
   currency
   invoiceDate
   userId
@@ -865,16 +876,10 @@ export function gqlVerifyOtpMutation(variables: VerifyOtpMutationVariables): { m
 export const GET_INVOICE_MUTATION = gql`
     mutation GetInvoice($invoiceId: String!) {
   getInvoice(invoiceId: $invoiceId) {
-    currency
-    invoiceDate
-    orderId
-    subTotal
-    taxAmount
-    totalAmount
-    userId
+    ...InvoiceFields
   }
 }
-    ` as DocumentNode<GetInvoiceMutationData, GetInvoiceMutationVariables>;
+    ${InvoiceFieldsFragmentDoc}` as DocumentNode<GetInvoiceMutationData, GetInvoiceMutationVariables>;
 
 export function gqlGetInvoiceMutation(variables: GetInvoiceMutationVariables): { mutation: typeof GET_INVOICE_MUTATION, variables: typeof variables } {
   return {
@@ -1077,12 +1082,12 @@ export const BULK_VERIFY_MUTATION = gql`
     mutation BulkVerify($input: FileVerificationInput!) {
   bulkVerify(input: $input) {
     verifiedFileId
+    originalFileId
     user
     updatedAt
     totalRows
     status
     startedAt
-    originalFileId
     createdAt
     completedAt
     _id

@@ -6,5 +6,9 @@ export const enviroment = {
   s3_base_url: 'http://localhost:3000',
   production: false,
   cashfree_mode: 'sandbox',
-};
+  companyInfo : {
+    name: 'Verify Pro',
+    email: "verifypro@gmail.com"
+  }
+}
 

@@ -1,12 +1,6 @@
 
 mutation GetInvoice($invoiceId: String!) {
   getInvoice(invoiceId: $invoiceId) {
-    currency
-    invoiceDate
-    orderId
-    subTotal
-    taxAmount
-    totalAmount
-    userId
+   ...InvoiceFields
   }
 }

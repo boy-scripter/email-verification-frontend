@@ -4,13 +4,15 @@ import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
 import { TableModule } from 'primeng/table';
 import { InvoiceFieldsFragment } from 'src/app/graphql/generated';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
+import { downloadPDFInvoice } from './invoice_template';
+import { AuthStore } from '@store/auth.store';
 
 @Component({
   selector: 'app-invoice',
-  imports: [CardComponent , TableModule , DatePipe , ButtonModule, RouterLink , CurrencyPipe],
+  imports: [CardComponent, TableModule, DatePipe, ButtonModule, RouterLink, CurrencyPipe, UpperCasePipe],
   template: `
     <div class="w-full">
       <div class="mb-8">
@@ -47,7 +49,7 @@ import { RouterLink } from '@angular/router';
             <ng-template let-invoice pTemplate="body">
             <tr class="table-row">
                   <td class="table-cell">
-                    <span class="cell-content">#{{ invoice.orderId }}</span>
+                    <span class="cell-content">#{{ invoice.orderId | uppercase}}</span>
                   </td>
 
                   <td class="table-cell">
@@ -75,7 +77,7 @@ import { RouterLink } from '@angular/router';
                   </td>
                   <td class="table-cell">
                     <span class="cell-content">
-                       <p-button icon="pi pi-download" iconPos="right" size="small" severity="success" label="Download Now" class="p-button-icon-left"></p-button>
+                       <p-button (click)="donwloadInvoice(invoice)" icon="pi pi-download" iconPos="right" size="small" severity="success" label="Download Now" class="p-button-icon-left"></p-button>
                     </span>
                   </td>
             </tr>
@@ -106,6 +108,7 @@ import { RouterLink } from '@angular/router';
 export class InvoiceComponent extends CursorPaginationFacade<InvoiceFieldsFragment> implements OnInit {
 
   private invoiceService = inject(InvoiceService);
+  private authStore = inject(AuthStore);
 
   public headers = ['Invoice ID', 'Date', 'Sub Total', 'Tax Amount', 'Total Amount', ''];
 
@@ -122,6 +125,13 @@ export class InvoiceComponent extends CursorPaginationFacade<InvoiceFieldsFragme
     };
   }
 
+  donwloadInvoice(data: InvoiceFieldsFragment) {
+    const user = this.authStore.authenticateUser();
+    downloadPDFInvoice({
+      invoiceData : data,
+      name: user.name,
+      email: user.email,
+    })
+  }
 
-  
 }
