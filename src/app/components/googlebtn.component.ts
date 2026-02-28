@@ -47,7 +47,7 @@ export class GoogleBtnComponent implements OnInit {
       client_id: enviroment.google_auth_client_id,
       scope: 'openid profile email',
       callback: (res: GoogleOAuthTokenResponse) => {
-        console.log(res)
+      
         this.credential.emit(
           new GoogleOAuthTokenResponse({
             code: res.code,

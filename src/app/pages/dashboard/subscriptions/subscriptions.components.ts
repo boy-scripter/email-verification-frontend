@@ -1,24 +1,46 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
-import { CardComponent } from '@components/index';
-import { SubscriptionService } from '@service';
 import { DatePipe } from '@angular/common';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
-import { SkeletonModule } from 'primeng/skeleton';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { CardComponent } from '@components/index';
+import { PercentagePipe } from '@pipes/percentage.pipe';
+import { SubscriptionService } from '@service';
 import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
+import { ButtonModule } from 'primeng/button';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TableModule } from 'primeng/table';
+import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
 
 @Component({
   selector: 'app-subscriptions',
-  imports: [CardComponent, TableModule, ButtonModule, ProgressBarModule, DatePipe, SkeletonModule],
+  imports: [
+    CardComponent,
+    TableModule,
+    ButtonModule,
+    ProgressBarModule,
+    DatePipe,
+    SkeletonModule,
+    RouterLink,
+    PercentagePipe,
+  ],
+  styles: `
+    .active {
+      color: #ffffff;
+      background-color: #22c55e; /* bright green */
+    }
+
+    .utilized {
+      color: #ffffff;
+      background-color: #3b82f6; /* blue */
+    }
+  `,
   template: `
     <div class="w-full">
       <div class="mb-8">
         <h1 class="text-3xl font-bold tracking-widest">Subscriptions</h1>
       </div>
       <div>
-        <div >
+        <div>
           <app-card icon="pi pi-shopping-cart" label="Subscriptions and Billing">
             <p class="text-gray-600">
               Manage your Active subscriptions, view your invoices and update your payment methods
@@ -34,7 +56,7 @@ import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
               type="button"
             ></p-button> -->
 
-            @if(items().length){
+            @if (items().length) {
               <p-table
                 [loading]="isLoading()"
                 [paginator]="true"
@@ -46,7 +68,7 @@ import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
               >
                 <ng-template pTemplate="header">
                   <tr>
-                    @for(header of headers; track header){
+                    @for (header of headers; track header) {
                       <th class="table-header">
                         <span class="header-text">{{ header }}</span>
                       </th>
@@ -60,38 +82,48 @@ import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
                       <span class="cell-content">{{ subscription.plan.name }}</span>
                     </td>
                     <td class="table-cell">
-                      <p-progressBar
-                        [showValue]="true"
-                        [value]="(subscription.total / subscription.left)"
-                        style="width: 80%;"
-                      ></p-progressBar>
+                      <div class="flex gap-2">
+                        <p-progressBar
+                          [showValue]="false"
+                          [value]="subscription.left_credits | percentage : subscription.total_credits"
+                          style="width: 60%;"
+                        ></p-progressBar>
+                        <span> {{ subscription.left_credits }} out of {{subscription.total_credits}} </span>
+                      </div>
+                    </td>
+
+                    <td class="table-cell">
+                      <span class="cell-content">
+                        {{ subscription.createdAt | date: 'fullDate' }}
+                      </span>
                     </td>
                     <td class="table-cell">
-                      <span class="cell-content">{{ subscription.createdAt | date: 'fullDate'  }}</span>
+                      <span
+                        class="cell-content rounded-lg p-2 px-5"
+                        [class]="subscription.status.toLowerCase()"
+                      >
+                        {{ subscription.status }}
+                      </span>
                     </td>
-                    <td class="table-cell">
-                      <span class="cell-content">{{ subscription.status }}</span>
-                    </td>
-                </tr>
+                  </tr>
                 </ng-template>
               </p-table>
-            }
-            @else {
-              <app-card >
-              <div class="flex text-gray-600 flex-col items-center justify-center py-8">
-                <i class="pi pi-credit-card text-5xl  mb-3"></i>
-                <h3 class="pl-4 mb-2 font-meduim">No Subscriptions Yet</h3>
-                <p class=" text-center mb-4">
-                  <span>You haven't purchased any subscription plan yet.</span> <br>
-                  <span class="font-bold">Choose a plan to unlock premium features.</span>
-                </p>
-                <p-button
-                  label="View Plans"
-                  icon="pi pi-shopping-cart"
-                  severity="success"
-                  routerLink="/dashboard/buy-credits"
-                ></p-button>
-              </div>
+            } @else {
+              <app-card>
+                <div class="flex flex-col items-center justify-center py-8 text-gray-600">
+                  <i class="pi pi-credit-card mb-3 text-5xl"></i>
+                  <h3 class="font-meduim mb-2 pl-4">No Subscriptions Yet</h3>
+                  <p class="mb-4 text-center">
+                    <span>You haven't purchased any subscription plan yet.</span> <br />
+                    <span class="font-bold">Choose a plan to unlock premium features.</span>
+                  </p>
+                  <p-button
+                    icon="pi pi-shopping-cart"
+                    label="View Plans"
+                    routerLink="/dashboard/buy-credits"
+                    severity="success"
+                  ></p-button>
+                </div>
               </app-card>
             }
           </div>
@@ -102,11 +134,11 @@ import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
 })
 export class SubscriptionsComponent
   extends CursorPaginationFacade<SubscriptionFieldsFragment>
-  implements OnInit {
-
+  implements OnInit
+{
   private subscriptionService = inject(SubscriptionService);
 
-  public headers = ['Plan', 'Credits', 'Status', 'Activated At'];
+  public headers = ['Plan', 'Credits', 'Activated At', 'Status'];
 
   ngOnInit(): void {
     this.loadPage();
@@ -116,8 +148,8 @@ export class SubscriptionsComponent
     const { data } = await this.subscriptionService.getSubscriptionPaginate(cursor);
 
     return {
-      nodes: data.getSubscriptions.edges.map(e => e.node),
-      endCursor: data.getSubscriptions.pageInfo.endCursor || undefined
+      nodes: data.getSubscriptions.edges.map((e) => e.node),
+      endCursor: data.getSubscriptions.pageInfo.endCursor || undefined,
     };
   }
 }

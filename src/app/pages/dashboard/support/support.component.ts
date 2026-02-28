@@ -51,7 +51,7 @@ export class SupportComponent {
 
     onFormSubmit() {
         if (this.supportForm.valid) {
-            console.log('Support form submitted:', this.supportForm.value);
+     
             alert('Thank you! Your message has been sent successfully. We\'ll get back to you soon.');
         }
     }

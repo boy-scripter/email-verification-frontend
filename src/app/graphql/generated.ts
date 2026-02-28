@@ -70,13 +70,13 @@ export type FileVerificationModel = {
   _id: Scalars['ID']['output'];
   completedAt: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
-  originalFile: Scalars['String']['output'];
+  originalFileId: Scalars['String']['output'];
   startedAt: Maybe<Scalars['DateTime']['output']>;
   status: FileVerificationStatus;
   totalRows: Maybe<Scalars['Int']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   user: Scalars['ID']['output'];
-  verifiedFile: Maybe<Scalars['String']['output']>;
+  verifiedFileId: Maybe<Scalars['String']['output']>;
 };
 
 export enum FileVerificationStatus {
@@ -660,7 +660,7 @@ export type BulkVerifyMutationVariables = Exact<{
 }>;
 
 
-export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFile: string | null, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, originalFile: string, createdAt: any, completedAt: any | null, _id: string } };
+export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFileId: string | null, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, originalFileId: string, createdAt: any, completedAt: any | null, _id: string } };
 
 export type SingleEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -1076,13 +1076,13 @@ export function gqlUpdateProfileImageMutation(variables: UpdateProfileImageMutat
 export const BULK_VERIFY_MUTATION = gql`
     mutation BulkVerify($input: FileVerificationInput!) {
   bulkVerify(input: $input) {
-    verifiedFile
+    verifiedFileId
     user
     updatedAt
     totalRows
     status
     startedAt
-    originalFile
+    originalFileId
     createdAt
     completedAt
     _id

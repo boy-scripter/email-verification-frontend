@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { SelectModule } from 'primeng/select';
@@ -53,7 +53,7 @@ export interface PeriodType {
     </p-card>
   `
 })
-export class VerificationChartComponent {
+export class VerificationChartComponent implements OnInit {
   private creditService = inject(CreditService)
   
   //CONSTANTS
@@ -61,7 +61,11 @@ export class VerificationChartComponent {
   public chartOptions = CHART_CONFIG.chartOptions;
   public timeRangeOptions = CHART_CONFIG.timeRangeOptions;
   
-  selectedTimeRange = this.timeRangeOptions[0];
+  public selectedTimeRange = this.timeRangeOptions[0];
+
+  ngOnInit() {
+    this.updateChartData(this.selectedTimeRange.value().gte, this.selectedTimeRange.value().lte);
+  }
 
   onPeriodChange() {
     const { gte, lte } = this.selectedTimeRange.value()
@@ -80,43 +84,43 @@ export class VerificationChartComponent {
       return `${date.toLocaleDateString('en-US', { month: 'short' })} ${date.getDate()} ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}`;
     });
 
-  return {
-    labels: labels,
-    datasets: [
-      {
-        label: 'Valid',
-        data: response.map(x => x.validCount),
-        fill: true,
-        borderColor: '#22c55e',
-        backgroundColor: 'rgba(34,197,94,0.15)',
-        tension: 0.4,
-        pointBackgroundColor: '#22c55e',
-        pointBorderColor: '#22c55e',
-        pointRadius: 4
-      },
-      {
-        label: 'Invalid',
-        data: response.map(x => x.invalidCount),
-        fill: true,
-        borderColor: '#ef4444',
-        backgroundColor: 'rgba(239,68,68,0.15)',
-        tension: 0.4,
-        pointBackgroundColor: '#ef4444',
-        pointBorderColor: '#ef4444',
-        pointRadius: 4
-      },
-      {
-        label: 'Total',
-        data: response.map(x => x.totalCount),
-        fill: true,
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59,130,246,0.15)',
-        tension: 0.4,
-        pointBackgroundColor: '#3b82f6',
-        pointBorderColor: '#3b82f6',
-        pointRadius: 4
-      }
-    ]
-  };
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Valid',
+          data: response.map(x => x.validCount),
+          fill: true,
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.15)',
+          tension: 0.4,
+          pointBackgroundColor: '#22c55e',
+          pointBorderColor: '#22c55e',
+          pointRadius: 3
+        },
+        {
+          label: 'Invalid',
+          data: response.map(x => x.invalidCount),
+          fill: true,
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239,68,68,0.15)',
+          tension: 0.4,
+          pointBackgroundColor: '#ef4444',
+          pointBorderColor: '#ef4444',
+          pointRadius: 3
+        },
+        {
+          label: 'Total',
+          data: response.map(x => x.totalCount),
+          fill: true,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,0.15)',
+          tension: 0.4,
+          pointBackgroundColor: '#3b82f6',
+          pointBorderColor: '#3b82f6',
+          pointRadius: 3
+        }
+      ]
+    };
 }
 }

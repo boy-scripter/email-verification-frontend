@@ -4,7 +4,7 @@ export const FILETYPE_ERROR = 'filetype';
 export function fileTypeValidator(allowedExtensions: string[]): ValidatorFn {
   return (control: AbstractControl) => {
     const file = control.value;
-console.log(file)
+
     if (!file) {
       return null;
     }

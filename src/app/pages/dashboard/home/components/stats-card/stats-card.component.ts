@@ -82,12 +82,12 @@ export class StatsCardComponent {
       const totalCredits = data.getTotalCredits.total_credits;
       const remainingCredits = data.getTotalCredits.remaining_credits;
       const usedCredits = totalCredits - remainingCredits;
-      const usedPercentage = (usedCredits / totalCredits) * 100;
+      const usedPercentage = totalCredits > 0 ? Number(((usedCredits / totalCredits) * 100).toFixed(2)) : 0;
 
       this.creditsUsage.set({
         remainingCredits: remainingCredits,
         usedCredits: usedCredits,
-        usedPercentage: isNaN(usedPercentage) ? 0 : usedPercentage
+        usedPercentage: usedPercentage
       });
 
     })

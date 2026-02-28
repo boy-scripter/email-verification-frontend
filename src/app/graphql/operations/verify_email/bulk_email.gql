@@ -1,12 +1,12 @@
 mutation BulkVerify($input: FileVerificationInput!) {
   bulkVerify(input: $input) {
-    verifiedFile
+    verifiedFileId
+    originalFileId
     user
     updatedAt
     totalRows
     status
     startedAt
-    originalFile
     createdAt
     completedAt
     _id

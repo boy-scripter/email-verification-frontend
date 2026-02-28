@@ -55,7 +55,7 @@ export class ForgotPasswordComponent {
     }
 
     onPasswordReset(passwordData: RawValue<PasswordFormGroup>) {
-        console.log('Password reset completed:', passwordData);
+        
         this.router.navigate([
             '',
             { outlets: { modal: ['modal', 'auth', 'login'] } }

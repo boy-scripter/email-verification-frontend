@@ -4,12 +4,13 @@ import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
 import { TableModule } from 'primeng/table';
 import { InvoiceFieldsFragment } from 'src/app/graphql/generated';
 import { InvoiceService } from 'src/app/services/invoice.service';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-invoice',
-  imports: [CardComponent , TableModule , DatePipe , ButtonModule],
+  imports: [CardComponent , TableModule , DatePipe , ButtonModule, RouterLink , CurrencyPipe],
   template: `
     <div class="w-full">
       <div class="mb-8">
@@ -44,19 +45,39 @@ import { ButtonModule } from 'primeng/button';
             </ng-template>
 
             <ng-template let-invoice pTemplate="body">
-              <tr class="table-row">
-                <td class="table-cell">
-                  <span class="cell-content">{{ invoice.id }}</span>
-                </td>
-                <td class="table-cell">
-                  <span class="cell-content">{{ invoice.createdAt | date: 'fullDate'  }}</span>
-                </td>
-                <td class="table-cell">
-                  <span class="cell-content">{{ invoice.amount }}</span>
-                </td>
-                <td class="table-cell">
-                  <span class="cell-content">{{ invoice.status }}</span>
-                </td>
+            <tr class="table-row">
+                  <td class="table-cell">
+                    <span class="cell-content">#{{ invoice.orderId }}</span>
+                  </td>
+
+                  <td class="table-cell">
+                    <span class="cell-content">
+                      {{ invoice.invoiceDate | date:'fullDate' }}
+                    </span>
+                  </td>
+
+                  <td class="table-cell">
+                    <span class="cell-content">
+                      {{ invoice.subTotal | currency:'INR' }}
+                    </span>
+                  </td>
+
+                  <td class="table-cell">
+                    <span class="cell-content">
+                      {{ invoice.taxAmount | currency:'INR' }}
+                    </span>
+                  </td>
+
+                  <td class="table-cell">
+                    <span class="cell-content">
+                      {{ invoice.totalAmount | currency:'INR' }}
+                    </span>
+                  </td>
+                  <td class="table-cell">
+                    <span class="cell-content">
+                       <p-button icon="pi pi-download" iconPos="right" size="small" severity="success" label="Download Now" class="p-button-icon-left"></p-button>
+                    </span>
+                  </td>
             </tr>
             </ng-template>
           </p-table>
@@ -86,7 +107,7 @@ export class InvoiceComponent extends CursorPaginationFacade<InvoiceFieldsFragme
 
   private invoiceService = inject(InvoiceService);
 
-  public headers = ['Invoice ID', 'Date', 'Amount', 'Status'];
+  public headers = ['Invoice ID', 'Date', 'Sub Total', 'Tax Amount', 'Total Amount', ''];
 
   ngOnInit(): void {
     this.loadPage();

@@ -1,11 +1,11 @@
 import { Component, inject } from "@angular/core";
 import { Button } from 'primeng/button';
+import { FormsModule } from "@angular/forms";
+import { DialogService } from 'primeng/dynamicdialog';
 import { InputTextModule } from "primeng/inputtext";
 import { CardComponent } from "@components/index";
 import { VerificationService } from "src/app/services";
 import { AsyncTaskDirective } from "@directive/asyncTask.directive";
-import { FormsModule } from "@angular/forms";
-import { DialogService } from 'primeng/dynamicdialog';
 import { EmailResultCardComponent } from "../modal/result-email.modal";
 
 @Component({
@@ -34,7 +34,11 @@ export class SingleEmailVerificationComponent {
      const { data } = await this.verificationService.checkSingleEmail(this.email)
      const result = data.checkEmail
      this.dialogService.open(EmailResultCardComponent, {
-      data: result
+      data: result,
+      header: 'Email Verification Result',
+      modal: true,
+      closable: true,
+      styleClass: 'bg-black/70 px-4 w-full md:w-4/5 lg:w-3/5 xl:w-3xl'
     });
   }
 

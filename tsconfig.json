@@ -24,7 +24,8 @@
       "@service": ["./src/app/services/index"],
       "@util/*": ["./src/app/util/*"],
       "@directive/*": ["./src/app/directive/*"],
-      "@provider/*": ["./src/app/providers/*"]
+      "@provider/*": ["./src/app/providers/*"],
+      "@pipes/*": ["./src/app/pipes/*"],
     }
   },
   "angularCompilerOptions": {
