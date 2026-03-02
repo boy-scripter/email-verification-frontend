@@ -1,6 +1,9 @@
 import { InvoiceFieldsFragment } from "src/app/graphql/generated";
-import html2pdf from "html2pdf.js";
+import { jsPDF } from "jspdf";
 import { enviroment } from "@env";
+
+// ─── Install: npm install jspdf ───────────────────────────────────────────────
+// No html2pdf, no iframe, no DOM attachment. Pure programmatic PDF drawing.
 
 interface InvoiceTemplateProps {
   name: string;
@@ -8,516 +11,332 @@ interface InvoiceTemplateProps {
   invoiceData: InvoiceFieldsFragment;
 }
 
-export function generateInvoiceTemplate(data: InvoiceTemplateProps): string {
-  const { invoiceData } = data;
+// ── Colour palette (matches original design) ──────────────────────────────────
+const C = {
+  accent: [15, 23, 42] as const,  // #0f172a  deep navy
+  highlight: [99, 102, 241] as const,  // #6366f1  indigo
+  highlight2: [129, 140, 248] as const,  // #818cf8  lighter indigo
+  soft: [241, 245, 249] as const,  // #f1f5f9  slate-100
+  border: [226, 232, 240] as const,  // #e2e8f0  slate-200
+  muted: [100, 116, 139] as const,  // #64748b  slate-500
+  white: [255, 255, 255] as const,
+  green: [34, 197, 94] as const,
+};
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: invoiceData.currency || "USD",
-    }).format(amount || 0);
+// ── Page dimensions (A4 in pts, portrait) ─────────────────────────────────────
+const PW = 595;   // page width  (pt)
+const PH = 842;   // page height (pt)
 
-  const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+// ── Helpers ───────────────────────────────────────────────────────────────────
+// function rgb(c: readonly [number, number, number]) {
+//   return { r: c[0], g: c[1], b: c[2] };
+// }
 
-  const accent     = "#0f172a";   // deep navy
-  const highlight  = "#6366f1";   // indigo
-  const highlight2 = "#818cf8";   // lighter indigo
-  const soft       = "#f1f5f9";   // slate-100
-  const border     = "#e2e8f0";   // slate-200
-  const muted      = "#64748b";   // slate-500
+// function formatCurrency(amount: number | null | undefined, currency?: string): string {
+//   const safeAmount = typeof amount === "number" && !isNaN(amount) ? amount : 0;
+//   const safeCurrency = currency && currency.trim() ? currency : "USD";
 
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Invoice #${invoiceData._id?.toUpperCase() || ""}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+//   return "799";
+//   return new Intl.NumberFormat("en-US", {
+//     style: "currency",
+//     currency: safeCurrency,
+//   }).format(safeAmount);
+// }
 
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #fff;
-      color: ${accent};
-      font-size: 13px;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    .page {
-      width: 794px;
-      min-height: 1123px;
-      background: #fff;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── TOP BAND ── */
-    .top-band {
-      background: ${accent};
-      padding: 40px 56px 52px;
-      position: relative;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    /* subtle grid lines */
-    .top-band::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
-
-    /* glowing orb */
-    .top-band::after {
-      content: '';
-      position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, ${highlight} 0%, transparent 70%);
-      opacity: 0.25;
-      border-radius: 50%;
-    }
-
-    .top-band-inner {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .brand-name {
-      font-family: 'Fraunces', serif;
-      font-size: 26px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.5px;
-      line-height: 1;
-    }
-
-    .brand-email {
-      margin-top: 6px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.45);
-    }
-
-    .invoice-word {
-      font-family: 'Fraunces', serif;
-      font-size: 25px;
-      font-weight: 900;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      background:white;
-      padding:4px
-     
-    }
-
-    /* ── META PILLS ── */
-    .meta-row {
-      display: flex;
-      gap: 12px;
-      padding: 0 56px;
-      margin-top: -20px;
-      position: relative;
-      z-index: 3;
-    }
-
-    .meta-pill {
-      flex: 1;
-      background: #fff;
-      border: 1px solid ${border};
-      border-radius: 10px;
-      padding: 14px 18px;
-      box-shadow: 0 4px 16px rgba(15,23,42,0.09);
-    }
-
-    .pill-label {
-      font-size: 9.5px;
-      text-transform: uppercase;
-      letter-spacing: 1.6px;
-      color: ${muted};
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .pill-value {
-      font-size: 13px;
-      font-weight: 700;
-      color: ${accent};
-    }
-
-    .pill-value.id-value {
-      color: ${highlight};
-      font-family: 'Fraunces', serif;
-      font-size: 15px;
-    }
-
-    .status-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-      margin-right: 6px;
-      vertical-align: middle;
-      box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
-    }
-
-    /* ── BODY ── */
-    .body-area {
-      padding: 36px 56px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
-    /* ── BILL TO ── */
-    .bill-to-card {
-      background: ${soft};
-      border: 1px solid ${border};
-      border-radius: 14px;
-      padding: 22px 28px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .bill-to-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: ${highlight};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .bill-to-icon svg {
-      width: 22px;
-      height: 22px;
-      stroke: #fff;
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .bill-to-label {
-      font-size: 9.5px;
-      text-transform: uppercase;
-      letter-spacing: 1.6px;
-      color: ${highlight};
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .bill-to-name {
-      font-size: 17px;
-      font-weight: 700;
-      color: ${accent};
-      line-height: 1.2;
-    }
-
-    .bill-to-email {
-      font-size: 12px;
-      color: ${muted};
-      margin-top: 2px;
-    }
-
-    /* ── DIVIDER ── */
-    .section-divider {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: ${border};
-    }
-
-    .divider-label {
-      font-size: 9.5px;
-      text-transform: uppercase;
-      letter-spacing: 1.8px;
-      color: ${muted};
-      font-weight: 600;
-    }
-
-    /* ── SUMMARY ── */
-    .summary-wrapper {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .summary-table {
-      width: 340px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid ${border};
-      box-shadow: 0 4px 24px rgba(15,23,42,0.07);
-    }
-
-    .s-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 22px;
-      background: #fff;
-      border-bottom: 1px solid ${border};
-    }
-
-    .s-row:last-child { border-bottom: none; }
-
-    .s-label {
-      font-size: 12px;
-      color: ${muted};
-      font-weight: 500;
-    }
-
-    .s-value {
-      font-size: 13px;
-      font-weight: 700;
-      color: ${accent};
-    }
-
-    .s-row.total {
-      background: linear-gradient(135deg, ${accent} 0%, #1e293b 100%);
-      padding: 18px 22px;
-    }
-
-    .s-row.total .s-label {
-      color: rgba(255,255,255,0.6);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-    }
-
-    .s-row.total .s-value {
-      font-family: 'Fraunces', serif;
-      font-size: 22px;
-      font-weight: 900;
-      color: ${highlight2};
-    }
-
-    /* ── FOOTER ── */
-    .page-footer {
-      margin-top: auto;
-      border-top: 1px solid ${border};
-      padding: 18px 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: ${soft};
-    }
-
-    .footer-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .footer-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: ${highlight};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .footer-badge svg {
-      width: 14px;
-      height: 14px;
-      stroke: #fff;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .footer-text {
-      font-size: 12px;
-      font-style: italic;
-      color: ${muted};
-    }
-
-    .footer-right {
-      font-size: 10.5px;
-      color: #94a3b8;
-      font-weight: 500;
-    }
-  </style>
-</head>
-<body>
-<div class="page">
-
-  <!-- TOP BAND -->
-  <div class="top-band">
-    <div class="top-band-inner">
-      <div>
-        <div class="brand-name">${enviroment.companyInfo.name}</div>
-        <div class="brand-email">${enviroment.companyInfo.email}</div>
-      </div>
-      <div class="invoice-word">Invoice</div>
-    </div>
-  </div>
-
-  <!-- META PILLS -->
-  <div class="meta-row">
-    <div class="meta-pill">
-      <div class="pill-label">Invoice No.</div>
-      <div class="pill-value id-value">#${invoiceData._id?.toUpperCase() || "N/A"}</div>
-    </div>
-    <div class="meta-pill">
-      <div class="pill-label">Issue Date</div>
-      <div class="pill-value">${formatDate(invoiceData.invoiceDate)}</div>
-    </div>
-    <div class="meta-pill">
-      <div class="pill-label">Currency</div>
-      <div class="pill-value">${invoiceData.currency || "USD"}</div>
-    </div>
-    <div class="meta-pill">
-      <div class="pill-label">Status</div>
-      <div class="pill-value"><span class="status-dot"></span>Issued</div>
-    </div>
-  </div>
-
-  <!-- BODY -->
-  <div class="body-area">
-
-    <!-- Bill To -->
-    <div class="bill-to-card">
-      <div class="bill-to-icon">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>
-      <div>
-        <div class="bill-to-label">Bill To</div>
-        <div class="bill-to-name">${data.name}</div>
-        <div class="bill-to-email">${data.email}</div>
-      </div>
-    </div>
-
-    <!-- Divider -->
-    <div class="section-divider">
-      <div class="divider-line"></div>
-      <div class="divider-label">Summary</div>
-      <div class="divider-line"></div>
-    </div>
-
-    <!-- Summary -->
-    <div class="summary-wrapper">
-      <div class="summary-table">
-        <div class="s-row">
-          <span class="s-label">Subtotal</span>
-          <span class="s-value">${formatCurrency(invoiceData.subTotal)}</span>
-        </div>
-        <div class="s-row">
-          <span class="s-label">Tax</span>
-          <span class="s-value">${formatCurrency(invoiceData.taxAmount!)}</span>
-        </div>
-        <div class="s-row total">
-          <span class="s-label">Total Due</span>
-          <span class="s-value">${formatCurrency(invoiceData.totalAmount)}</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- FOOTER -->
-  <div class="page-footer">
-    <div class="footer-left">
-      <div class="footer-badge">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </div>
-      <span class="footer-text">Thank you for your business!</span>
-    </div>
-    <div class="footer-right">Ref: ${invoiceData._id?.toUpperCase() || ""}</div>
-  </div>
-
-</div>
-</body>
-</html>
-  `;
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
+/** Draw a rounded rectangle (fill + optional stroke). */
+function roundedRect(
+  doc: jsPDF,
+  x: number, y: number, w: number, h: number,
+  r: number,
+  fillColor: readonly [number, number, number],
+  strokeColor?: readonly [number, number, number],
+  lineWidth = 0.5,
+) {
+  doc.setFillColor(...fillColor);
+  if (strokeColor) {
+    doc.setDrawColor(...strokeColor);
+    doc.setLineWidth(lineWidth);
+    doc.roundedRect(x, y, w, h, r, r, "FD");
+  } else {
+    doc.roundedRect(x, y, w, h, r, r, "F");
+  }
+}
+
+/** Draw a plain rectangle (fill). */
+function rect(
+  doc: jsPDF,
+  x: number, y: number, w: number, h: number,
+  fillColor: readonly [number, number, number],
+) {
+  doc.setFillColor(...fillColor);
+  doc.rect(x, y, w, h, "F");
+}
+
+/** Truncate text to fit within maxWidth (pts). */
+function truncate(doc: jsPDF, text: string, maxWidth: number): string {
+  while (doc.getTextWidth(text) > maxWidth && text.length > 3) {
+    text = text.slice(0, -4) + "…";
+  }
+  return text;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 export async function downloadPDFInvoice(data: InvoiceTemplateProps): Promise<void> {
-  const htmlContent = generateInvoiceTemplate(data);
+  const { invoiceData } = data;
+  const currency = invoiceData.currency || "USD";
+  const invoiceId = (invoiceData._id ?? "").toUpperCase() || "N/A";
+  const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
 
-  const iframe = document.createElement("iframe");
+  // ── 1. TOP BAND ─────────────────────────────────────────────────────────────
+  const bandH = 110;
+  rect(doc, 0, 0, PW, bandH, C.accent);
 
-  Object.assign(iframe.style, {
-    visibility: "hidden",
-    position:   "fixed",
-    top:        "0",
-    left:       "0",
-    width:      "794px",
-    height:     "1123px",
-    border:     "none",
-    zIndex:     "-1",
-  });
+  // subtle grid pattern (light lines)
+  doc.setDrawColor(255, 255, 255);
+  doc.setLineWidth(0.3);
+  doc.setGState(doc.GState({ opacity: 0.05 }));
+  for (let x = 0; x < PW; x += 24) doc.line(x, 0, x, bandH);
+  for (let y = 0; y < bandH; y += 24) doc.line(0, y, PW, y);
+  doc.setGState(doc.GState({ opacity: 1 }));
 
-  document.body.appendChild(iframe);
+  // Glowing orb (radial – approximate with a soft indigo circle)
+  doc.setGState(doc.GState({ opacity: 0.18 }));
+  doc.setFillColor(...C.highlight);
+  doc.circle(PW - 30, -20, 90, "F");
+  doc.setGState(doc.GState({ opacity: 1 }));
 
-  const iframeDoc = iframe.contentDocument!;
-  iframeDoc.open();
-  iframeDoc.write(htmlContent);
-  iframeDoc.close();
+  // Company name (bold, white)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.setTextColor(...C.white);
+  doc.text(enviroment.companyInfo.name, 44, 44);
 
-  // Wait for fonts/images inside the iframe to fully load
-  await new Promise<void>((resolve) => {
-    if (iframe.contentWindow!.document.readyState === "complete") {
-      resolve();
+  // Company email (small, muted white)
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(255, 255, 255);
+  doc.setGState(doc.GState({ opacity: 0.45 }));
+  doc.text(enviroment.companyInfo.email, 44, 58);
+  doc.setGState(doc.GState({ opacity: 1 }));
+
+  // "INVOICE" word – white background pill on the right
+  const invWord = "INVOICE";
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  const invW = doc.getTextWidth(invWord) + 20;
+  const invX = PW - 44 - invW;
+  doc.setFillColor(...C.white);
+  doc.rect(invX, 28, invW, 28, "F");
+  doc.setTextColor(...C.accent);
+  doc.text(invWord, invX + 10, 48);
+
+  // ── 2. META PILLS (4 cards below the band) ──────────────────────────────────
+  const pillY = bandH - 18;   // overlaps band bottom
+  const pillH = 52;
+  const gap = 10;
+  const pillW = (PW - 88 - gap * 3) / 4;
+  const pillX = 44;
+
+  const pills = [
+    { label: "Invoice No.", value: `#${invoiceId}`, accent: true },
+    { label: "Issue Date", value: formatDate(invoiceData.invoiceDate), accent: false },
+    { label: "Currency", value: currency, accent: false },
+    { label: "Status", value: "Issued", accent: false, status: true },
+  ];
+
+  pills.forEach((pill, i) => {
+    const px = pillX + i * (pillW + gap);
+
+    // card
+    roundedRect(doc, px, pillY, pillW, pillH, 6, C.white, C.border, 0.5);
+
+    // shadow hack: second rect slightly below with opacity
+    doc.setGState(doc.GState({ opacity: 0.06 }));
+    doc.setFillColor(15, 23, 42);
+    doc.roundedRect(px + 2, pillY + 4, pillW, pillH, 6, 6, "F");
+    doc.setGState(doc.GState({ opacity: 1 }));
+
+    // re-draw card on top to cover shadow
+    roundedRect(doc, px, pillY, pillW, pillH, 6, C.white, C.border, 0.5);
+
+    // label
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7);
+    doc.setTextColor(...C.muted);
+    doc.text(pill.label.toUpperCase(), px + 10, pillY + 14);
+
+    // value
+    if (pill.accent) {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(6);
+      doc.setTextColor(...C.highlight);
     } else {
-      iframe.addEventListener("load", () => resolve(), { once: true });
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(...C.accent);
+    }
+
+    if (pill.status) {
+      // green dot
+      doc.setFillColor(...C.green);
+      doc.circle(px + 15, pillY + 33, 3, "F");
+      doc.text(pill.value, px + 22, pillY + 37);
+    } else {
+      const safeVal = truncate(doc, pill.value, pillW - 20);
+      doc.text(safeVal, px + 10, pillY + 37);
     }
   });
 
-  const element = iframeDoc.querySelector(".page") as HTMLElement;
+  // ── 3. BODY ──────────────────────────────────────────────────────────────────
+  let curY = pillY + pillH + 28;
 
-  try {
-    await html2pdf()
-      .set({
-        margin: 0,
-        filename: `invoice-${data.invoiceData._id || "export"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          width: 794,
-          windowWidth: 794,
-          scrollX: 0,
-          scrollY: 0,
-        },
-        jsPDF: {
-          unit: "px",
-          format: [794, 1123],
-          orientation: "portrait",
-        },
-      })
-      .from(element)
-      .save();
-  } finally {
-    document.body.removeChild(iframe);
-  }
+  // ── Bill-To card ─────────────────────────────────────────────────────────────
+  const cardX = 44;
+  const cardW = PW - 88;
+  const cardH = 62;
+
+  roundedRect(doc, cardX, curY, cardW, cardH, 8, C.soft, C.border, 0.5);
+
+  // Icon box (indigo square)
+  roundedRect(doc, cardX + 16, curY + 10, 38, 38, 6, C.highlight);
+  // Person SVG approximation – just a white circle + semi-circle
+  doc.setFillColor(...C.white);
+  doc.circle(cardX + 35, curY + 21, 6, "F");
+  doc.setFillColor(...C.white);
+  doc.ellipse(cardX + 35, curY + 39, 10, 6, "F");  // body
+
+  // "Bill To" label
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.highlight);
+  doc.text("BILL TO", cardX + 66, curY + 20);
+
+  // Name
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(...C.accent);
+  doc.text(truncate(doc, data.name, cardW - 120), cardX + 66, curY + 36);
+
+  // Email
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...C.muted);
+  doc.text(truncate(doc, data.email, cardW - 120), cardX + 66, curY + 50);
+
+  curY += cardH + 28;
+
+  // ── Section divider ("SUMMARY") ───────────────────────────────────────────────
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.5);
+  doc.line(44, curY, PW / 2 - 40, curY);
+  doc.line(PW / 2 + 40, curY, PW - 44, curY);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C.muted);
+  doc.text("SUMMARY", PW / 2, curY + 3.5, { align: "center" });
+
+  curY += 20;
+
+  // ── Summary table (right-aligned, 260 pt wide) ────────────────────────────────
+  const tW = 260;
+  const tX = PW - 44 - tW;
+  const rH = 36;   // row height
+  const rows = [
+    { label: "Subtotal", value: invoiceData.subTotal },
+    { label: "Tax", value: invoiceData.taxAmount ?? 0 },
+  ];
+
+  // White card background
+  roundedRect(doc, tX, curY, tW, rH * rows.length + 48, 8, C.white, C.border, 0.5);
+
+  rows.forEach((row, i) => {
+    const ry = curY + i * rH;
+
+    // row separator (except last)
+    if (i < rows.length - 1) {
+      doc.setDrawColor(...C.border);
+      doc.setLineWidth(0.4);
+      doc.line(tX, ry + rH, tX + tW, ry + rH);
+    }
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...C.muted);
+    doc.text(row.label, tX + 18, ry + 22);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(...C.accent);
+    doc.text('' + row.value, tX + tW - 18, ry + 22, { align: "right" });
+  });
+
+  // Total row – dark background
+  const totalY = curY + rows.length * rH;
+  const totalH = 48;
+
+  // Clip bottom corners to match outer card radius
+  doc.setFillColor(...C.accent);
+  doc.roundedRect(tX, totalY, tW, totalH, 8, 8, "F");
+  // Cover top-left / top-right radius (flat top edge)
+  rect(doc, tX, totalY, tW, 8, C.accent);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(255, 255, 255);
+  doc.setGState(doc.GState({ opacity: 0.6 }));
+  doc.text("TOTAL DUE", tX + 18, totalY + 18);
+  doc.setGState(doc.GState({ opacity: 1 }));
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(...C.highlight2);
+  doc.text(
+    '' + invoiceData.totalAmount,
+    tX + tW - 18,
+    totalY + 32,
+    { align: "right" },
+  );
+
+  // ── 4. FOOTER ────────────────────────────────────────────────────────────────
+  const footerY = PH - 52;
+
+  // top border
+  doc.setDrawColor(...C.border);
+  doc.setLineWidth(0.5);
+  doc.line(0, footerY, PW, footerY);
+
+  // background
+  rect(doc, 0, footerY, PW, 52, C.soft);
+
+  // Heart icon box
+  roundedRect(doc, 44, footerY + 12, 24, 24, 5, C.highlight);
+  doc.setFillColor(...C.white);
+  // Rough heart: two overlapping circles + a rotated rect approximation
+  doc.circle(49, footerY + 21, 4, "F");
+  doc.circle(57, footerY + 21, 4, "F");
+  doc.triangle(44, footerY + 23, 68, footerY + 23, 56, footerY + 34, "F");
+
+  // Thank-you text
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(10);
+  doc.setTextColor(...C.muted);
+  doc.text("Thank you for your business!", 76, footerY + 28);
+
+  // Ref on the right
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.5);
+  doc.setTextColor(148, 163, 184);
+  doc.text(`Ref: ${invoiceId}`, PW - 44, footerY + 28, { align: "right" });
+
+  // ── Save ─────────────────────────────────────────────────────────────────────
+  doc.save(`invoice-${invoiceData._id || "export"}.pdf`);
 }
