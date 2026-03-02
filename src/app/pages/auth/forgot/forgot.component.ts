@@ -35,16 +35,16 @@ export type StepsType = 1 | 2 | 3;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPasswordComponent {
-    
+
     private readonly router = inject(Router);
-    
+
     //states to prop drill (ha ha)
     currentStep = signal<StepsType>(1);
     submittedEmail = signal('');
     resetToken = signal('');
 
     onEmailSubmitted(data: RawValue<EmailFormGroup>) {
-        const { email  } = data
+        const { email } = data
         this.submittedEmail.set(email);
         this.currentStep.set(2);
     }
@@ -55,12 +55,11 @@ export class ForgotPasswordComponent {
     }
 
     onPasswordReset(passwordData: RawValue<PasswordFormGroup>) {
-        
+
         this.router.navigate([
             '',
             { outlets: { modal: ['modal', 'auth', 'login'] } }
-            ]);
-
+        ]);
     }
 
     goToStep(step: StepsType) {

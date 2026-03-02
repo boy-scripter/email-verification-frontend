@@ -4,7 +4,7 @@ import { ValidationVisibilityStrategy , ChangeStrategy , SubmitStrategy , Change
 
 
 
-export type StrategyType = 'submit' | 'changeSubmit' |'change' | 'blur';
+export type StrategyType = 'submit' | 'changeSubmit' | 'change' | 'blur';
 export function getValidationStrategy( type: StrategyType,
   ngForm: FormGroupDirective
 ): ValidationVisibilityStrategy {
