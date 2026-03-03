@@ -23,7 +23,6 @@ export class FileInputDirective implements ControlValueAccessor {
 
     // Callbacks assigned by Angular
     onChange: (value: FileInputType) => void = (value :FileInputType) => {
-        console.log(value)
         //empty
      };
 

@@ -7,3 +7,4 @@ export * from './verification.service';
 export * from './plan.service';
 
 export * from './subscription.service'
+export * from './invoice.service'
