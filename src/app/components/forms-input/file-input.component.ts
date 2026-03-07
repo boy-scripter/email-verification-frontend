@@ -44,25 +44,28 @@ export class FileInputDirective implements ControlValueAccessor {
     }
 
     // Event handlers using classic method syntax
+
     onInput(event: Event): void {
         const input = event.target as HTMLInputElement;
 
-        this.onTouched()
+        this.onTouched();
         if (!input.files || input.files.length === 0) {
             this.value = null;
-            // this.onChange(null);
+            this.onChange(null);
             return;
         }
-        
+
         const files = Array.from(input.files);
 
-        // Detect if multiple attribute is set on input element
         if (input.multiple) {
             this.onChange(files);
         } else {
             this.onChange(files[0]);
         }
+
+        input.value = '';
     }
+
 
     onBlur(): void {
         this.onTouched();

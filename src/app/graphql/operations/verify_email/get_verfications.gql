@@ -1,0 +1,25 @@
+mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
+  getFileVerifications(input: $input) {
+    edges {
+      cursor
+      node {
+        _id
+        completedAt
+        createdAt
+        originalFileId
+        startedAt
+        status
+        totalRows
+        updatedAt
+        user
+        verifiedFileId
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}

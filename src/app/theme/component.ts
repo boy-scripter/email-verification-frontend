@@ -57,7 +57,7 @@ export const Component: ComponentsDesignTokens = {
 
       borderRadius: primitives.borderRadius.sm,
       label: {
-        fontWeight: '500',
+        fontWeight: '600',
       },
 
       focusRing: {
@@ -73,7 +73,7 @@ export const Component: ComponentsDesignTokens = {
       background: primitives.surface[200],
     },
     value: {
-      background: 'repeating-linear-gradient(45deg, skyblue, skyblue 10px, #2196F3 10px, #2196F3 20px)',
+      background: '#22C55E',
     },
   },
 };

@@ -1,7 +1,6 @@
-mutation GenerateTempUpload($input: GenerateTempUploadInput!) {
-  generateTempUpload(input: $input) {
-    _id
-    presignedData
+mutation GeneratePreSignedURL($fileId: String!) {
+  generatePreSignedURL(fileId: $fileId) {
+    url
   }
 }
 

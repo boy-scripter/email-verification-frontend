@@ -85,7 +85,7 @@ import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
                       <div class="flex gap-2">
                         <p-progressBar
                           [showValue]="false"
-                          [value]="subscription.left_credits | percentage : subscription.total_credits"
+                          [value]="subscription.total_credits | percentage : subscription.left_credits"
                           style="width: 60%;"
                         ></p-progressBar>
                         <span> {{ subscription.left_credits }} out of {{subscription.total_credits}} </span>

@@ -61,6 +61,18 @@ export enum FileAcl {
   PublicRead = 'PUBLIC_READ'
 }
 
+export type FileProcessingStatusModel = {
+  __typename?: 'FileProcessingStatusModel';
+  _id: Scalars['ID']['output'];
+  fileId: Scalars['String']['output'];
+  invalidCount: Scalars['Int']['output'];
+  percentage: Scalars['Int']['output'];
+  processedRows: Scalars['Int']['output'];
+  totalRows: Scalars['Int']['output'];
+  userId: Scalars['ID']['output'];
+  validCount: Scalars['Int']['output'];
+};
+
 export type FileVerificationInput = {
   fileId: Scalars['String']['input'];
 };
@@ -77,6 +89,12 @@ export type FileVerificationModel = {
   updatedAt: Scalars['DateTime']['output'];
   user: Scalars['ID']['output'];
   verifiedFileId: Maybe<Scalars['String']['output']>;
+};
+
+export type FileVerificationModel_Edge = {
+  __typename?: 'FileVerificationModel_Edge';
+  cursor: Scalars['String']['output'];
+  node: FileVerificationModel;
 };
 
 export enum FileVerificationStatus {
@@ -100,6 +118,11 @@ export type FinalizeUploadResponse = {
   size: Scalars['Float']['output'];
   uploadRuleId: Maybe<Scalars['ID']['output']>;
   uploaded_at: Scalars['DateTime']['output'];
+};
+
+export type GeneratePreSignedUrl = {
+  __typename?: 'GeneratePreSignedURL';
+  url: Scalars['String']['output'];
 };
 
 export type GenerateTempUploadInput = {
@@ -157,9 +180,12 @@ export type Mutation = {
   checkEmail: VerificationModel;
   creditsByRange: Array<CreditsHistoryModel>;
   creditsHistory: CreditsHistoryTotals;
-  fileProcessingStatus: FileVerificationModel;
+  fileProcessingStatus: FileProcessingStatusModel;
   finalizeUpload: FinalizeUploadResponse;
+  generatePreSignedURL: GeneratePreSignedUrl;
   generateTempUpload: TempUploadResponse;
+  getFileVerification: FileVerificationModel;
+  getFileVerifications: PaginatedFileVerificationResponse;
   getInvoice: InvoiceModel;
   getInvoices: PaginatedInvoiceResponse;
   getOrder: OrderModel;
@@ -209,8 +235,23 @@ export type MutationFinalizeUploadArgs = {
 };
 
 
+export type MutationGeneratePreSignedUrlArgs = {
+  fileId: Scalars['String']['input'];
+};
+
+
 export type MutationGenerateTempUploadArgs = {
   input: GenerateTempUploadInput;
+};
+
+
+export type MutationGetFileVerificationArgs = {
+  fileVerficationId: Scalars['String']['input'];
+};
+
+
+export type MutationGetFileVerificationsArgs = {
+  input: PaginatedFileVerificationDto;
 };
 
 
@@ -317,6 +358,19 @@ export type PageInfo = {
   hasNextPage: Scalars['Boolean']['output'];
   hasPreviousPage: Scalars['Boolean']['output'];
   startCursor: Maybe<Scalars['String']['output']>;
+};
+
+export type PaginatedFileVerificationDto = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: Scalars['Int']['input'];
+  sortDirection?: Scalars['Int']['input'];
+  sortField?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PaginatedFileVerificationResponse = {
+  __typename?: 'PaginatedFileVerificationResponse';
+  edges: Array<FileVerificationModel_Edge>;
+  pageInfo: PageInfo;
 };
 
 export type PaginatedInvoiceDto = {
@@ -498,6 +552,8 @@ export type VerifyOtpResponse = {
   reset_token: Scalars['String']['output'];
 };
 
+export type FileVerificationFieldsFragment = { __typename?: 'FileVerificationModel', _id: string, status: FileVerificationStatus, totalRows: number | null, startedAt: any | null, completedAt: any | null, createdAt: any, updatedAt: any, originalFileId: string, verifiedFileId: string | null };
+
 export type InvoiceFieldsFragment = { __typename?: 'InvoiceModel', _id: string, currency: string, invoiceDate: any, userId: string, totalAmount: number, taxAmount: number | null, subTotal: number, orderId: string };
 
 export type SubscriptionFieldsFragment = { __typename?: 'SubscriptionModel', _id: string, createdAt: any, left_credits: number, status: SubscriptionStatus, total_credits: number, updatedAt: any, plan: { __typename?: 'PlanModel', name: string } };
@@ -547,6 +603,13 @@ export type FinalizeUploadMutationVariables = Exact<{
 
 
 export type FinalizeUploadMutationData = { __typename?: 'Mutation', finalizeUpload: { __typename?: 'FinalizeUploadResponse', _id: string, acl: FileAcl, uploaded_at: any, uploadRuleId: string | null, size: number, presigned_url: string, mimeType: string, key: string, marked: boolean, hash: string, filename: string } };
+
+export type GeneratePreSignedUrlMutationVariables = Exact<{
+  fileId: Scalars['String']['input'];
+}>;
+
+
+export type GeneratePreSignedUrlMutationData = { __typename?: 'Mutation', generatePreSignedURL: { __typename?: 'GeneratePreSignedURL', url: string } };
 
 export type GenerateTempUploadMutationVariables = Exact<{
   input: GenerateTempUploadInput;
@@ -672,6 +735,20 @@ export type BulkVerifyMutationVariables = Exact<{
 
 export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFileId: string | null, originalFileId: string, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, createdAt: any, completedAt: any | null, _id: string } };
 
+export type GetFileVerificationMutationVariables = Exact<{
+  fileVerficationId: Scalars['String']['input'];
+}>;
+
+
+export type GetFileVerificationMutationData = { __typename?: 'Mutation', getFileVerification: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, originalFileId: string, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null } };
+
+export type GetFileVerificationsMutationVariables = Exact<{
+  input: PaginatedFileVerificationDto;
+}>;
+
+
+export type GetFileVerificationsMutationData = { __typename?: 'Mutation', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, originalFileId: string, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
+
 export type SingleEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
 }>;
@@ -679,6 +756,19 @@ export type SingleEmailMutationVariables = Exact<{
 
 export type SingleEmailMutationData = { __typename?: 'Mutation', checkEmail: { __typename?: 'VerificationModel', username: string | null, status: string, mx_record: string | null, email: string, domain: string | null, checks: { __typename?: 'EmailChecks', syntax_valid: boolean, smtp_connect: boolean, smtp_block: boolean, is_role: boolean, is_catchall: boolean } } };
 
+export const FileVerificationFieldsFragmentDoc = gql`
+    fragment FileVerificationFields on FileVerificationModel {
+  _id
+  status
+  totalRows
+  startedAt
+  completedAt
+  createdAt
+  updatedAt
+  originalFileId
+  verifiedFileId
+}
+    ` as DocumentNode<FileVerificationFieldsFragment, unknown>;
 export const InvoiceFieldsFragmentDoc = gql`
     fragment InvoiceFields on InvoiceModel {
   _id
@@ -806,6 +896,21 @@ export const FINALIZE_UPLOAD_MUTATION = gql`
 export function gqlFinalizeUploadMutation(variables: FinalizeUploadMutationVariables): { mutation: typeof FINALIZE_UPLOAD_MUTATION, variables: typeof variables } {
   return {
     mutation: FINALIZE_UPLOAD_MUTATION,
+    variables
+  };
+}
+
+export const GENERATE_PRE_SIGNED_URL_MUTATION = gql`
+    mutation GeneratePreSignedURL($fileId: String!) {
+  generatePreSignedURL(fileId: $fileId) {
+    url
+  }
+}
+    ` as DocumentNode<GeneratePreSignedUrlMutationData, GeneratePreSignedUrlMutationVariables>;
+
+export function gqlGeneratePreSignedUrlMutation(variables: GeneratePreSignedUrlMutationVariables): { mutation: typeof GENERATE_PRE_SIGNED_URL_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GENERATE_PRE_SIGNED_URL_MUTATION,
     variables
   };
 }
@@ -1098,6 +1203,65 @@ export const BULK_VERIFY_MUTATION = gql`
 export function gqlBulkVerifyMutation(variables: BulkVerifyMutationVariables): { mutation: typeof BULK_VERIFY_MUTATION, variables: typeof variables } {
   return {
     mutation: BULK_VERIFY_MUTATION,
+    variables
+  };
+}
+
+export const GET_FILE_VERIFICATION_MUTATION = gql`
+    mutation GetFileVerification($fileVerficationId: String!) {
+  getFileVerification(fileVerficationId: $fileVerficationId) {
+    _id
+    completedAt
+    createdAt
+    originalFileId
+    startedAt
+    status
+    totalRows
+    updatedAt
+    user
+    verifiedFileId
+  }
+}
+    ` as DocumentNode<GetFileVerificationMutationData, GetFileVerificationMutationVariables>;
+
+export function gqlGetFileVerificationMutation(variables: GetFileVerificationMutationVariables): { mutation: typeof GET_FILE_VERIFICATION_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GET_FILE_VERIFICATION_MUTATION,
+    variables
+  };
+}
+
+export const GET_FILE_VERIFICATIONS_MUTATION = gql`
+    mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
+  getFileVerifications(input: $input) {
+    edges {
+      cursor
+      node {
+        _id
+        completedAt
+        createdAt
+        originalFileId
+        startedAt
+        status
+        totalRows
+        updatedAt
+        user
+        verifiedFileId
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+      hasPreviousPage
+      startCursor
+    }
+  }
+}
+    ` as DocumentNode<GetFileVerificationsMutationData, GetFileVerificationsMutationVariables>;
+
+export function gqlGetFileVerificationsMutation(variables: GetFileVerificationsMutationVariables): { mutation: typeof GET_FILE_VERIFICATIONS_MUTATION, variables: typeof variables } {
+  return {
+    mutation: GET_FILE_VERIFICATIONS_MUTATION,
     variables
   };
 }

@@ -90,10 +90,7 @@ export class FileInputComponent implements AfterViewInit {
             filter((v) => {
                 const control = this.ngControl()?.control;
 
-                const isReset =
-                    control?.pristine &&
-                    !control?.dirty &&
-                    (v === null || v === '');
+                const isReset = control?.pristine && !control?.dirty && (v === null || v === '');
 
                 if (isReset) {
                     this.progressState = signal(null);

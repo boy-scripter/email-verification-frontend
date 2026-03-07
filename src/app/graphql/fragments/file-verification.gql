@@ -1,0 +1,11 @@
+fragment FileVerificationFields on FileVerificationModel {
+    _id
+    status
+    totalRows
+    startedAt
+    completedAt
+    createdAt
+    updatedAt
+    originalFileId
+    verifiedFileId
+}

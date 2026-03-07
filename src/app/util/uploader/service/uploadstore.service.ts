@@ -1,6 +1,9 @@
 import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { createFileAdvanced, UploadableFile } from '../classes';
 import { UploadStrategyFactory, UploadStrategyType } from '../stratergy-factory';
+import { ApolloService } from '@util/service/apollo/apollo.service';
+import { gqlGeneratePreSignedUrlMutation } from 'src/app/graphql/generated';
+
 
 export type UploadStatus = 'idle' | 'uploading' | 'completed' | 'error';
 export interface UploadItemState {
@@ -18,6 +21,9 @@ export interface AddNewFile {
 
 @Injectable({ providedIn: 'root' })
 export class UploadStoreService {
+
+  private apolloService = inject(ApolloService);
+
   private filesMap = new Map<string, WritableSignal<UploadItemState>>();
   private uploadStrategyFactory = inject(UploadStrategyFactory);
   readonly files = computed(() => this.filesMap);
@@ -81,6 +87,10 @@ export class UploadStoreService {
 
   startAll() {
     Object.keys(this.filesMap).forEach((key) => this.startUpload(key));
+  }
+
+  generatePresignedUrl(fileId: string) {
+    return this.apolloService.query(gqlGeneratePreSignedUrlMutation({ fileId }))
   }
 
   get(key: string): WritableSignal<UploadItemState> {

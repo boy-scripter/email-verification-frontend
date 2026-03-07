@@ -1,0 +1,14 @@
+mutation GetFileVerification($fileVerficationId: String!) {
+  getFileVerification(fileVerficationId: $fileVerficationId) {
+    _id
+    completedAt
+    createdAt
+    originalFileId
+    startedAt
+    status
+    totalRows
+    updatedAt
+    user
+    verifiedFileId
+  }
+}
