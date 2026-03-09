@@ -1,4 +1,5 @@
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { InMemoryCache, provideApollo, withApolloOptions } from '@apollo-orbit/angular';
 import { HttpLinkFactory, withHttpLink } from '@apollo-orbit/angular/http';
 import { ApolloLink, Observable } from '@apollo/client';
@@ -14,6 +15,7 @@ export const provideApolloConfig = () => {
       const httpLink = inject(HttpLinkFactory);
       const tokenStore = inject(TokenStore);
       const messageService = inject(MessageService);
+      const router = inject(Router);
 
       const httpLinkhandler = httpLink.create({ uri: enviroment.gql_base_url });
       const defaultOptionsContextLink = new ApolloLink((operation, forward) => {
@@ -21,9 +23,9 @@ export const provideApolloConfig = () => {
           showError: true, // default
           ...operation.getContext(), // allow override
         });
-
         return forward(operation);
       });
+
       const authMiddleware = new ApolloLink((operation, forward) => {
         const token = tokenStore.accessToken();
 
@@ -57,7 +59,7 @@ export const provideApolloConfig = () => {
 
         if (!isUnauthorized) {
           console.log(
-            'this request does not have have unauthoized error , so refresh token no needed',
+            'this request does not have have unauthoized error , so refresh token not needed',
           );
           return;
         }
@@ -76,6 +78,8 @@ export const provideApolloConfig = () => {
               forward(operation).subscribe(observer);
             })
             .catch((err) => {
+              console.warn('unable to refresh token');
+              router.navigate(['/']);
               observer.error(err);
             });
         });

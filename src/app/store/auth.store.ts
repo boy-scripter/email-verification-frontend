@@ -25,7 +25,7 @@ export const AuthStore = signalStore(
     authenticateUser: computed(() => {
       const user = store.user();
       if (!user) {
-        throw new Error('User should exist here');
+        throw new Error('user should exist here');
       }
       return user;
     }),
@@ -82,9 +82,9 @@ export const AuthStore = signalStore(
         patchState(store, { loading: true });
         const res = await authService.updateProfileImage(fileId);
         const user = res.data.updateProfileImage;
-        patchState(store, { 
-          loading: false, 
-          user: user as User 
+        patchState(store, {
+          loading: false,
+          user: user as User,
         });
       },
 
@@ -95,4 +95,3 @@ export const AuthStore = signalStore(
     };
   }),
 );
-
