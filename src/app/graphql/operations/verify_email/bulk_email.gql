@@ -1,7 +1,9 @@
 mutation BulkVerify($input: FileVerificationInput!) {
   bulkVerify(input: $input) {
     verifiedFileId
-    originalFileId
+    originalFile{
+      filename
+    }
     user
     updatedAt
     totalRows

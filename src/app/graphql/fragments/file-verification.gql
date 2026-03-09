@@ -6,6 +6,9 @@ fragment FileVerificationFields on FileVerificationModel {
     completedAt
     createdAt
     updatedAt
-    originalFileId
+    originalFile {
+        filename
+        size
+    }
     verifiedFileId
 }

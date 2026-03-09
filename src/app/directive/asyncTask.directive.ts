@@ -23,7 +23,7 @@ export class AsyncTaskDirective {
 
     const taskFactory = this.appAsyncTask();
     if (!taskFactory) {
-      console.warn('appAsyncTask directive: No task provided!');
+      console.warn('[ATTRIBUTE DIRECTIVE] appAsyncTask: No task provided!');
       return;
     }
 
@@ -55,7 +55,6 @@ export class AsyncTaskDirective {
     this.btnRef.loading = false;
     this.btnRef.disabled = false;
     this.btnRef.cd.detectChanges()
-
   }
 
   private taskError(err : Error) {

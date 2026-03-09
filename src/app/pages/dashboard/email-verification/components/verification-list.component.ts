@@ -7,10 +7,13 @@ import { DatePipe } from "@angular/common";
 import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
 import { FileVerificationFieldsFragment, FileVerificationStatus } from "src/app/graphql/generated";
 import { Tag } from "primeng/tag";
+import { FileformatPipe } from "@pipes/index";
+import { AsyncTaskDirective } from "@directive/asyncTask.directive";
+import { UploadStoreService } from "@util/uploader/service/uploadstore.service";
 
 @Component({
   selector: 'app-verification-list',
-  imports: [CardComponent, TableModule, DatePipe, ButtonModule, Tag],
+  imports: [CardComponent, TableModule, DatePipe, ButtonModule, Tag, FileformatPipe, AsyncTaskDirective],
   styles: `
      .active {
         color: #ffffff;
@@ -42,47 +45,44 @@ import { Tag } from "primeng/tag";
               </tr>
             </ng-template>
 
-            <ng-template let-data pTemplate="body">
-            <tr class="table-row">
+            <ng-template  let-data pTemplate="body">
+              <tr class="table-row">
+                    <td class="table-cell">
+                      <span class="cell-content">{{ data.originalFile.filename }}</span>
+                    </td>
+
+                    <td class="table-cell">
+                      <span class="cell-content">
+                        {{ data.totalRows }} emails , {{ data.originalFile.size | fileformat }} 
+                      </span>
+                    </td>
+
                   <td class="table-cell">
-                    <span class="cell-content">#{{ 'data.file.name' }}</span>
+                  <span class="cell-content">
+                      {{ data.createdAt | date:'d MMM, EEE, y, h:mm a' }}
+                  </span>
                   </td>
 
                   <td class="table-cell">
-                    <span class="cell-content">
-                      {{ data.totalRows }}
-                    </span>
+                  <span class="cell-content">
+                      {{ data.completedAt ? (data.completedAt | date:'d MMM, EEE, y, h:mm a') : 'Not Yet Completed' }}
+                  </span>
                   </td>
 
-                <td class="table-cell">
-                <span class="cell-content">
-                    {{ data.createdAt | date:'d MMM, EEE, y, h:mm a' }}
-                </span>
-                </td>
-
-                <td class="table-cell">
-                <span class="cell-content">
-                    {{ data.completedAt ? (data.completedAt | date:'d MMM, EEE, y, h:mm a') : 'Not Yet Completed' }}
-                </span>
-                </td>
-
-                  <td class="table-cell">
-                    <span 
-                    class="cell-content"
-                    >
-               
-                    <p-tag
-                        [value]="data.status"
-                        [severity]="FileVerificationStatusColor[data.status]">
-                      </p-tag>
-                    </span>
-                  </td>
-                  <td class="table-cell">
-                    <span class="cell-content">
-                       <p-button icon="pi pi-download" iconPos="right" size="small" severity="success" label="Download Now" class="p-button-icon-left"></p-button>
-                    </span>
-                  </td>
-            </tr>
+                    <td class="table-cell">
+                      <span class="cell-content">
+                      <p-tag
+                          [value]="data.status"
+                          [severity]="FileVerificationStatusColor[data.status]">
+                        </p-tag>
+                      </span>
+                    </td>
+                    <td class="table-cell">
+                      <span class="cell-content">
+                        <p-button [appAsyncTask]="downloadFile(data.verifiedFileId)" icon="pi pi-download" iconPos="right" size="small" severity="success" label="Download Now" class="p-button-icon-left"></p-button>
+                      </span>
+                    </td>
+              </tr>
             </ng-template>
           </p-table>
 
@@ -108,8 +108,9 @@ import { Tag } from "primeng/tag";
 export class VerificationListComponent extends CursorPaginationFacade<FileVerificationFieldsFragment> implements OnInit {
 
   private verificationService = inject(VerificationService)
+  private fileService = inject(UploadStoreService)
 
-  public headers = ['File Name', 'Total Rows', 'Started At', 'Completed At', 'Status', ' '];
+  public headers = ['File Name', 'Info', 'Started At', 'Completed At', 'Status', ' '];
 
   ngOnInit(): void {
     this.loadPage();
@@ -123,7 +124,7 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
       endCursor: data.getFileVerifications.pageInfo.endCursor || undefined
     };
   }
-  
+
   public FileVerificationStatusColor: Record<string, string> = {
     [FileVerificationStatus.Completed]: 'success',
     [FileVerificationStatus.Failed]: 'danger',
@@ -131,4 +132,19 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
     [FileVerificationStatus.Processing]: 'warning',
     [FileVerificationStatus.Queued]: 'secondary'
   };
+
+  public downloadFile(id: string) {
+    return async () => {
+      try {
+        const { data } = await this.fileService.generatePresignedUrl(id);
+        const url = data.generatePreSignedURL.url;
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = '';
+        link.click();
+      } catch (error) {
+        console.error('Download failed', error);
+      }
+    }
+  }
 }

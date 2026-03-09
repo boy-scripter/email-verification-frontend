@@ -1,0 +1,12 @@
+fragment FileFields on FileModel {
+    _id
+    acl
+    filename
+    hash
+    key
+    marked
+    mimeType
+    size
+    uploadRuleId
+    uploaded_at
+}

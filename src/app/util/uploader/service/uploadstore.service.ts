@@ -90,7 +90,7 @@ export class UploadStoreService {
   }
 
   generatePresignedUrl(fileId: string) {
-    return this.apolloService.query(gqlGeneratePreSignedUrlMutation({ fileId }))
+    return this.apolloService.mutate(gqlGeneratePreSignedUrlMutation({ fileId }))
   }
 
   get(key: string): WritableSignal<UploadItemState> {

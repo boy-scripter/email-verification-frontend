@@ -6,7 +6,10 @@ mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
         _id
         completedAt
         createdAt
-        originalFileId
+        originalFile{
+          filename
+          size 
+        }
         startedAt
         status
         totalRows

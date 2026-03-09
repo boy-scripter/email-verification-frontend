@@ -3,7 +3,9 @@ mutation GetFileVerification($fileVerficationId: String!) {
     _id
     completedAt
     createdAt
-    originalFileId
+    originalFile{
+      filename
+    }
     startedAt
     status
     totalRows
