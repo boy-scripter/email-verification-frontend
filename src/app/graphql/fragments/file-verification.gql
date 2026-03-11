@@ -1,14 +1,20 @@
 fragment FileVerificationFields on FileVerificationModel {
-    _id
-    status
-    totalRows
-    startedAt
-    completedAt
-    createdAt
-    updatedAt
-    originalFile {
-        filename
-        size
-    }
-    verifiedFileId
+  _id
+  status
+  totalRows
+  startedAt
+  completedAt
+  createdAt
+  updatedAt
+  originalFile {
+    filename
+    size
+  }
+  verifiedFileId
+
+  metadata {
+    valid
+    invalid
+    duplicate
+  }
 }

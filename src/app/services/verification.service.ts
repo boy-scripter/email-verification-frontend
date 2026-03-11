@@ -2,9 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { ApolloMutationResult, ApolloService } from '@util/service/apollo/apollo.service';
 import {
   BulkVerifyMutationData,
+  FileProcessingStatusMutationData,
   GetFileVerificationMutationData,
   GetFileVerificationsMutationData,
   gqlBulkVerifyMutation,
+  gqlFileProcessingStatusMutation,
   gqlGetFileVerificationMutation,
   gqlGetFileVerificationsMutation,
   gqlSingleEmailMutation,
@@ -52,6 +54,14 @@ export class VerificationService {
     return this.apollo.mutate(
       gqlGetFileVerificationMutation({
         fileVerficationId: id,
+      }),
+    );
+  }
+
+  getFileVerificationProgress(id: string): ApolloMutationResult<FileProcessingStatusMutationData> {
+    return this.apollo.mutate(
+      gqlFileProcessingStatusMutation({
+        fileId: id,
       }),
     );
   }

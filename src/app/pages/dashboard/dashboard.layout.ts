@@ -90,9 +90,7 @@ import { MenuModule } from 'primeng/menu';
             </ng-template>
           </p-menu>
 
-          <div
-            class="border-surface-200 bg-surface-400/10 w-full rounded-lg border-solid p-2 backdrop-blur-md sm:p-5 md:flex-1 md:overflow-y-auto lg:border-2"
-          >
+          <div class="border-surface-200 bg-surface-400/10 w-full rounded-lg border-solid p-2 backdrop-blur-md sm:p-5 md:flex-1 md:overflow-y-auto lg:border-2">
             <router-outlet />
           </div>
         </div>
@@ -111,8 +109,8 @@ export class DashboardLayout {
     { label: 'Logout', icon: 'pi pi-sign-out', routerLink: 'logout' },
   ];
 
- protected router = inject(Router);
- protected authStore = inject(AuthStore);
+  protected router = inject(Router);
+  protected authStore = inject(AuthStore);
 
 
   isMenuOpen = signal(false);

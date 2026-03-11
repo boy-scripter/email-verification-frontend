@@ -66,7 +66,7 @@ export class WithLoaderDirective implements OnInit {
     ).subscribe({
       next: () => {
         clearTimeout(taskId);
-        this.renderTemplate(); // render original content on success
+        this.renderTemplate(data); 
       },
       error: (err) => this.handleError(err),
     });
@@ -75,9 +75,9 @@ export class WithLoaderDirective implements OnInit {
   // ================================
   // Template Renderers
   // ================================
-  private renderTemplate(): void {
+  private renderTemplate(data : any): void {
     this.clearView();
-    this.vcr.createEmbeddedView(this.templateRef);
+    this.vcr.createEmbeddedView(this.templateRef, data);
   }
 
   private handleError(error: any): void {

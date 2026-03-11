@@ -16,10 +16,15 @@ mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
         updatedAt
         user
         verifiedFileId
+        metadata {
+          valid
+          invalid
+          duplicate
+        }
       }
     }
     pageInfo {
-      endCursor
+      endCursor 
       hasNextPage
       hasPreviousPage
       startCursor

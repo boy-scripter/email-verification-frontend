@@ -1,0 +1,11 @@
+mutation FileProcessingStatus($fileId: String!) {
+  fileProcessingStatus(fileId: $fileId) {
+    _id
+    duplicateCount
+    invalidCount
+    percentage
+    processedRows
+    totalRows
+    validCount
+  }
+}

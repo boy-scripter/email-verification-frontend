@@ -78,6 +78,7 @@ export type FileModel = {
 export type FileProcessingStatusModel = {
   __typename?: 'FileProcessingStatusModel';
   _id: Scalars['ID']['output'];
+  duplicateCount: Scalars['Int']['output'];
   fileId: Scalars['String']['output'];
   invalidCount: Scalars['Int']['output'];
   percentage: Scalars['Int']['output'];
@@ -96,6 +97,7 @@ export type FileVerificationModel = {
   _id: Scalars['ID']['output'];
   completedAt: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  metadata: Maybe<Metadata>;
   originalFile: FileModel;
   startedAt: Maybe<Scalars['DateTime']['output']>;
   status: FileVerificationStatus;
@@ -187,6 +189,13 @@ export type MessageResponseModel = {
   timestamp: Scalars['DateTime']['output'];
 };
 
+export type Metadata = {
+  __typename?: 'Metadata';
+  duplicate: Scalars['Int']['output'];
+  invalid: Scalars['Int']['output'];
+  valid: Scalars['Int']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   bulkVerify: FileVerificationModel;
@@ -240,7 +249,7 @@ export type MutationCreditsByRangeArgs = {
 
 
 export type MutationFileProcessingStatusArgs = {
-  id: Scalars['String']['input'];
+  fileId: Scalars['String']['input'];
 };
 
 
@@ -566,7 +575,7 @@ export type VerifyOtpResponse = {
   reset_token: Scalars['String']['output'];
 };
 
-export type FileVerificationFieldsFragment = { __typename?: 'FileVerificationModel', _id: string, status: FileVerificationStatus, totalRows: number | null, startedAt: any | null, completedAt: any | null, createdAt: any, updatedAt: any, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', filename: string, size: number } };
+export type FileVerificationFieldsFragment = { __typename?: 'FileVerificationModel', _id: string, status: FileVerificationStatus, totalRows: number | null, startedAt: any | null, completedAt: any | null, createdAt: any, updatedAt: any, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', filename: string, size: number }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null };
 
 export type FileFieldsFragment = { __typename?: 'FileModel', _id: string, acl: FileAcl, filename: string, hash: string, key: string, marked: boolean, mimeType: string, size: number, uploadRuleId: string | null, uploaded_at: any };
 
@@ -751,19 +760,26 @@ export type BulkVerifyMutationVariables = Exact<{
 
 export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFileId: string | null, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, createdAt: any, completedAt: any | null, _id: string, originalFile: { __typename?: 'FileModel', filename: string } } };
 
+export type FileProcessingStatusMutationVariables = Exact<{
+  fileId: Scalars['String']['input'];
+}>;
+
+
+export type FileProcessingStatusMutationData = { __typename?: 'Mutation', fileProcessingStatus: { __typename?: 'FileProcessingStatusModel', _id: string, duplicateCount: number, invalidCount: number, percentage: number, processedRows: number, totalRows: number, validCount: number } };
+
 export type GetFileVerificationMutationVariables = Exact<{
   fileVerficationId: Scalars['String']['input'];
 }>;
 
 
-export type GetFileVerificationMutationData = { __typename?: 'Mutation', getFileVerification: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', filename: string } } };
+export type GetFileVerificationMutationData = { __typename?: 'Mutation', getFileVerification: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', filename: string }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } };
 
 export type GetFileVerificationsMutationVariables = Exact<{
   input: PaginatedFileVerificationDto;
 }>;
 
 
-export type GetFileVerificationsMutationData = { __typename?: 'Mutation', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', filename: string, size: number } } }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
+export type GetFileVerificationsMutationData = { __typename?: 'Mutation', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', filename: string, size: number }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
 
 export type SingleEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -786,6 +802,11 @@ export const FileVerificationFieldsFragmentDoc = gql`
     size
   }
   verifiedFileId
+  metadata {
+    valid
+    invalid
+    duplicate
+  }
 }
     ` as DocumentNode<FileVerificationFieldsFragment, unknown>;
 export const FileFieldsFragmentDoc = gql`
@@ -1242,6 +1263,27 @@ export function gqlBulkVerifyMutation(variables: BulkVerifyMutationVariables): {
   };
 }
 
+export const FILE_PROCESSING_STATUS_MUTATION = gql`
+    mutation FileProcessingStatus($fileId: String!) {
+  fileProcessingStatus(fileId: $fileId) {
+    _id
+    duplicateCount
+    invalidCount
+    percentage
+    processedRows
+    totalRows
+    validCount
+  }
+}
+    ` as DocumentNode<FileProcessingStatusMutationData, FileProcessingStatusMutationVariables>;
+
+export function gqlFileProcessingStatusMutation(variables: FileProcessingStatusMutationVariables): { mutation: typeof FILE_PROCESSING_STATUS_MUTATION, variables: typeof variables } {
+  return {
+    mutation: FILE_PROCESSING_STATUS_MUTATION,
+    variables
+  };
+}
+
 export const GET_FILE_VERIFICATION_MUTATION = gql`
     mutation GetFileVerification($fileVerficationId: String!) {
   getFileVerification(fileVerficationId: $fileVerficationId) {
@@ -1257,6 +1299,11 @@ export const GET_FILE_VERIFICATION_MUTATION = gql`
     updatedAt
     user
     verifiedFileId
+    metadata {
+      valid
+      invalid
+      duplicate
+    }
   }
 }
     ` as DocumentNode<GetFileVerificationMutationData, GetFileVerificationMutationVariables>;
@@ -1287,6 +1334,11 @@ export const GET_FILE_VERIFICATIONS_MUTATION = gql`
         updatedAt
         user
         verifiedFileId
+        metadata {
+          valid
+          invalid
+          duplicate
+        }
       }
     }
     pageInfo {

@@ -12,5 +12,10 @@ mutation GetFileVerification($fileVerficationId: String!) {
     updatedAt
     user
     verifiedFileId
+    metadata {
+      valid
+      invalid
+      duplicate
+    }
   }
 }
