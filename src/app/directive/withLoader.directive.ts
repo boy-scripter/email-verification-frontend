@@ -13,19 +13,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SpinnerComponent } from '@components/loaders/spinner.component';
 import { from, isObservable, Observable, Subscription } from 'rxjs';
 
+// ✅ Callback type: a function that returns a Promise or Observable
+export type LoaderCallback<T = any> = () => Promise<T> | Observable<T>;
+
 @Directive({
   selector: '[appWithLoader]',
   standalone: true,
 })
 export class WithLoaderDirective implements OnInit {
-  private readonly templateRef = inject<TemplateRef<unknown>>(TemplateRef); // original template
+  private readonly templateRef = inject<TemplateRef<unknown>>(TemplateRef);
   private readonly vcr = inject(ViewContainerRef);
   private readonly destroyRef = inject(DestroyRef);
 
   // ================================
-  // Inputs (using input.required as requested)
+  // Inputs
   // ================================
-  readonly appWithLoader = input.required<Promise<any> | Observable<any>>();
+  readonly appWithLoader = input.required<LoaderCallback>();        // ✅ Now a callback
   readonly appWithLoaderLoading = input<TemplateRef<unknown> | null>(null);
 
   // ================================
@@ -33,25 +36,23 @@ export class WithLoaderDirective implements OnInit {
   // ================================
   private subscription?: Subscription;
   private spinnerRef?: ComponentRef<SpinnerComponent>;
-  private source?: Promise<any> | Observable<any>; // store promise/observable
 
   // ================================
   // ngOnInit — execute once
   // ================================
   ngOnInit(): void {
-    this.renderTemplate(); // Always render content first
+    this.renderTemplate();
 
-    const loader = this.appWithLoader();
-    if (loader) {
-      this.source = loader;
-      this.execute(this.source);
+    const loaderFn = this.appWithLoader();   // ✅ Get the callback
+    if (loaderFn) {
+      this.execute(loaderFn);                // ✅ Pass callback, not its result
     }
   }
 
   // ================================
   // Core Execution
   // ================================
-  private execute(source: Promise<any> | Observable<any>): void {
+  private execute(loaderFn: LoaderCallback): void {
     const DEBOUNCE = 1000 * 2;
 
     const taskId = setTimeout(() => {
@@ -59,23 +60,28 @@ export class WithLoaderDirective implements OnInit {
       this.renderLoading();
     }, DEBOUNCE);
 
+    // ✅ Invoke the callback HERE — lazy, controlled invocation
+    const source = loaderFn();
     const observable$ = isObservable(source) ? source : from(source);
 
     this.subscription = observable$.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
-      next: () => {
+      next: (data: any) => {
         clearTimeout(taskId);
-        this.renderTemplate(data); 
+        this.renderTemplate(data);
       },
-      error: (err) => this.handleError(err),
+      error: (err) => {
+        clearTimeout(taskId);
+        this.handleError(err);
+      },
     });
   }
 
   // ================================
   // Template Renderers
   // ================================
-  private renderTemplate(data : any): void {
+  private renderTemplate(data: any = {}): void {
     this.clearView();
     this.vcr.createEmbeddedView(this.templateRef, data);
   }
@@ -86,12 +92,11 @@ export class WithLoaderDirective implements OnInit {
     div.textContent = 'Something went wrong.';
     div.style.color = 'red';
     this.vcr.element.nativeElement.appendChild(div);
-    console.error('[WithLoaderDirective] Error:', error);
+    console.error('[withLoaderDirective] Error:', error);
   }
 
   private renderLoading(): void {
     this.clearView();
-
     const loadingTemplate = this.appWithLoaderLoading();
     if (loadingTemplate) {
       this.vcr.createEmbeddedView(loadingTemplate);
@@ -106,15 +111,12 @@ export class WithLoaderDirective implements OnInit {
   private cleanup(): void {
     this.subscription?.unsubscribe();
     this.subscription = undefined;
-
     this.spinnerRef?.destroy();
     this.spinnerRef = undefined;
-
     this.vcr.clear();
   }
 
   private clearView(): void {
     this.cleanup();
   }
-  
 }

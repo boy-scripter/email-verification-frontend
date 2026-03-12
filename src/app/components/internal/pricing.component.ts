@@ -13,7 +13,7 @@ import { enviroment } from "src/environments/environment";
 import * as cashfree from '@cashfreepayments/cashfree-js';
 
 @Component({
-  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, NgTemplateOutlet, ToggleSwitchModule, FormsModule , WithLoaderDirective , DecimalPipe],
+  imports: [CardModule, ButtonModule, NgxBorderBeamComponent, NgTemplateOutlet, ToggleSwitchModule, FormsModule, WithLoaderDirective, DecimalPipe],
   selector: 'app-pricing',
   standalone: true,
   styles: ` 
@@ -70,19 +70,19 @@ import * as cashfree from '@cashfreepayments/cashfree-js';
    </ng-container>
   `
 })
-export class PricingComponent  {
+export class PricingComponent {
 
   planservice = inject(PlanService)
-  
+
   checked = false;
   plans: WritableSignal<PlanModel[]> = signal([]);
-  loadPlansPromise: Promise<void>;
+  loadPlansPromise: () => Promise<void>;
 
-  constructor(){
-   this.loadPlansPromise = this.planservice.getPlans()
-   .then(({ data }) => {
-    this.plans.set(data.plans)
-   })
+  constructor() {
+    this.loadPlansPromise = () => this.planservice.getPlans()
+      .then(({ data }) => {
+        this.plans.set(data.plans)
+      })
   }
 
   async onBuyNow(plan: PlanModel) {

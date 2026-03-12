@@ -1,16 +1,24 @@
-import { Component, input, computed, inject, } from '@angular/core';
+import { Component, input, computed, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { FileVerificationStatus } from 'src/app/graphql/generated';
 import { UploadStoreService } from '@util/uploader/service/uploadstore.service';
 import { AsyncTaskDirective } from '@directive/asyncTask.directive';
 import { VerificationService } from '@service';
-import { WithLoaderDirective } from "@directive/withLoader.directive";
+
+interface FileProgress {
+  percentage: number;
+  processedRows: number;
+  totalRows: number;
+  validCount: number;
+  invalidCount: number;
+  duplicateCount: number;
+}
 
 @Component({
   selector: 'app-progress-download',
   standalone: true,
-  imports: [CommonModule, ButtonModule, AsyncTaskDirective, WithLoaderDirective],
+  imports: [CommonModule, ButtonModule, AsyncTaskDirective],
   template: `
     @if (isCompleted()) {
       <p-button
@@ -22,36 +30,125 @@ import { WithLoaderDirective } from "@directive/withLoader.directive";
         label="Download Now"
         class="p-button-icon-left"
       ></p-button>
-    } @else {
+    } @else if (isProcessing()) {
+      @if (isLoadingInitial()) {
+        <p-button
+          icon="pi pi-spin pi-spinner"
+          iconPos="right"
+          size="small"
+          severity="secondary"
+          label="Fetching Progress..."
+          class="p-button-icon-left"
+          [disabled]="true"
+        ></p-button>
+      } @else {
+        <div class="progress-info">
+          <span class="progress-label">
+            <i class="pi pi-spin pi-spinner"></i>
+            Processing... {{ progress()?.percentage ?? 0 }}%
+          </span>
+        </div>
+      }
+    } @else if (isLoadingInitial()) {
       <p-button
-        *appWithLoader="onFileProgress"
-        icon="pi pi-download"
+        icon="pi pi-spin pi-spinner"
         iconPos="right"
         size="small"
-        severity="success"
-        label="Download Now"
+        severity="secondary"
+        label="Loading..."
         class="p-button-icon-left"
+        [disabled]="true"
       ></p-button>
     }
   `,
+  styles: [`
+    .progress-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .progress-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      color: var(--text-color);
+    }
+    small {
+      color: var(--text-color-secondary);
+      font-size: 0.75rem;
+    }
+  `]
 })
-export class ProgressDownloadComponent {
-  //enums
+export class ProgressDownloadComponent implements OnInit, OnDestroy {
   public FileVerificationStatus = FileVerificationStatus;
 
-  private uploadStoreService = inject(UploadStoreService)
-  private verificationService = inject(VerificationService)
+  private uploadStoreService = inject(UploadStoreService);
+  private verificationService = inject(VerificationService);
 
-
-  // --- Signal Inputs (replaces @Input decorator) ---
   status = input.required<FileVerificationStatus>();
   verifiedFileId = input<string>();
   fileId = input.required<string>();
 
-  // --- Computed: auto-updates when status() changes ---
-  isCompleted = computed(
-    () => this.status() === FileVerificationStatus.Completed
-  );
+  isCompleted = computed(() => this.status() === FileVerificationStatus.Completed);
+  isProcessing = computed(() => this.status() === FileVerificationStatus.Processing);
+
+  progress = signal<FileProgress | null>(null);
+  isLoadingInitial = signal<boolean>(true);
+
+  private pollInterval: ReturnType<typeof setInterval> | null = null;
+
+  ngOnInit(): void {
+    // If already completed on init, no need to fetch or poll
+    if (this.isCompleted()) {
+      this.isLoadingInitial.set(false);
+      return;
+    }
+
+    this.startPolling();
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  private startPolling(): void {
+    this.fetchProgress();
+
+    this.pollInterval = setInterval(() => {
+      if (this.isCompleted()) {
+        this.stopPolling();
+        return;
+      }
+      this.fetchProgress();
+    }, 5000);
+  }
+
+  private stopPolling(): void {
+    if (this.pollInterval !== null) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
+    }
+  }
+
+  private async fetchProgress(): Promise<void> {
+    try {
+      const { data } = await this.verificationService.getFileVerificationProgress(this.fileId());
+      this.progress.set({
+        percentage: data.fileProcessingStatus.percentage,
+        processedRows: data.fileProcessingStatus.processedRows,
+        totalRows: data.fileProcessingStatus.totalRows,
+        validCount: data.fileProcessingStatus.validCount,
+        invalidCount: data.fileProcessingStatus.invalidCount,
+        duplicateCount: data.fileProcessingStatus.duplicateCount,
+      });
+    } catch (error) {
+      console.error('Progress fetch failed', error);
+    } finally {
+      // Always turn off initial loader after first attempt, success or fail
+      this.isLoadingInitial.set(false);
+    }
+  }
 
   public downloadFile = async () => {
     try {
@@ -64,21 +161,5 @@ export class ProgressDownloadComponent {
     } catch (error) {
       console.error('Download failed', error);
     }
-
-  }
-
-  public onFileProgress = new Promise((resolve) => {
-    this.verificationService.getFileVerificationProgress(this.fileId()).then(({ data }) => {
-      resolve({
-        percentage: data.fileProcessingStatus.percentage,
-        processedRows: data.fileProcessingStatus.processedRows,
-        totalRows: data.fileProcessingStatus.totalRows,
-        validCount: data.fileProcessingStatus.validCount,
-        invalidCount: data.fileProcessingStatus.invalidCount,
-        duplicateCount: data.fileProcessingStatus.duplicateCount,
-      })
-    })
-  })
+  };
 }
-
-

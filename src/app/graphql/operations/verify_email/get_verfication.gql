@@ -4,6 +4,7 @@ mutation GetFileVerification($fileVerficationId: String!) {
     completedAt
     createdAt
     originalFile{
+      _id
       filename
     }
     startedAt

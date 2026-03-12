@@ -36,6 +36,7 @@ export const AuthStore = signalStore(
     const tokenStore = inject(TokenStore);
 
     return {
+
       clear() {
         patchState(store, { user: null });
       },
@@ -92,6 +93,7 @@ export const AuthStore = signalStore(
         tokenStore.clear();
         this.clear();
       },
+
     };
   }),
 );

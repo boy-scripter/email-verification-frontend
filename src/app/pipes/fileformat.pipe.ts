@@ -13,7 +13,6 @@ export class FileformatPipe implements PipeTransform {
 
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     const value = bytes / Math.pow(k, i);
-    console.log(i, value)
 
     return `${parseFloat(value.toFixed(decimals))} ${sizes[i]}`;
   }

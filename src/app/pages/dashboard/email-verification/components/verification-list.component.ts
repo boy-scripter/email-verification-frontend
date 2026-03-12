@@ -94,7 +94,7 @@ import { ProgressDownloadComponent } from "./progress-download.component";
                                   <app-progress-download
                                     [status]="data.status"
                                     [verifiedFileId]="data.verifiedFileId"
-                                    [fileId]="data.fileId">
+                                    [fileId]="data.originalFile._id">
                                   </app-progress-download>
                                 </span>
                               </td>

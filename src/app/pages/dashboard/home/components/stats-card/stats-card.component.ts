@@ -73,12 +73,12 @@ export class StatsCardComponent {
     usedCredits: 0,
     usedPercentage: 0,
   })
-  public totalCreditsPromise: Promise<void>
-  public creditHistory: Promise<void>
+  public totalCreditsPromise: () => Promise<void>
+  public creditHistory: () => Promise<void>
 
   constructor() {
 
-    this.totalCreditsPromise = this.creditService.getTotalCredits().then(({ data }) => {
+    this.totalCreditsPromise = () => this.creditService.getTotalCredits().then(({ data }) => {
       const totalCredits = data.getTotalCredits.total_credits;
       const remainingCredits = data.getTotalCredits.remaining_credits;
       const usedCredits = totalCredits - remainingCredits;
@@ -92,7 +92,7 @@ export class StatsCardComponent {
 
     })
 
-    this.creditHistory = this.creditService.getCreditsHistory().then(
+    this.creditHistory = () => this.creditService.getCreditsHistory().then(
       ({ data }) => {
         this.verficationCounts.set({
           valid: data.creditsHistory.validCount,
