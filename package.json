@@ -62,6 +62,7 @@
     "html2pdf.js": "^0.14.0",
     "luxon": "^3.7.2",
     "ngx-fast-marquee": "^0.2.3",
+    "ngx-infinite-scroll": "^21.0.0",
     "ogl": "^1.0.11",
     "postcss": "^8.5.6",
     "prettier-eslint": "^16.4.2",

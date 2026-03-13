@@ -208,7 +208,6 @@ export type Mutation = {
   generatePreSignedURL: GeneratePreSignedUrl;
   generateTempUpload: TempUploadResponse;
   getFileVerification: FileVerificationModel;
-  getFileVerifications: PaginatedFileVerificationResponse;
   getInvoice: InvoiceModel;
   getInvoices: PaginatedInvoiceResponse;
   getOrder: OrderModel;
@@ -270,11 +269,6 @@ export type MutationGenerateTempUploadArgs = {
 
 export type MutationGetFileVerificationArgs = {
   fileVerficationId: Scalars['String']['input'];
-};
-
-
-export type MutationGetFileVerificationsArgs = {
-  input: PaginatedFileVerificationDto;
 };
 
 
@@ -468,9 +462,15 @@ export type PlanModel = {
 
 export type Query = {
   __typename?: 'Query';
+  getFileVerifications: PaginatedFileVerificationResponse;
   getHello: Scalars['String']['output'];
   plans: Array<PlanModel>;
   userInfo: User;
+};
+
+
+export type QueryGetFileVerificationsArgs = {
+  input: PaginatedFileVerificationDto;
 };
 
 export type RangeValidator = {
@@ -774,12 +774,12 @@ export type GetFileVerificationMutationVariables = Exact<{
 
 export type GetFileVerificationMutationData = { __typename?: 'Mutation', getFileVerification: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', _id: string, filename: string }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } };
 
-export type GetFileVerificationsMutationVariables = Exact<{
+export type GetFileVerificationsQueryVariables = Exact<{
   input: PaginatedFileVerificationDto;
 }>;
 
 
-export type GetFileVerificationsMutationData = { __typename?: 'Mutation', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', _id: string, filename: string, size: number }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
+export type GetFileVerificationsQueryData = { __typename?: 'Query', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', _id: string, filename: string, size: number }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
 
 export type SingleEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -1317,8 +1317,8 @@ export function gqlGetFileVerificationMutation(variables: GetFileVerificationMut
   };
 }
 
-export const GET_FILE_VERIFICATIONS_MUTATION = gql`
-    mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
+export const GET_FILE_VERIFICATIONS_QUERY = gql`
+    query GetFileVerifications($input: PaginatedFileVerificationDto!) {
   getFileVerifications(input: $input) {
     edges {
       cursor
@@ -1352,11 +1352,13 @@ export const GET_FILE_VERIFICATIONS_MUTATION = gql`
     }
   }
 }
-    ` as DocumentNode<GetFileVerificationsMutationData, GetFileVerificationsMutationVariables>;
+    ` as DocumentNode<GetFileVerificationsQueryData, GetFileVerificationsQueryVariables>;
 
-export function gqlGetFileVerificationsMutation(variables: GetFileVerificationsMutationVariables): { mutation: typeof GET_FILE_VERIFICATIONS_MUTATION, variables: typeof variables } {
+export function gqlGetFileVerificationsQuery(variables: GetFileVerificationsQueryVariables): { query: typeof GET_FILE_VERIFICATIONS_QUERY, variables: typeof variables };
+export function gqlGetFileVerificationsQuery(variables: () => GetFileVerificationsQueryVariables | null): { query: typeof GET_FILE_VERIFICATIONS_QUERY, variables: typeof variables };
+export function gqlGetFileVerificationsQuery(variables: any): any {
   return {
-    mutation: GET_FILE_VERIFICATIONS_MUTATION,
+    query: GET_FILE_VERIFICATIONS_QUERY,
     variables
   };
 }

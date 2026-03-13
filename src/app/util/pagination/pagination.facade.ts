@@ -10,30 +10,26 @@ export abstract class CursorPaginationFacade<T> {
   // computed
   public hasNextPage = computed(() => this.nextPageCursor() !== undefined);
 
-  /**
-   * Must be implemented by child class
-   */
   protected abstract fetchPage(cursor?: string): Promise<{
     nodes: T[];
     endCursor?: string;
   }>;
 
-  loadPage = async () => {
+  public async loadNextPage() {
+    const nextPageCursor = this.nextPageCursor();
     this.isLoading.set(true);
 
     try {
-      const { nodes, endCursor } = await this.fetchPage(
-        this.nextPageCursor()
-      );
-
-      this.items.set(nodes);
+      const { nodes, endCursor } = await this.fetchPage(nextPageCursor);
+      this.items.update(items => [...items, ...nodes]);
       this.nextPageCursor.set(endCursor);
+
     } finally {
       this.isLoading.set(false);
     }
-  };
+  }
 
-  reset = () => {
+  public reset() {
     this.items.set([]);
     this.nextPageCursor.set(undefined);
   };

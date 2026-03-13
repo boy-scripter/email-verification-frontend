@@ -1,4 +1,4 @@
-mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
+query GetFileVerifications($input: PaginatedFileVerificationDto!) {
   getFileVerifications(input: $input) {
     edges {
       cursor
@@ -6,10 +6,10 @@ mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
         _id
         completedAt
         createdAt
-        originalFile{
+        originalFile {
           _id
           filename
-          size 
+          size
         }
         startedAt
         status
@@ -25,7 +25,7 @@ mutation GetFileVerifications($input: PaginatedFileVerificationDto!) {
       }
     }
     pageInfo {
-      endCursor 
+      endCursor
       hasNextPage
       hasPreviousPage
       startCursor

@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { ApolloMutationResult, ApolloService } from '@util/service/apollo/apollo.service';
+import { ApolloMutationResult, ApolloService, ApolloWatchQueryResult } from '@util/service/apollo/apollo.service';
 import {
   BulkVerifyMutationData,
   FileProcessingStatusMutationData,
   GetFileVerificationMutationData,
-  GetFileVerificationsMutationData,
+  GetFileVerificationsQueryData,
   gqlBulkVerifyMutation,
   gqlFileProcessingStatusMutation,
   gqlGetFileVerificationMutation,
-  gqlGetFileVerificationsMutation,
+  gqlGetFileVerificationsQuery,
   gqlSingleEmailMutation,
   SingleEmailMutationData,
 } from '../graphql/generated';
@@ -37,16 +37,18 @@ export class VerificationService {
     );
   }
 
-  getFileVerifications(cursor?: string): ApolloMutationResult<GetFileVerificationsMutationData> {
-    return this.apollo.mutate(
-      gqlGetFileVerificationsMutation({
-        input: {
-          sortDirection: -1,
-          sortField: 'createdAt',
-          first: 10,
-          after: cursor
-        }
-      })
+  getFileVerifications(cursor?: string) {
+    return this.apollo.watchQuery<GetFileVerificationsQueryData>(
+      {
+        query: gqlGetFileVerificationsQuery({
+          input: {
+            sortDirection: -1,
+            sortField: 'createdAt',
+            first: 10,
+            after: cursor
+          }
+        })
+      }
     );
   }
 

@@ -95,16 +95,14 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
 
   progress = signal<FileProgress | null>(null);
   isLoadingInitial = signal<boolean>(true);
-
   private pollInterval: ReturnType<typeof setInterval> | null = null;
+  static POLL_IN_EVERY_MS = 5000
 
   ngOnInit(): void {
-    // If already completed on init, no need to fetch or poll
     if (this.isCompleted()) {
       this.isLoadingInitial.set(false);
       return;
     }
-
     this.startPolling();
   }
 
@@ -115,13 +113,14 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
   private startPolling(): void {
     this.fetchProgress();
 
-    this.pollInterval = setInterval(() => {
-      if (this.isCompleted()) {
-        this.stopPolling();
-        return;
-      }
-      this.fetchProgress();
-    }, 5000);
+    this.pollInterval = setInterval(
+      () => {
+        if (this.isCompleted()) {
+          this.stopPolling();
+          return;
+        }
+        this.fetchProgress();
+      }, ProgressDownloadComponent.POLL_IN_EVERY_MS);
   }
 
   private stopPolling(): void {
@@ -145,7 +144,6 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Progress fetch failed', error);
     } finally {
-      // Always turn off initial loader after first attempt, success or fail
       this.isLoadingInitial.set(false);
     }
   }
@@ -162,4 +160,5 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
       console.error('Download failed', error);
     }
   };
+  
 }

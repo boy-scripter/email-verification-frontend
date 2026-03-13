@@ -9,10 +9,11 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { downloadPDFInvoice } from './invoice_template';
 import { AuthStore } from '@store/auth.store';
+import { AppInfiniteScrollComponent } from '@util/pagination/infinte-scroll.component';
 
 @Component({
   selector: 'app-invoice',
-  imports: [CardComponent, TableModule, DatePipe, ButtonModule, RouterLink, CurrencyPipe, UpperCasePipe],
+  imports: [CardComponent, TableModule, DatePipe, ButtonModule, RouterLink, CurrencyPipe, UpperCasePipe , AppInfiniteScrollComponent],
   template: `
     <div class="w-full">
       <div class="mb-8">
@@ -27,14 +28,12 @@ import { AuthStore } from '@store/auth.store';
           </app-card>
         </div>
         @if(items().length){
+          <app-infinite-scroll styleClass="bg-white block overflow-y-auto rounded-xl" (scrolled)="loadNextPage()">
           <p-table
             [loading]="isLoading()"
-            [paginator]="true"
-            [rows]="5"
-            [rowsPerPageOptions]="[5, 10, 20]"
-            [scrollable]="true"
-            [tableStyle]="{ 'min-width': '50rem' }"
             [value]="items()"
+            [rows]="5"
+            [tableStyle]="{ 'min-width': '50rem' }"
           >
             <ng-template pTemplate="header">
               <tr>
@@ -49,7 +48,7 @@ import { AuthStore } from '@store/auth.store';
             <ng-template let-invoice pTemplate="body">
             <tr class="table-row">
                   <td class="table-cell">
-                    <span class="cell-content">#{{ invoice.orderId | uppercase}}</span>
+                    <span class="cell-content">#{{ invoice._id | uppercase}}</span>
                   </td>
 
                   <td class="table-cell">
@@ -83,6 +82,7 @@ import { AuthStore } from '@store/auth.store';
             </tr>
             </ng-template>
           </p-table>
+          </app-infinite-scroll>
         } @else {
           <app-card >
           <div class="flex text-gray-600 flex-col items-center justify-center py-8">
@@ -113,7 +113,7 @@ export class InvoiceComponent extends CursorPaginationFacade<InvoiceFieldsFragme
   public headers = ['Invoice ID', 'Date', 'Sub Total', 'Tax Amount', 'Total Amount', ''];
 
   ngOnInit(): void {
-    this.loadPage();
+    this.loadNextPage();
   }
 
   protected async fetchPage(cursor?: string) {

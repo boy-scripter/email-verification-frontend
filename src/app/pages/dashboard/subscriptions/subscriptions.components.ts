@@ -10,6 +10,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
+import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.component";
 
 @Component({
   selector: 'app-subscriptions',
@@ -22,7 +23,8 @@ import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
     SkeletonModule,
     RouterLink,
     PercentagePipe,
-  ],
+    AppInfiniteScrollComponent
+],
   styles: `
     .active {
       color: #ffffff;
@@ -47,22 +49,12 @@ import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
             </p>
           </app-card>
           <div class="mt-8">
-            <!-- <p-button
-              icon="pi pi-crown"
-              label="Active subscription"
-              severity="warn"
-              size="large"
-              styleClass="px-6 my-2 text-base"
-              type="button"
-            ></p-button> -->
 
             @if (items().length) {
+              <app-infinite-scroll styleClass="bg-white block overflow-y-auto rounded-xl" (scrolled)="loadNextPage()">
               <p-table
                 [loading]="isLoading()"
-                [paginator]="true"
                 [rows]="5"
-                [rowsPerPageOptions]="[5, 10, 20]"
-                [scrollable]="true"
                 [tableStyle]="{ 'min-width': '50rem' }"
                 [value]="items()"
               >
@@ -108,6 +100,7 @@ import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
                   </tr>
                 </ng-template>
               </p-table>
+              </app-infinite-scroll>
             } @else {
               <app-card>
                 <div class="flex flex-col items-center justify-center py-8 text-gray-600">
@@ -141,7 +134,7 @@ export class SubscriptionsComponent
   public headers = ['Plan', 'Credits', 'Activated At', 'Status'];
 
   ngOnInit(): void {
-    this.loadPage();
+    this.loadNextPage();
   }
 
   protected async fetchPage(cursor?: string) {

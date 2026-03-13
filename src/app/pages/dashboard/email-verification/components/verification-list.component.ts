@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { CardComponent } from "@components/card.component";
 import { VerificationService } from "@service";
-import { TableModule } from "primeng/table";
+import { TableLazyLoadEvent, TableModule } from "primeng/table";
 import { ButtonModule } from "primeng/button";
 import { DatePipe } from "@angular/common";
 import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
@@ -9,10 +9,11 @@ import { FileVerificationFieldsFragment, FileVerificationStatus } from "src/app/
 import { Tag } from "primeng/tag";
 import { FileformatPipe } from "@pipes/index";
 import { ProgressDownloadComponent } from "./progress-download.component";
+import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.component";
 
 @Component({
   selector: 'app-verification-list',
-  imports: [CardComponent, TableModule, DatePipe, ButtonModule, Tag, FileformatPipe, ProgressDownloadComponent],
+  imports: [CardComponent, TableModule, DatePipe, ButtonModule, Tag, FileformatPipe, ProgressDownloadComponent, AppInfiniteScrollComponent],
   styles: `
      .active {
         color: #ffffff;
@@ -27,15 +28,12 @@ import { ProgressDownloadComponent } from "./progress-download.component";
   template: `
     <app-card icon="pi pi-history" label="Verification List">
             @if(items().length){
+              <app-infinite-scroll (scrolled)="loadNextPage()">
                 <p-table
-                    [loading]="isLoading()"
-                    [paginator]="true"
-                    [rows]="10"
-                    (onLazyLoad)="fetchPage(nextPageCursor())"
-                    [lazy]="true"
-                    [scrollable]="true"
-                    [tableStyle]="{ 'min-width': '50rem' }"
-                    [value]="items()"
+                  [loading]="isLoading()"
+                  [value]="items()"
+                  [rows]="10"
+                  [tableStyle]="{ 'min-width': '50rem' }"
                   >
                     <ng-template pTemplate="header">
                       <tr>
@@ -101,6 +99,7 @@ import { ProgressDownloadComponent } from "./progress-download.component";
                         </tr>
                       </ng-template>
                 </p-table>
+                </app-infinite-scroll>
             } @else {
               <div class="flex text-gray-600 flex-col items-center justify-center py-8">
                   <i class="pi pi-credit-card text-5xl  mb-3"></i>
@@ -122,15 +121,21 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
   public headers = ['File Name', 'Info', 'Started At', 'Completed At', 'Status', ' '];
 
   ngOnInit(): void {
-    this.loadPage();
+    this.loadNextPage();
   }
 
+
   public async fetchPage(cursor?: string) {
+    console.log("fetching....");
     const { data } = await this.verificationService.getFileVerifications(cursor);
     return {
       nodes: data.getFileVerifications.edges.map(e => e.node),
       endCursor: data.getFileVerifications.pageInfo.endCursor || undefined
     };
+  }
+  public async onPageChange(event: TableLazyLoadEvent) {
+    console.log(event);
+
   }
 
   public async fileProgress(id: string) {
@@ -148,3 +153,6 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
 
 
 }
+
+
+
