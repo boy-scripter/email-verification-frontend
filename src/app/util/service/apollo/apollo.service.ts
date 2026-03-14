@@ -6,8 +6,12 @@ import {
   OperationVariables,
   QueryOptions,
   QueryResult,
+  WatchQueryOptions,
+  WatchQueryResult,
 } from '@apollo-orbit/angular';
-import { catchError, firstValueFrom, map, Observable, throwError } from 'rxjs';
+import { firstValueFrom, map, Observable } from 'rxjs';
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -19,21 +23,9 @@ export class ApolloService {
   // WATCH QUERY → PROMISE
   // -------------------------
   watchQuery<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
-    options: QueryOptions<TData, TVariables>,
-  ): Observable<QueryResult<TData>> {
-    return this.apollo.watchQuery<TData, TVariables>(options).pipe(
-      map((result) => {
-        if (!result || !result.data) {
-          throw new Error('result.data is null or undefined');
-        }
-        return result;
-      }),
-      catchError((error) => {
-        console.error('Apollo Query Error:', error);
-        console.log('Query Options:', options);
-        return throwError(() => error);
-      })
-    )
+    options: WatchQueryOptions<TData, TVariables>,
+  ): ApolloWatchQueryResult<TData> {
+    return this.apollo.watchQuery<TData, TVariables>(options)
   }
 
   // -------------------------
@@ -81,8 +73,11 @@ export class ApolloService {
   }
 }
 
+
+
+// we have discarded the data property from the result type because it has also undefined signature type like data | undeifned  but after patched  only data
 type PatchData<
-  ResultType extends MutationResult<TData> | QueryResult<TData>,
+  ResultType extends MutationResult<TData> | QueryResult<TData> | WatchQueryResult<TData>,
   TData = unknown,
 > = Omit<ResultType, 'data'> & {
   data: TData;
@@ -90,8 +85,7 @@ type PatchData<
 
 type PatchedMutationResult<TData = unknown> = PatchData<MutationResult<TData>, TData>;
 type PatchedQueryResult<TData = unknown> = PatchData<QueryResult<TData>, TData>;
-type PatchedWatchQueryResult<TData = unknown> = PatchData<QueryResult<TData>, TData>;
 
 export type ApolloMutationResult<TData = unknown> = Promise<PatchData<MutationResult<TData>, TData>>;
 export type ApolloQueryResult<TData = unknown> = Promise<PatchData<QueryResult<TData>, TData>>;
-export type ApolloWatchQueryResult<TData = unknown> = Observable<PatchedWatchQueryResult<TData>>;
+export type ApolloWatchQueryResult<TData = unknown> = Observable<QueryResult<TData>>;

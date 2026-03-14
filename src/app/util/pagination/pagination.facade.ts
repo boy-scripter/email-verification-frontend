@@ -1,36 +1,55 @@
 import { signal, computed } from '@angular/core';
+import { PaginationResponse } from "@myTypes/pagination.type";
+import { Observable } from 'rxjs';
+
+const initialPaginationData : PaginationResponse<any> = {
+  edges: [],
+  pageInfo: {
+    endCursor: null,
+    hasNextPage: false,
+    hasPreviousPage: false,
+    startCursor: null
+  }
+}
 
 export abstract class CursorPaginationFacade<T> {
 
-  // state
-  protected nextPageCursor = signal<string | undefined>(undefined);
-  public items = signal<T[]>([]);
+  // --- state ---
+  public paginationData = signal<PaginationResponse<T>>(initialPaginationData);
   public isLoading = signal<boolean>(false);
 
-  // computed
+  // --- computed ---
+  public nextPageCursor = computed(() => this.paginationData().pageInfo.endCursor);
   public hasNextPage = computed(() => this.nextPageCursor() !== undefined);
+  public items = computed(() => this.paginationData().edges.map(edge => edge));
 
-  protected abstract fetchPage(cursor?: string): Promise<{
-    nodes: T[];
-    endCursor?: string;
-  }>;
+  // --- abstract fetchPage ---
+  protected abstract fetchPage(cursor: string | undefined): Observable<PaginationResponse<T>>;
 
-  public async loadNextPage() {
-    const nextPageCursor = this.nextPageCursor();
+  // --- load next page ---
+  public loadNextPage() {
+    const cursor = this.nextPageCursor() || undefined;
+    if (this.isLoading()) return;
+
     this.isLoading.set(true);
-
-    try {
-      const { nodes, endCursor } = await this.fetchPage(nextPageCursor);
-      this.items.update(items => [...items, ...nodes]);
-      this.nextPageCursor.set(endCursor);
-
-    } finally {
-      this.isLoading.set(false);
-    }
+    this.fetchPage(cursor).subscribe({
+      next: (data) => {
+        const currentEdges = this.paginationData()?.edges ?? [];
+        this.paginationData.set({
+          edges: [...currentEdges, ...data.edges],
+          pageInfo: data.pageInfo
+        });
+      },
+      error: () => {
+        this.isLoading.set(false);
+      },
+      complete: () => {
+        this.isLoading.set(false);
+      }
+    });
   }
 
   public reset() {
-    this.items.set([]);
-    this.nextPageCursor.set(undefined);
-  };
+    this.paginationData.set(initialPaginationData);
+  }
 }

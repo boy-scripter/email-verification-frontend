@@ -26,6 +26,7 @@
       "@directive/*": ["./src/app/directive/*"],
       "@provider/*": ["./src/app/providers/*"],
       "@pipes/*": ["./src/app/pipes/*"],
+      "@myTypes/*": ["./src/app/types/*"],
     }
   },
   "angularCompilerOptions": {

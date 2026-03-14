@@ -4,7 +4,7 @@ import {
   BulkVerifyMutationData,
   FileProcessingStatusMutationData,
   GetFileVerificationMutationData,
-  GetFileVerificationsQueryData,
+  PaginatedFileVerificationResponse,
   gqlBulkVerifyMutation,
   gqlFileProcessingStatusMutation,
   gqlGetFileVerificationMutation,
@@ -37,10 +37,10 @@ export class VerificationService {
     );
   }
 
-  getFileVerifications(cursor?: string) {
-    return this.apollo.watchQuery<GetFileVerificationsQueryData>(
+  getFileVerifications(cursor?: string): ApolloWatchQueryResult<PaginatedFileVerificationResponse> {
+    return this.apollo.watchQuery(
       {
-        query: gqlGetFileVerificationsQuery({
+        ...gqlGetFileVerificationsQuery({
           input: {
             sortDirection: -1,
             sortField: 'createdAt',

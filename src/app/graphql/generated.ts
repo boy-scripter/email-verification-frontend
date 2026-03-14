@@ -932,18 +932,18 @@ export function gqlRegisterMutation(variables: RegisterMutationVariables): { mut
 
 export const FINALIZE_UPLOAD_MUTATION = gql`
     mutation FinalizeUpload($fileId: String!) {
-  finalizeUpload(fileId: $fileId) {
-    _id
-    acl
-    uploaded_at
-    uploadRuleId
-    size
-    presigned_url
-    mimeType
-    key
-    marked
-    hash
-    filename
+      finalizeUpload(fileId: $fileId) {
+        _id
+        acl
+        uploaded_at
+        uploadRuleId
+        size
+        presigned_url
+        mimeType
+        key
+        marked
+        hash
+        filename
   }
 }
     ` as DocumentNode<FinalizeUploadMutationData, FinalizeUploadMutationVariables>;
@@ -1199,8 +1199,7 @@ export const GET_TOTAL_CREDITS_MUTATION = gql`
     remaining_credits
     total_credits
   }
-}
-    ` as DocumentNode<GetTotalCreditsMutationData, GetTotalCreditsMutationVariables>;
+}` as DocumentNode<GetTotalCreditsMutationData, GetTotalCreditsMutationVariables>;
 
 export function gqlGetTotalCreditsMutation(): { mutation: typeof GET_TOTAL_CREDITS_MUTATION } {
   return {
@@ -1240,19 +1239,19 @@ export function gqlUpdateProfileImageMutation(variables: UpdateProfileImageMutat
 
 export const BULK_VERIFY_MUTATION = gql`
     mutation BulkVerify($input: FileVerificationInput!) {
-  bulkVerify(input: $input) {
-    verifiedFileId
-    originalFile {
-      filename
-    }
-    user
-    updatedAt
-    totalRows
-    status
-    startedAt
-    createdAt
-    completedAt
-    _id
+    bulkVerify(input: $input) {
+      verifiedFileId
+      originalFile {
+        filename
+      }
+      user
+      updatedAt
+      totalRows
+      status
+      startedAt
+      createdAt
+      completedAt
+      _id
   }
 }
     ` as DocumentNode<BulkVerifyMutationData, BulkVerifyMutationVariables>;

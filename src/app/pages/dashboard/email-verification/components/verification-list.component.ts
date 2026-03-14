@@ -1,15 +1,18 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { CardComponent } from "@components/card.component";
 import { VerificationService } from "@service";
-import { TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { ButtonModule } from "primeng/button";
 import { DatePipe } from "@angular/common";
 import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
-import { FileVerificationFieldsFragment, FileVerificationStatus } from "src/app/graphql/generated";
+import { FileVerificationFieldsFragment, FileVerificationStatus, FileVerificationModel_Edge } from "src/app/graphql/generated";
 import { Tag } from "primeng/tag";
 import { FileformatPipe } from "@pipes/index";
 import { ProgressDownloadComponent } from "./progress-download.component";
 import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.component";
+import { map, Observable, tap } from "rxjs";
+import { PaginationResponse } from "@myTypes/pagination.type";
+
 
 @Component({
   selector: 'app-verification-list',
@@ -114,7 +117,7 @@ import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.comp
     </app-card>
   `,
 })
-export class VerificationListComponent extends CursorPaginationFacade<FileVerificationFieldsFragment> implements OnInit {
+export class VerificationListComponent extends CursorPaginationFacade<FileVerificationModel_Edge> implements OnInit {
 
   private verificationService = inject(VerificationService)
 
@@ -124,32 +127,34 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
     this.loadNextPage();
   }
 
-
-  public async fetchPage(cursor?: string) {
-    console.log("fetching....");
-    const { data } = await this.verificationService.getFileVerifications(cursor);
-    return {
-      nodes: data.getFileVerifications.edges.map(e => e.node),
-      endCursor: data.getFileVerifications.pageInfo.endCursor || undefined
-    };
+  protected fetchPage(cursor?: string) {
+      return this.verificationService.getFileVerifications<PaginationResponse<FileVerificationModel_Edge>>(cursor)
+        .pipe(
+          map(({ data }) => {
+            if (!data?.getFileVerifications) {
+              throw new Error('data.getFileVerifications is null or undefined');
+            }
+            return {
+              __typename: data.getFileVerifications.__typename,
+              edges: data.getFileVerifications.edges as any,
+              pageInfo: data.getFileVerifications.pageInfo 
+            }
+          }))   
   }
-  public async onPageChange(event: TableLazyLoadEvent) {
-    console.log(event);
 
-  }
 
   public async fileProgress(id: string) {
-    const { data } = await this.verificationService.getFileVerificationProgress(id);
-    return data.fileProcessingStatus;
-  }
+  const { data } = await this.verificationService.getFileVerificationProgress(id);
+  return data.fileProcessingStatus;
+}
 
   public FileVerificationStatusColor: Record<string, string> = {
-    [FileVerificationStatus.Completed]: 'success',
-    [FileVerificationStatus.Failed]: 'danger',
-    [FileVerificationStatus.Imported]: 'info',
-    [FileVerificationStatus.Processing]: 'warning',
-    [FileVerificationStatus.Queued]: 'secondary'
-  };
+  [FileVerificationStatus.Completed]: 'success',
+  [FileVerificationStatus.Failed]: 'danger',
+  [FileVerificationStatus.Imported]: 'info',
+  [FileVerificationStatus.Processing]: 'warning',
+  [FileVerificationStatus.Queued]: 'secondary'
+};
 
 
 }
