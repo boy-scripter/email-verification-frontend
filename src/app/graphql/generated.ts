@@ -209,11 +209,9 @@ export type Mutation = {
   generateTempUpload: TempUploadResponse;
   getFileVerification: FileVerificationModel;
   getInvoice: InvoiceModel;
-  getInvoices: PaginatedInvoiceResponse;
   getOrder: OrderModel;
   getOrders: PaginatedOrderResponse;
   getSubscription: SubscriptionModel;
-  getSubscriptions: PaginatedSubscriptionResponse;
   getTotalCredits: TotalCreditsResponse;
   loginWithEmail: AuthResponse;
   loginWithGoogle: AuthResponse;
@@ -277,11 +275,6 @@ export type MutationGetInvoiceArgs = {
 };
 
 
-export type MutationGetInvoicesArgs = {
-  input: PaginatedInvoiceDto;
-};
-
-
 export type MutationGetOrderArgs = {
   orderId: Scalars['String']['input'];
 };
@@ -294,11 +287,6 @@ export type MutationGetOrdersArgs = {
 
 export type MutationGetSubscriptionArgs = {
   id: Scalars['String']['input'];
-};
-
-
-export type MutationGetSubscriptionsArgs = {
-  input: PaginatedSubscriptionDto;
 };
 
 
@@ -464,6 +452,8 @@ export type Query = {
   __typename?: 'Query';
   getFileVerifications: PaginatedFileVerificationResponse;
   getHello: Scalars['String']['output'];
+  getInvoices: PaginatedInvoiceResponse;
+  getSubscriptions: PaginatedSubscriptionResponse;
   plans: Array<PlanModel>;
   userInfo: User;
 };
@@ -471,6 +461,16 @@ export type Query = {
 
 export type QueryGetFileVerificationsArgs = {
   input: PaginatedFileVerificationDto;
+};
+
+
+export type QueryGetInvoicesArgs = {
+  input: PaginatedInvoiceDto;
+};
+
+
+export type QueryGetSubscriptionsArgs = {
+  input: PaginatedSubscriptionDto;
 };
 
 export type RangeValidator = {
@@ -674,12 +674,12 @@ export type GetInvoiceMutationData = { __typename?: 'Mutation', getInvoice: (
     & InvoiceFieldsFragment
   ) };
 
-export type GetInvoicesMutationVariables = Exact<{
+export type GetInvoicesQueryVariables = Exact<{
   input: PaginatedInvoiceDto;
 }>;
 
 
-export type GetInvoicesMutationData = { __typename?: 'Mutation', getInvoices: { __typename?: 'PaginatedInvoiceResponse', edges: Array<{ __typename?: 'InvoiceModel_Edge', cursor: string, node: (
+export type GetInvoicesQueryData = { __typename?: 'Query', getInvoices: { __typename?: 'PaginatedInvoiceResponse', edges: Array<{ __typename?: 'InvoiceModel_Edge', cursor: string, node: (
         { __typename?: 'InvoiceModel' }
         & InvoiceFieldsFragment
       ) }>, pageInfo: { __typename?: 'PageInfo', startCursor: string | null, hasPreviousPage: boolean, hasNextPage: boolean, endCursor: string | null } } };
@@ -706,12 +706,12 @@ export type GetSubscriptionMutationData = { __typename?: 'Mutation', getSubscrip
     & SubscriptionFieldsFragment
   ) };
 
-export type GetSubscriptionsMutationVariables = Exact<{
+export type GetSubscriptionsQueryVariables = Exact<{
   input: PaginatedSubscriptionDto;
 }>;
 
 
-export type GetSubscriptionsMutationData = { __typename?: 'Mutation', getSubscriptions: { __typename?: 'PaginatedSubscriptionResponse', edges: Array<{ __typename?: 'SubscriptionModel_Edge', cursor: string, node: (
+export type GetSubscriptionsQueryData = { __typename?: 'Query', getSubscriptions: { __typename?: 'PaginatedSubscriptionResponse', edges: Array<{ __typename?: 'SubscriptionModel_Edge', cursor: string, node: (
         { __typename?: 'SubscriptionModel' }
         & SubscriptionFieldsFragment
       ) }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
@@ -758,7 +758,10 @@ export type BulkVerifyMutationVariables = Exact<{
 }>;
 
 
-export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: { __typename?: 'FileVerificationModel', verifiedFileId: string | null, user: string, updatedAt: any, totalRows: number | null, status: FileVerificationStatus, startedAt: any | null, createdAt: any, completedAt: any | null, _id: string, originalFile: { __typename?: 'FileModel', filename: string } } };
+export type BulkVerifyMutationData = { __typename?: 'Mutation', bulkVerify: (
+    { __typename?: 'FileVerificationModel' }
+    & FileVerificationFieldsFragment
+  ) };
 
 export type FileProcessingStatusMutationVariables = Exact<{
   fileId: Scalars['String']['input'];
@@ -772,14 +775,20 @@ export type GetFileVerificationMutationVariables = Exact<{
 }>;
 
 
-export type GetFileVerificationMutationData = { __typename?: 'Mutation', getFileVerification: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', _id: string, filename: string }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } };
+export type GetFileVerificationMutationData = { __typename?: 'Mutation', getFileVerification: (
+    { __typename?: 'FileVerificationModel' }
+    & FileVerificationFieldsFragment
+  ) };
 
 export type GetFileVerificationsQueryVariables = Exact<{
   input: PaginatedFileVerificationDto;
 }>;
 
 
-export type GetFileVerificationsQueryData = { __typename?: 'Query', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: { __typename?: 'FileVerificationModel', _id: string, completedAt: any | null, createdAt: any, startedAt: any | null, status: FileVerificationStatus, totalRows: number | null, updatedAt: any, user: string, verifiedFileId: string | null, originalFile: { __typename?: 'FileModel', _id: string, filename: string, size: number }, metadata: { __typename?: 'Metadata', valid: number, invalid: number, duplicate: number } | null } }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
+export type GetFileVerificationsQueryData = { __typename?: 'Query', getFileVerifications: { __typename?: 'PaginatedFileVerificationResponse', edges: Array<{ __typename?: 'FileVerificationModel_Edge', cursor: string, node: (
+        { __typename?: 'FileVerificationModel' }
+        & FileVerificationFieldsFragment
+      ) }>, pageInfo: { __typename?: 'PageInfo', endCursor: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null } } };
 
 export type SingleEmailMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -932,18 +941,18 @@ export function gqlRegisterMutation(variables: RegisterMutationVariables): { mut
 
 export const FINALIZE_UPLOAD_MUTATION = gql`
     mutation FinalizeUpload($fileId: String!) {
-      finalizeUpload(fileId: $fileId) {
-        _id
-        acl
-        uploaded_at
-        uploadRuleId
-        size
-        presigned_url
-        mimeType
-        key
-        marked
-        hash
-        filename
+  finalizeUpload(fileId: $fileId) {
+    _id
+    acl
+    uploaded_at
+    uploadRuleId
+    size
+    presigned_url
+    mimeType
+    key
+    marked
+    hash
+    filename
   }
 }
     ` as DocumentNode<FinalizeUploadMutationData, FinalizeUploadMutationVariables>;
@@ -1048,8 +1057,8 @@ export function gqlGetInvoiceMutation(variables: GetInvoiceMutationVariables): {
   };
 }
 
-export const GET_INVOICES_MUTATION = gql`
-    mutation GetInvoices($input: PaginatedInvoiceDto!) {
+export const GET_INVOICES_QUERY = gql`
+    query GetInvoices($input: PaginatedInvoiceDto!) {
   getInvoices(input: $input) {
     edges {
       cursor
@@ -1065,11 +1074,13 @@ export const GET_INVOICES_MUTATION = gql`
     }
   }
 }
-    ${InvoiceFieldsFragmentDoc}` as DocumentNode<GetInvoicesMutationData, GetInvoicesMutationVariables>;
+    ${InvoiceFieldsFragmentDoc}` as DocumentNode<GetInvoicesQueryData, GetInvoicesQueryVariables>;
 
-export function gqlGetInvoicesMutation(variables: GetInvoicesMutationVariables): { mutation: typeof GET_INVOICES_MUTATION, variables: typeof variables } {
+export function gqlGetInvoicesQuery(variables: GetInvoicesQueryVariables): { query: typeof GET_INVOICES_QUERY, variables: typeof variables };
+export function gqlGetInvoicesQuery(variables: () => GetInvoicesQueryVariables | null): { query: typeof GET_INVOICES_QUERY, variables: typeof variables };
+export function gqlGetInvoicesQuery(variables: any): any {
   return {
-    mutation: GET_INVOICES_MUTATION,
+    query: GET_INVOICES_QUERY,
     variables
   };
 }
@@ -1133,8 +1144,8 @@ export function gqlGetSubscriptionMutation(variables: GetSubscriptionMutationVar
   };
 }
 
-export const GET_SUBSCRIPTIONS_MUTATION = gql`
-    mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
+export const GET_SUBSCRIPTIONS_QUERY = gql`
+    query GetSubscriptions($input: PaginatedSubscriptionDto!) {
   getSubscriptions(input: $input) {
     edges {
       cursor
@@ -1150,11 +1161,13 @@ export const GET_SUBSCRIPTIONS_MUTATION = gql`
     }
   }
 }
-    ${SubscriptionFieldsFragmentDoc}` as DocumentNode<GetSubscriptionsMutationData, GetSubscriptionsMutationVariables>;
+    ${SubscriptionFieldsFragmentDoc}` as DocumentNode<GetSubscriptionsQueryData, GetSubscriptionsQueryVariables>;
 
-export function gqlGetSubscriptionsMutation(variables: GetSubscriptionsMutationVariables): { mutation: typeof GET_SUBSCRIPTIONS_MUTATION, variables: typeof variables } {
+export function gqlGetSubscriptionsQuery(variables: GetSubscriptionsQueryVariables): { query: typeof GET_SUBSCRIPTIONS_QUERY, variables: typeof variables };
+export function gqlGetSubscriptionsQuery(variables: () => GetSubscriptionsQueryVariables | null): { query: typeof GET_SUBSCRIPTIONS_QUERY, variables: typeof variables };
+export function gqlGetSubscriptionsQuery(variables: any): any {
   return {
-    mutation: GET_SUBSCRIPTIONS_MUTATION,
+    query: GET_SUBSCRIPTIONS_QUERY,
     variables
   };
 }
@@ -1199,7 +1212,8 @@ export const GET_TOTAL_CREDITS_MUTATION = gql`
     remaining_credits
     total_credits
   }
-}` as DocumentNode<GetTotalCreditsMutationData, GetTotalCreditsMutationVariables>;
+}
+    ` as DocumentNode<GetTotalCreditsMutationData, GetTotalCreditsMutationVariables>;
 
 export function gqlGetTotalCreditsMutation(): { mutation: typeof GET_TOTAL_CREDITS_MUTATION } {
   return {
@@ -1239,22 +1253,11 @@ export function gqlUpdateProfileImageMutation(variables: UpdateProfileImageMutat
 
 export const BULK_VERIFY_MUTATION = gql`
     mutation BulkVerify($input: FileVerificationInput!) {
-    bulkVerify(input: $input) {
-      verifiedFileId
-      originalFile {
-        filename
-      }
-      user
-      updatedAt
-      totalRows
-      status
-      startedAt
-      createdAt
-      completedAt
-      _id
+  bulkVerify(input: $input) {
+    ...FileVerificationFields
   }
 }
-    ` as DocumentNode<BulkVerifyMutationData, BulkVerifyMutationVariables>;
+    ${FileVerificationFieldsFragmentDoc}` as DocumentNode<BulkVerifyMutationData, BulkVerifyMutationVariables>;
 
 export function gqlBulkVerifyMutation(variables: BulkVerifyMutationVariables): { mutation: typeof BULK_VERIFY_MUTATION, variables: typeof variables } {
   return {
@@ -1287,27 +1290,10 @@ export function gqlFileProcessingStatusMutation(variables: FileProcessingStatusM
 export const GET_FILE_VERIFICATION_MUTATION = gql`
     mutation GetFileVerification($fileVerficationId: String!) {
   getFileVerification(fileVerficationId: $fileVerficationId) {
-    _id
-    completedAt
-    createdAt
-    originalFile {
-      _id
-      filename
-    }
-    startedAt
-    status
-    totalRows
-    updatedAt
-    user
-    verifiedFileId
-    metadata {
-      valid
-      invalid
-      duplicate
-    }
+    ...FileVerificationFields
   }
 }
-    ` as DocumentNode<GetFileVerificationMutationData, GetFileVerificationMutationVariables>;
+    ${FileVerificationFieldsFragmentDoc}` as DocumentNode<GetFileVerificationMutationData, GetFileVerificationMutationVariables>;
 
 export function gqlGetFileVerificationMutation(variables: GetFileVerificationMutationVariables): { mutation: typeof GET_FILE_VERIFICATION_MUTATION, variables: typeof variables } {
   return {
@@ -1322,25 +1308,7 @@ export const GET_FILE_VERIFICATIONS_QUERY = gql`
     edges {
       cursor
       node {
-        _id
-        completedAt
-        createdAt
-        originalFile {
-          _id
-          filename
-          size
-        }
-        startedAt
-        status
-        totalRows
-        updatedAt
-        user
-        verifiedFileId
-        metadata {
-          valid
-          invalid
-          duplicate
-        }
+        ...FileVerificationFields
       }
     }
     pageInfo {
@@ -1351,7 +1319,7 @@ export const GET_FILE_VERIFICATIONS_QUERY = gql`
     }
   }
 }
-    ` as DocumentNode<GetFileVerificationsQueryData, GetFileVerificationsQueryVariables>;
+    ${FileVerificationFieldsFragmentDoc}` as DocumentNode<GetFileVerificationsQueryData, GetFileVerificationsQueryVariables>;
 
 export function gqlGetFileVerificationsQuery(variables: GetFileVerificationsQueryVariables): { query: typeof GET_FILE_VERIFICATIONS_QUERY, variables: typeof variables };
 export function gqlGetFileVerificationsQuery(variables: () => GetFileVerificationsQueryVariables | null): { query: typeof GET_FILE_VERIFICATIONS_QUERY, variables: typeof variables };

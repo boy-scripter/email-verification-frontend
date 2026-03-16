@@ -1,4 +1,4 @@
-mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
+query GetSubscriptions($input: PaginatedSubscriptionDto!) {
   getSubscriptions(input: $input) {
     edges {
       cursor
@@ -12,5 +12,5 @@ mutation GetSubscriptions($input: PaginatedSubscriptionDto!) {
       hasPreviousPage
       startCursor
     }
-}
+  }
 }

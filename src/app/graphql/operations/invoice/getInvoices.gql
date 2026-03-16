@@ -1,9 +1,9 @@
-mutation GetInvoices($input: PaginatedInvoiceDto!) {
+query GetInvoices($input: PaginatedInvoiceDto!) {
   getInvoices(input: $input) {
     edges {
       cursor
       node {
-       ...InvoiceFields
+        ...InvoiceFields
       }
     }
     pageInfo {

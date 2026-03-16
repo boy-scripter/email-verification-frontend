@@ -1,16 +1,16 @@
+import { DatePipe } from "@angular/common";
 import { Component, inject, OnInit } from "@angular/core";
 import { CardComponent } from "@components/card.component";
-import { VerificationService } from "@service";
-import { TableModule } from "primeng/table";
-import { ButtonModule } from "primeng/button";
-import { DatePipe } from "@angular/common";
-import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
-import { FileVerificationStatus, FileVerificationModel_Edge } from "src/app/graphql/generated";
-import { Tag } from "primeng/tag";
 import { FileformatPipe } from "@pipes/index";
-import { ProgressDownloadComponent } from "./progress-download.component";
+import { VerificationService } from "@service";
 import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.component";
-import { map } from "rxjs";
+import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
+import { ButtonModule } from "primeng/button";
+import { TableModule } from "primeng/table";
+import { Tag } from "primeng/tag";
+import { FileVerificationModel_Edge, FileVerificationStatus } from "src/app/graphql/generated";
+import { ProgressDownloadComponent } from "./progress-download.component";
+
 
 @Component({
   selector: 'app-verification-list',
@@ -122,22 +122,12 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
   public headers = ['File Name', 'Info', 'Started At', 'Completed At', 'Status', ' '];
 
   ngOnInit(): void {
-    this.loadNextPage();
+    this.loadFirstPage();
   }
 
-  protected fetchPage(cursor?: string) {
-      return this.verificationService.getFileVerifications(cursor)
-        .pipe(
-          map(({ data }) => {
-            const edges = data.getFileVerifications.edges as FileVerificationModel_Edge[];
-            const pageInfo = data.getFileVerifications.pageInfo;
-            return {
-              edges,
-              pageInfo
-            }
-          }))   
+  protected watchQuery<GetFileVerificationsQueryData, PaginatedFileVerificationDto>(cursor?: string)  {
+    return this.verificationService.getFileVerifications(cursor)
   }
-
 
   public async fileProgress(id: string) {
     const { data } = await this.verificationService.getFileVerificationProgress(id);
@@ -145,12 +135,12 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
   }
 
   public FileVerificationStatusColor: Record<string, string> = {
-  [FileVerificationStatus.Completed]: 'success',
-  [FileVerificationStatus.Failed]: 'danger',
-  [FileVerificationStatus.Imported]: 'info',
-  [FileVerificationStatus.Processing]: 'warning',
-  [FileVerificationStatus.Queued]: 'secondary'
-};
+    [FileVerificationStatus.Completed]: 'success',
+    [FileVerificationStatus.Failed]: 'danger',
+    [FileVerificationStatus.Imported]: 'info',
+    [FileVerificationStatus.Processing]: 'warning',
+    [FileVerificationStatus.Queued]: 'secondary'
+  };
 
 
 }

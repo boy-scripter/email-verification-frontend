@@ -3,25 +3,7 @@ query GetFileVerifications($input: PaginatedFileVerificationDto!) {
     edges {
       cursor
       node {
-        _id
-        completedAt
-        createdAt
-        originalFile {
-          _id
-          filename
-          size
-        }
-        startedAt
-        status
-        totalRows
-        updatedAt
-        user
-        verifiedFileId
-        metadata {
-          valid
-          invalid
-          duplicate
-        }
+        ...FileVerificationFields
       }
     }
     pageInfo {

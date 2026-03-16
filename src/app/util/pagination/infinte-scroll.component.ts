@@ -13,23 +13,20 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
     [scrollWindow]="scrollWindow()"
     (scrolled)="scrolled.emit()"
     [style.height]="height()"
-    class="block overflow-y-auto"
     [class]="styleClass()"
+    class="block overflow-y-auto"
     >
         <ng-content />
     </div>
   `,
 })
 export class AppInfiniteScrollComponent {
-
   height = input<string>('600px');
-
   scrollDistance = input<number>(2);
   styleClass = input<string>('bg-white');
   scrollThrottle = input<number>(200);
   scrollWindow = input<boolean>(false);
   infiniteScrollDisabled = input<boolean>(false);
-
   scrolled = output<void>();
 }
 

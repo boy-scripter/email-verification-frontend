@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CardComponent } from '@components/index';
 import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
 import { TableModule } from 'primeng/table';
-import { InvoiceFieldsFragment } from 'src/app/graphql/generated';
+import { InvoiceFieldsFragment, InvoiceModel_Edge } from 'src/app/graphql/generated';
 import { InvoiceService } from 'src/app/services/invoice.service';
 import { CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -10,10 +10,11 @@ import { RouterLink } from '@angular/router';
 import { downloadPDFInvoice } from './invoice_template';
 import { AuthStore } from '@store/auth.store';
 import { AppInfiniteScrollComponent } from '@util/pagination/infinte-scroll.component';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-invoice',
-  imports: [CardComponent, TableModule, DatePipe, ButtonModule, RouterLink, CurrencyPipe, UpperCasePipe , AppInfiniteScrollComponent],
+  imports: [CardComponent, TableModule, DatePipe, ButtonModule, RouterLink, CurrencyPipe, UpperCasePipe, AppInfiniteScrollComponent],
   template: `
     <div class="w-full">
       <div class="mb-8">
@@ -105,7 +106,7 @@ import { AppInfiniteScrollComponent } from '@util/pagination/infinte-scroll.comp
     </div>
   `,
 })
-export class InvoiceComponent extends CursorPaginationFacade<InvoiceFieldsFragment> implements OnInit {
+export class InvoiceComponent extends CursorPaginationFacade<InvoiceModel_Edge> implements OnInit {
 
   private invoiceService = inject(InvoiceService);
   private authStore = inject(AuthStore);
@@ -116,19 +117,24 @@ export class InvoiceComponent extends CursorPaginationFacade<InvoiceFieldsFragme
     this.loadNextPage();
   }
 
-  protected async fetchPage(cursor?: string) {
-    const { data } = await this.invoiceService.getInvoicesPaginated(cursor);
-
-    return {
-      nodes: data.getInvoices.edges.map(e => e.node),
-      endCursor: data.getInvoices.pageInfo.endCursor || undefined
-    };
+  protected fetchPage(cursor?: string) {
+    return this.invoiceService.getInvoicesPaginated(cursor)
+      .pipe(
+        filter((data) => data.data !== undefined),
+        map(({ data }) => {
+          const edges = data.getInvoices.edges as InvoiceModel_Edge[];
+          const pageInfo = data.getInvoices.pageInfo;
+          return {
+            edges,
+            pageInfo
+          }
+        }))
   }
 
   donwloadInvoice(data: InvoiceFieldsFragment) {
     const user = this.authStore.authenticateUser();
     downloadPDFInvoice({
-      invoiceData : data,
+      invoiceData: data,
       name: user.name,
       email: user.email,
     })

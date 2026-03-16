@@ -1,22 +1,5 @@
 mutation GetFileVerification($fileVerficationId: String!) {
   getFileVerification(fileVerficationId: $fileVerficationId) {
-    _id
-    completedAt
-    createdAt
-    originalFile{
-      _id
-      filename
-    }
-    startedAt
-    status
-    totalRows
-    updatedAt
-    user
-    verifiedFileId
-    metadata {
-      valid
-      invalid
-      duplicate
-    }
+    ...FileVerificationFields
   }
 }

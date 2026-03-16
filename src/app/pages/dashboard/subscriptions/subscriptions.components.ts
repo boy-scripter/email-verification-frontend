@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+
 import { CardComponent } from '@components/index';
 import { PercentagePipe } from '@pipes/percentage.pipe';
 import { SubscriptionService } from '@service';
@@ -10,7 +10,8 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
-import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
+import { filter, map } from 'rxjs';
+import { SubscriptionModel_Edge } from 'src/app/graphql/generated';
 
 @Component({
   selector: 'app-subscriptions',
@@ -21,7 +22,6 @@ import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
     ProgressBarModule,
     DatePipe,
     SkeletonModule,
-    RouterLink,
     PercentagePipe,
     AppInfiniteScrollComponent,
   ],
@@ -132,9 +132,8 @@ import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
   `,
 })
 export class SubscriptionsComponent
-  extends CursorPaginationFacade<SubscriptionFieldsFragment>
-  implements OnInit
-{
+  extends CursorPaginationFacade<SubscriptionModel_Edge>
+  implements OnInit {
   private subscriptionService = inject(SubscriptionService);
 
   public headers = ['Plan', 'Credits', 'Activated At', 'Status'];
@@ -143,15 +142,17 @@ export class SubscriptionsComponent
     this.loadNextPage();
   }
 
-  protected async fetchPage(cursor?: string) {
-    const { data } = await this.subscriptionService.getSubscriptionPaginate(cursor);
-
-    const edges = data.getSubscriptions.edges as SubscriptionFieldsFragment[];
-    const pageInfo = data.getSubscriptions.pageInfo;
-
-    return {
-      edges,
-      pageInfo,
-    };
+  protected fetchPage(cursor?: string) {
+    return this.subscriptionService.getSubscriptionPaginate(cursor)
+      .pipe(
+        filter((data) => data.data !== undefined),
+        map(({ data }) => {
+          const edges = data.getSubscriptions.edges as SubscriptionModel_Edge[];
+          const pageInfo = data.getSubscriptions.pageInfo;
+          return {
+            edges,
+            pageInfo
+          }
+        }))
   }
 }

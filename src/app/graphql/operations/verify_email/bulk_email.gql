@@ -1,16 +1,5 @@
 mutation BulkVerify($input: FileVerificationInput!) {
   bulkVerify(input: $input) {
-    verifiedFileId
-    originalFile{
-      filename
-    }
-    user
-    updatedAt
-    totalRows
-    status
-    startedAt
-    createdAt
-    completedAt
-    _id
+   ...FileVerificationFields
   }
 }

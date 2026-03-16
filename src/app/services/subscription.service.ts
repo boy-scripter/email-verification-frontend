@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { gqlGetSubscriptionsMutation, gqlGetSubscriptionMutation, GetSubscriptionsMutationData, GetSubscriptionMutationData } from "../graphql/generated";
+import {  gqlGetSubscriptionMutation, GetSubscriptionMutationData, gqlGetSubscriptionsQuery } from "../graphql/generated";
 import { ApolloMutationResult, ApolloService } from "@util/service/apollo/apollo.service";
 
 @Injectable({
@@ -9,9 +9,9 @@ export class SubscriptionService {
 
     private apolloService = inject(ApolloService)
 
-    getSubscriptionPaginate(afterCursor?: string): ApolloMutationResult<GetSubscriptionsMutationData> {
-        return this.apolloService.mutate(
-            gqlGetSubscriptionsMutation({
+    getSubscriptionPaginate(afterCursor?: string) {
+        return this.apolloService.watchQuery(
+            gqlGetSubscriptionsQuery({
                 input: {
                     sortDirection: -1,
                     sortField: 'createdAt',

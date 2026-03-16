@@ -12,7 +12,6 @@ fragment FileVerificationFields on FileVerificationModel {
     size
   }
   verifiedFileId
-
   metadata {
     valid
     invalid
