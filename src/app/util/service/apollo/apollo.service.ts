@@ -4,28 +4,30 @@ import {
   MutationOptions,
   MutationResult,
   OperationVariables,
+  QueryObservable,
   QueryOptions,
   QueryResult,
-  WatchQueryOptions,
-  WatchQueryResult,
 } from '@apollo-orbit/angular';
-import { firstValueFrom, map, Observable } from 'rxjs';
-
-
+import { firstValueFrom, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApolloService {
+  public instance: Apollo;
   private apollo = inject(Apollo);
 
+  constructor() {
+    this.instance = this.apollo;
+  }
+
   // -------------------------
-  // WATCH QUERY → PROMISE
+  // WATCH QUERY OBSERVABLE
   // -------------------------
   watchQuery<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
-    options: WatchQueryOptions<TData, TVariables>,
-  ): ApolloWatchQueryResult<TData> {
-    return this.apollo.watchQuery<TData, TVariables>(options)
+    options: QueryOptions<TData, TVariables>,
+  ): ApolloWatchQueryResult<TData, TVariables> {
+    return this.apollo.watchQuery<TData, TVariables>(options);
   }
 
   // -------------------------
@@ -73,11 +75,9 @@ export class ApolloService {
   }
 }
 
-
-
 // we have discarded the data property from the result type because it has also undefined signature type like data | undeifned  but after patched  only data
 type PatchData<
-  ResultType extends MutationResult<TData> | QueryResult<TData> | WatchQueryResult<TData>,
+  ResultType extends MutationResult<TData> | QueryResult<TData>,
   TData = unknown,
 > = Omit<ResultType, 'data'> & {
   data: TData;
@@ -86,6 +86,11 @@ type PatchData<
 type PatchedMutationResult<TData = unknown> = PatchData<MutationResult<TData>, TData>;
 type PatchedQueryResult<TData = unknown> = PatchData<QueryResult<TData>, TData>;
 
-export type ApolloMutationResult<TData = unknown> = Promise<PatchData<MutationResult<TData>, TData>>;
+export type ApolloMutationResult<TData = unknown> = Promise<
+  PatchData<MutationResult<TData>, TData>
+>;
 export type ApolloQueryResult<TData = unknown> = Promise<PatchData<QueryResult<TData>, TData>>;
-export type ApolloWatchQueryResult<TData = unknown> = Observable<QueryResult<TData>>;
+export type ApolloWatchQueryResult<
+  TData = unknown,
+  TVariables extends OperationVariables = OperationVariables,
+> = QueryObservable<TData, TVariables, 'complete' | 'streaming'>;

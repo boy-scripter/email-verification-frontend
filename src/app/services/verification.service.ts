@@ -1,10 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { ApolloMutationResult, ApolloService, ApolloWatchQueryResult } from '@util/service/apollo/apollo.service';
+import { ApolloMutationResult, ApolloService } from '@util/service/apollo/apollo.service';
 import {
   BulkVerifyMutationData,
   FileProcessingStatusMutationData,
   GetFileVerificationMutationData,
-  PaginatedFileVerificationResponse,
   gqlBulkVerifyMutation,
   gqlFileProcessingStatusMutation,
   gqlGetFileVerificationMutation,
@@ -37,19 +36,17 @@ export class VerificationService {
     );
   }
 
-  getFileVerifications(cursor?: string): ApolloWatchQueryResult<PaginatedFileVerificationResponse> {
-    return this.apollo.watchQuery(
-      {
-        ...gqlGetFileVerificationsQuery({
-          input: {
-            sortDirection: -1,
-            sortField: 'createdAt',
-            first: 10,
-            after: cursor
-          }
-        })
-      }
-    );
+  getFileVerifications(cursor?: string) {
+    return this.apollo.watchQuery({
+      ...gqlGetFileVerificationsQuery({
+        input: {
+          sortDirection: -1,
+          sortField: 'createdAt',
+          first: 10,
+          after: cursor,
+        },
+      }),
+    });
   }
 
   getFileVerfication(id: string): ApolloMutationResult<GetFileVerificationMutationData> {

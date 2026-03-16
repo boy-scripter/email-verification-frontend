@@ -1,19 +1,18 @@
-import { signal, computed } from '@angular/core';
-import { PaginationResponse } from "@myTypes/pagination.type";
+import { computed, signal } from '@angular/core';
+import { PaginationResponse } from '@myTypes/pagination.type';
 import { Observable } from 'rxjs';
 
-const initialPaginationData : PaginationResponse<any> = {
+const initialPaginationData: PaginationResponse<any> = {
   edges: [],
   pageInfo: {
     endCursor: null,
     hasNextPage: false,
     hasPreviousPage: false,
-    startCursor: null
-  }
-}
+    startCursor: null,
+  },
+};
 
 export abstract class CursorPaginationFacade<T> {
-
   // --- state ---
   public paginationData = signal<PaginationResponse<T>>(initialPaginationData);
   public isLoading = signal<boolean>(false);
@@ -21,7 +20,7 @@ export abstract class CursorPaginationFacade<T> {
   // --- computed ---
   public nextPageCursor = computed(() => this.paginationData().pageInfo.endCursor);
   public hasNextPage = computed(() => this.nextPageCursor() !== undefined);
-  public items = computed(() => this.paginationData().edges.map(edge => edge));
+  public items = computed(() => this.paginationData().edges.map((edge) => edge));
 
   // --- abstract fetchPage ---
   protected abstract fetchPage(cursor: string | undefined): Observable<PaginationResponse<T>>;
@@ -37,7 +36,7 @@ export abstract class CursorPaginationFacade<T> {
         const currentEdges = this.paginationData()?.edges ?? [];
         this.paginationData.set({
           edges: [...currentEdges, ...data.edges],
-          pageInfo: data.pageInfo
+          pageInfo: data.pageInfo,
         });
       },
       error: () => {
@@ -45,7 +44,7 @@ export abstract class CursorPaginationFacade<T> {
       },
       complete: () => {
         this.isLoading.set(false);
-      }
+      },
     });
   }
 

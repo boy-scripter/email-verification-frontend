@@ -5,14 +5,12 @@ import { TableModule } from "primeng/table";
 import { ButtonModule } from "primeng/button";
 import { DatePipe } from "@angular/common";
 import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
-import { FileVerificationFieldsFragment, FileVerificationStatus, FileVerificationModel_Edge } from "src/app/graphql/generated";
+import { FileVerificationStatus, FileVerificationModel_Edge } from "src/app/graphql/generated";
 import { Tag } from "primeng/tag";
 import { FileformatPipe } from "@pipes/index";
 import { ProgressDownloadComponent } from "./progress-download.component";
 import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.component";
-import { map, Observable, tap } from "rxjs";
-import { PaginationResponse } from "@myTypes/pagination.type";
-
+import { map } from "rxjs";
 
 @Component({
   selector: 'app-verification-list',
@@ -128,25 +126,23 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
   }
 
   protected fetchPage(cursor?: string) {
-      return this.verificationService.getFileVerifications<PaginationResponse<FileVerificationModel_Edge>>(cursor)
+      return this.verificationService.getFileVerifications(cursor)
         .pipe(
           map(({ data }) => {
-            if (!data?.getFileVerifications) {
-              throw new Error('data.getFileVerifications is null or undefined');
-            }
+            const edges = data.getFileVerifications.edges as FileVerificationModel_Edge[];
+            const pageInfo = data.getFileVerifications.pageInfo;
             return {
-              __typename: data.getFileVerifications.__typename,
-              edges: data.getFileVerifications.edges as any,
-              pageInfo: data.getFileVerifications.pageInfo 
+              edges,
+              pageInfo
             }
           }))   
   }
 
 
   public async fileProgress(id: string) {
-  const { data } = await this.verificationService.getFileVerificationProgress(id);
-  return data.fileProcessingStatus;
-}
+    const { data } = await this.verificationService.getFileVerificationProgress(id);
+    return data.fileProcessingStatus;
+  }
 
   public FileVerificationStatusColor: Record<string, string> = {
   [FileVerificationStatus.Completed]: 'success',

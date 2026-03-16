@@ -4,13 +4,13 @@ import { RouterLink } from '@angular/router';
 import { CardComponent } from '@components/index';
 import { PercentagePipe } from '@pipes/percentage.pipe';
 import { SubscriptionService } from '@service';
+import { AppInfiniteScrollComponent } from '@util/pagination/infinte-scroll.component';
 import { CursorPaginationFacade } from '@util/pagination/pagination.facade';
 import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { SubscriptionFieldsFragment } from 'src/app/graphql/generated';
-import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.component";
 
 @Component({
   selector: 'app-subscriptions',
@@ -23,8 +23,8 @@ import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.comp
     SkeletonModule,
     RouterLink,
     PercentagePipe,
-    AppInfiniteScrollComponent
-],
+    AppInfiniteScrollComponent,
+  ],
   styles: `
     .active {
       color: #ffffff;
@@ -49,57 +49,63 @@ import { AppInfiniteScrollComponent } from "@util/pagination/infinte-scroll.comp
             </p>
           </app-card>
           <div class="mt-8">
-
             @if (items().length) {
-              <app-infinite-scroll styleClass="bg-white block overflow-y-auto rounded-xl" (scrolled)="loadNextPage()">
-              <p-table
-                [loading]="isLoading()"
-                [rows]="5"
-                [tableStyle]="{ 'min-width': '50rem' }"
-                [value]="items()"
+              <app-infinite-scroll
+                (scrolled)="loadNextPage()"
+                styleClass="bg-white block overflow-y-auto rounded-xl"
               >
-                <ng-template pTemplate="header">
-                  <tr>
-                    @for (header of headers; track header) {
-                      <th class="table-header">
-                        <span class="header-text">{{ header }}</span>
-                      </th>
-                    }
-                  </tr>
-                </ng-template>
+                <p-table
+                  [loading]="isLoading()"
+                  [rows]="5"
+                  [tableStyle]="{ 'min-width': '50rem' }"
+                  [value]="items()"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      @for (header of headers; track header) {
+                        <th class="table-header">
+                          <span class="header-text">{{ header }}</span>
+                        </th>
+                      }
+                    </tr>
+                  </ng-template>
 
-                <ng-template let-subscription pTemplate="body">
-                  <tr class="table-row">
-                    <td class="table-cell">
-                      <span class="cell-content">{{ subscription.plan.name }}</span>
-                    </td>
-                    <td class="table-cell">
-                      <div class="flex gap-2">
-                        <p-progressBar
-                          [showValue]="false"
-                          [value]="subscription.total_credits | percentage : subscription.left_credits"
-                          style="width: 60%;"
-                        ></p-progressBar>
-                        <span> {{ subscription.left_credits }} out of {{subscription.total_credits}} </span>
-                      </div>
-                    </td>
+                  <ng-template let-subscription pTemplate="body">
+                    <tr class="table-row">
+                      <td class="table-cell">
+                        <span class="cell-content">{{ subscription.plan.name }}</span>
+                      </td>
+                      <td class="table-cell">
+                        <div class="flex gap-2">
+                          <p-progressBar
+                            [showValue]="false"
+                            [value]="
+                              subscription.total_credits | percentage: subscription.left_credits
+                            "
+                            style="width: 60%;"
+                          ></p-progressBar>
+                          <span>
+                            {{ subscription.left_credits }} out of {{ subscription.total_credits }}
+                          </span>
+                        </div>
+                      </td>
 
-                    <td class="table-cell">
-                      <span class="cell-content">
-                        {{ subscription.createdAt | date: 'fullDate' }}
-                      </span>
-                    </td>
-                    <td class="table-cell">
-                      <span
-                        class="cell-content rounded-lg p-2 px-5"
-                        [class]="subscription.status.toLowerCase()"
-                      >
-                        {{ subscription.status }}
-                      </span>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
+                      <td class="table-cell">
+                        <span class="cell-content">
+                          {{ subscription.createdAt | date: 'fullDate' }}
+                        </span>
+                      </td>
+                      <td class="table-cell">
+                        <span
+                          class="cell-content rounded-lg p-2 px-5"
+                          [class]="subscription.status.toLowerCase()"
+                        >
+                          {{ subscription.status }}
+                        </span>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
               </app-infinite-scroll>
             } @else {
               <app-card>
@@ -140,9 +146,12 @@ export class SubscriptionsComponent
   protected async fetchPage(cursor?: string) {
     const { data } = await this.subscriptionService.getSubscriptionPaginate(cursor);
 
+    const edges = data.getSubscriptions.edges as SubscriptionFieldsFragment[];
+    const pageInfo = data.getSubscriptions.pageInfo;
+
     return {
-      nodes: data.getSubscriptions.edges.map((e) => e.node),
-      endCursor: data.getSubscriptions.pageInfo.endCursor || undefined,
+      edges,
+      pageInfo,
     };
   }
 }

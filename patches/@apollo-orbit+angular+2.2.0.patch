@@ -1,0 +1,72 @@
+diff --git a/node_modules/@apollo-orbit/angular/LICENSE b/node_modules/@apollo-orbit/angular/LICENSE
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/README.md b/node_modules/@apollo-orbit/angular/README.md
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/batch-http/index.d.ts b/node_modules/@apollo-orbit/angular/batch-http/index.d.ts
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.batch-http.mjs b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.batch-http.mjs
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.batch-http.mjs.map b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.batch-http.mjs.map
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.fetch.mjs b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.fetch.mjs
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.fetch.mjs.map b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.fetch.mjs.map
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.http.mjs b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.http.mjs
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.http.mjs.map b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.http.mjs.map
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.mjs b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.mjs
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.mjs.map b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.mjs.map
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.state.mjs b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.state.mjs
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.state.mjs.map b/node_modules/@apollo-orbit/angular/fesm2022/apollo-orbit.angular.state.mjs.map
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/fetch/index.d.ts b/node_modules/@apollo-orbit/angular/fetch/index.d.ts
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/http/index.d.ts b/node_modules/@apollo-orbit/angular/http/index.d.ts
+old mode 100644
+new mode 100755
+diff --git a/node_modules/@apollo-orbit/angular/index.d.ts b/node_modules/@apollo-orbit/angular/index.d.ts
+old mode 100644
+new mode 100755
+index 9986507..be6e3e1
+--- a/node_modules/@apollo-orbit/angular/index.d.ts
++++ b/node_modules/@apollo-orbit/angular/index.d.ts
+@@ -382,7 +382,7 @@ interface SingleQueryResult<TData = unknown> {
+     *
+     * @docGroup 1. Operation data
+     */
+-    data: TData | undefined;
++    data: TData ;
+     /**
+     * A single ErrorLike object describing the error that occurred during the latest
+     * query execution.
+@@ -394,7 +394,7 @@ interface SingleQueryResult<TData = unknown> {
+     error?: ErrorLike;
+ }
+ interface MutationResult<TData = unknown> {
+-    data: TData | undefined;
++    data: TData ;
+     error?: ErrorLike;
+     extensions?: Record<string, any>;
+ }
+diff --git a/node_modules/@apollo-orbit/angular/state/index.d.ts b/node_modules/@apollo-orbit/angular/state/index.d.ts
+old mode 100644
+new mode 100755

@@ -1,7 +1,6 @@
-import { PageInfo } from "../graphql/generated";
+import { PageInfo } from '../graphql/generated';
 
-export interface PaginationResponse<T = any> {
-  __typename?: string;
+export interface PaginationResponse<T> {
   edges: T[];
   pageInfo: PageInfo;
 }
