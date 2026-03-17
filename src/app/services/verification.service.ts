@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { ApolloMutationResult, ApolloService, ApolloWatchQueryResult } from '@util/service/apollo/apollo.service';
+import { ApolloMutationResult, ApolloService } from '@util/service/apollo/apollo.service';
 import {
   BulkVerifyMutationData,
-  Exact,
   FileProcessingStatusMutationData,
   FileVerificationFieldsFragmentDoc,
   GET_FILE_VERIFICATIONS_QUERY,
@@ -12,7 +11,6 @@ import {
   gqlGetFileVerificationMutation,
   gqlGetFileVerificationsQuery,
   gqlSingleEmailMutation,
-  PaginatedFileVerificationDto , GetFileVerificationsQueryData,
   SingleEmailMutationData,
 } from '../graphql/generated';
 import { getQueryFieldName } from '@util/apollo/getQueryFieldName';
@@ -50,7 +48,7 @@ export class VerificationService {
               const firstEdge = existing.edges?.[0];
               const newEdge = {
                 __typename: firstEdge?.__typename,
-                cursor: newItem?._id,
+                cursor: btoa(newItem?._id || ''),
                 node: ref
               };
               return {
@@ -64,7 +62,7 @@ export class VerificationService {
     });
   }
 
-  getFileVerifications(cursor?: string) : ApolloWatchQueryResult<GetFileVerificationsQueryData, Exact<{ input: PaginatedFileVerificationDto; }>>  {
+  getFileVerifications(cursor?: string) {
     return this.apollo.watchQuery({
       ...gqlGetFileVerificationsQuery({
         input: {

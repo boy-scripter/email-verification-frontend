@@ -1,5 +1,6 @@
 import { computed, signal } from '@angular/core';
-import { PaginationResponse } from '@myTypes/pagination.type';
+import { OperationVariables } from '@apollo/client';
+import { Node, PaginationResponse } from '@myTypes/pagination.type';
 import { ApolloWatchQueryResult } from '@util/service/apollo/apollo.service';
 import { filter, map } from 'rxjs';
 import { Exact } from 'src/app/graphql/generated';
@@ -13,18 +14,18 @@ const initialPaginationData: PaginationResponse<any> = {
     startCursor: null,
   },
 };
-export abstract class CursorPaginationFacade<T> {
+export abstract class CursorPaginationFacade<TData, TVariables extends Record<string, unknown> = OperationVariables> {
   // --- state ---
-  public paginationData = signal<PaginationResponse<T>>(initialPaginationData);
+  public paginationData = signal<PaginationResponse<Node<TData>>>(initialPaginationData);
   public isLoading = signal<boolean>(false);
 
   // --- computed ---
   public nextPageCursor = computed(() => this.paginationData().pageInfo.endCursor);
   public hasNextPage = computed(() => this.nextPageCursor() !== undefined);
-  public items = computed(() => this.paginationData().edges.map((edge: any) => edge.node));
+  public items = signal<Node<TData>[]>([])
 
   // --- abstract fetchPage ---
-  protected abstract watchQuery<P, PaginationDto>(cursor?: string): ApolloWatchQueryResult<P, Exact<{ input: PaginationDto; }>>;
+  protected abstract watchQuery(cursor?: string): ApolloWatchQueryResult<TData, Exact<{ input: TVariables; }>>;
 
   // --- load next page ---
   public async loadNextPage() {
@@ -40,17 +41,19 @@ export abstract class CursorPaginationFacade<T> {
         variables: {
           input: {
             after: cursor,
-          },
+          } as Record<any, any>,
         },
       })
-    const [key] = Object.keys(data!);
-    const field = (data as any)[key];
+    const [key] = Object.keys(data.data!);
+    const field = (data.data as any)[key];
     const edges = field.edges;
     const pageInfo = field.pageInfo;
     this.paginationData.set({
       edges: edges,
       pageInfo: pageInfo,
     });
+    const items = edges.map((edge: any) => edge.node);
+    this.items.set([...this.items(), ...items]);
     this.isLoading.set(false);
   }
 
@@ -75,6 +78,8 @@ export abstract class CursorPaginationFacade<T> {
             edges: data.edges,
             pageInfo: data.pageInfo,
           });
+          const items = data.edges.map((edge: any) => edge.node);
+          this.items.set([...items])
           this.isLoading.set(false);
         },
         error: (error) => {

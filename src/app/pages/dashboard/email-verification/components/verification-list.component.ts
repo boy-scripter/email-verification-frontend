@@ -8,13 +8,14 @@ import { CursorPaginationFacade } from "@util/pagination/pagination.facade";
 import { ButtonModule } from "primeng/button";
 import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
-import { FileVerificationModel_Edge, FileVerificationStatus } from "src/app/graphql/generated";
+import { FileVerificationStatus, GetFileVerificationsQueryData, } from "src/app/graphql/generated";
 import { ProgressDownloadComponent } from "./progress-download.component";
+import { TimeDiffPipe } from "../../../../pipes/timediff.pipe";
 
 
 @Component({
   selector: 'app-verification-list',
-  imports: [CardComponent, TableModule, DatePipe, ButtonModule, Tag, FileformatPipe, ProgressDownloadComponent, AppInfiniteScrollComponent],
+  imports: [CardComponent, TableModule, DatePipe, ButtonModule, Tag, FileformatPipe, ProgressDownloadComponent, AppInfiniteScrollComponent, TimeDiffPipe],
   styles: `
      .active {
         color: #ffffff;
@@ -45,7 +46,7 @@ import { ProgressDownloadComponent } from "./progress-download.component";
                         }
                       </tr>
                     </ng-template>
-                      <ng-template  let-data pTemplate="body">
+                      <ng-template let-data pTemplate="body">
                         <tr class="table-row">
                               <td class="table-cell">
                                 <span class="cell-content">{{ data.originalFile.filename }}</span>
@@ -81,7 +82,29 @@ import { ProgressDownloadComponent } from "./progress-download.component";
                               </span>
                             </td>
                               <td class="table-cell">
+                                @let t = (data.createdAt | timeDiff:data.completedAt);
+                                @if(data.completedAt){
+                                    <span class="flex cell-content items-center gap-1">
+                                    
+                                    @if (t.fast) {
+                                      <i class="pi pi-bolt text-blue-500 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]"></i>
+                                    } @else {
+                                      <i class="pi pi-clock text-yellow-500 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]"></i>
+                                    }
+
+                                    <span [class]="t.fast ? 'text-blue-500 font-semibold' : 'text-yellow-500'">
+                                      {{ t.text }}
+                                    </span>
+                                    
+                                  </span> 
+                              } @else {
                                 <span class="cell-content">
+                                  N/A
+                                </span>
+                              }
+                              </td>
+                              <td class="table-cell">
+                                <span class="cell-content"> 
                                 <p-tag
                                     [value]="data.status"
                                     [severity]="FileVerificationStatusColor[data.status]">
@@ -91,6 +114,7 @@ import { ProgressDownloadComponent } from "./progress-download.component";
                               <td class="table-cell">
                                 <span class="cell-content">
                                   <app-progress-download
+                                    [fileVerificationId]="data._id"
                                     [status]="data.status"
                                     [verifiedFileId]="data.verifiedFileId"
                                     [fileId]="data.originalFile._id">
@@ -115,17 +139,17 @@ import { ProgressDownloadComponent } from "./progress-download.component";
     </app-card>
   `,
 })
-export class VerificationListComponent extends CursorPaginationFacade<FileVerificationModel_Edge> implements OnInit {
+export class VerificationListComponent extends CursorPaginationFacade<GetFileVerificationsQueryData> implements OnInit {
 
   private verificationService = inject(VerificationService)
 
-  public headers = ['File Name', 'Info', 'Started At', 'Completed At', 'Status', ' '];
+  public headers = ['File Name', 'Info', 'Started At', 'Completed At', "Duration", 'Status', ' '];
 
   ngOnInit(): void {
     this.loadFirstPage();
   }
 
-  protected watchQuery<GetFileVerificationsQueryData, PaginatedFileVerificationDto>(cursor?: string)  {
+  protected watchQuery(cursor?: string) {
     return this.verificationService.getFileVerifications(cursor)
   }
 
@@ -141,7 +165,6 @@ export class VerificationListComponent extends CursorPaginationFacade<FileVerifi
     [FileVerificationStatus.Processing]: 'warning',
     [FileVerificationStatus.Queued]: 'secondary'
   };
-
 
 }
 

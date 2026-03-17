@@ -10,8 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
-import { filter, map } from 'rxjs';
-import { SubscriptionModel_Edge } from 'src/app/graphql/generated';
+import { GetSubscriptionsQueryData } from 'src/app/graphql/generated';
 
 @Component({
   selector: 'app-subscriptions',
@@ -132,27 +131,18 @@ import { SubscriptionModel_Edge } from 'src/app/graphql/generated';
   `,
 })
 export class SubscriptionsComponent
-  extends CursorPaginationFacade<SubscriptionModel_Edge>
+  extends CursorPaginationFacade<GetSubscriptionsQueryData>
   implements OnInit {
   private subscriptionService = inject(SubscriptionService);
 
   public headers = ['Plan', 'Credits', 'Activated At', 'Status'];
 
   ngOnInit(): void {
-    this.loadNextPage();
+    this.loadFirstPage();
   }
 
-  protected fetchPage(cursor?: string) {
+  protected watchQuery(cursor?: string) {
     return this.subscriptionService.getSubscriptionPaginate(cursor)
-      .pipe(
-        filter((data) => data.data !== undefined),
-        map(({ data }) => {
-          const edges = data.getSubscriptions.edges as SubscriptionModel_Edge[];
-          const pageInfo = data.getSubscriptions.pageInfo;
-          return {
-            edges,
-            pageInfo
-          }
-        }))
+
   }
 }

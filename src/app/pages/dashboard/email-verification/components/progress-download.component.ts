@@ -88,6 +88,7 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
 
   status = input.required<FileVerificationStatus>();
   verifiedFileId = input<string>();
+  fileVerificationId = input.required<string>();
   fileId = input.required<string>();
 
   isCompleted = computed(() => this.status() === FileVerificationStatus.Completed);
@@ -96,7 +97,7 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
   progress = signal<FileProgress | null>(null);
   isLoadingInitial = signal<boolean>(true);
   private pollInterval: ReturnType<typeof setInterval> | null = null;
-  static POLL_IN_EVERY_MS = 5000
+  static POLL_IN_EVERY_MS = 7000;
 
   ngOnInit(): void {
     if (this.isCompleted()) {
@@ -111,22 +112,37 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
   }
 
   private startPolling(): void {
-    this.fetchProgress();
-
     this.pollInterval = setInterval(
       () => {
-        if (this.isCompleted()) {
-          this.stopPolling();
-          return;
-        }
-        this.fetchProgress();
+        this.runPollingStep();
       }, ProgressDownloadComponent.POLL_IN_EVERY_MS);
   }
+
 
   private stopPolling(): void {
     if (this.pollInterval !== null) {
       clearInterval(this.pollInterval);
       this.pollInterval = null;
+    }
+  }
+
+  private runPollingStep(): void {
+    const status = this.status();
+    switch (status) {
+      case FileVerificationStatus.Processing:
+        this.fetchProgress();
+        break;
+      default:
+        this.checkStatus();
+        break;
+    }
+  }
+
+  private async checkStatus(): Promise<void> {
+    try {
+      this.verificationService.getFileVerfication(this.fileVerificationId());
+    } catch (error) {
+      console.error('Progress fetch failed', error);
     }
   }
 
@@ -141,6 +157,11 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
         invalidCount: data.fileProcessingStatus.invalidCount,
         duplicateCount: data.fileProcessingStatus.duplicateCount,
       });
+      if (this.progress()?.percentage === 100) {
+        this.checkStatus()
+        this.stopPolling();
+        return;
+      }
     } catch (error) {
       console.error('Progress fetch failed', error);
     } finally {
@@ -160,5 +181,5 @@ export class ProgressDownloadComponent implements OnInit, OnDestroy {
       console.error('Download failed', error);
     }
   };
-  
+
 }
